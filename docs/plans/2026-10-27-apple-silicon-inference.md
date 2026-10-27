@@ -85,7 +85,15 @@ inference change. Retrospective is future work pending a meaningful user outcome
 - [x] Qualify real workflows and document evidence.
 - [x] Independent Python/code and CI review; findings corrected and re-reviewed.
 - [x] Final wheel build and isolated installed-wheel checkpoint/config/cleanup checks.
-- [ ] Personal fork branch and upstream PR (active; live state is authoritative).
+- [x] Publish [personal fork](https://github.com/sealad886/sam2) branch
+  `codex/apple-silicon-inference` and [upstream PR #778](https://github.com/facebookresearch/sam2/pull/778).
+
+Implementation commit: `d1a444261286860d565211c27f903a8baed86dbe` (GPG signature
+verified). Local implementation, qualification and contribution preparation are
+complete. Upstream acceptance remains external: Meta CLA Check reports
+`ACTION_REQUIRED`, maintainer review is required, and both Actions workflows
+reported `action_required` before any jobs ran. The contributor must complete
+the Meta CLA personally; upstream maintainers control review and CI approval.
 
 Runtime investigation added two confirmed Hiera fixes: MPS query pooling needs a
 contiguous input, and unsupported bicubic interpolation needs a targeted CPU

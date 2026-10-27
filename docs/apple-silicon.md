@@ -5,6 +5,9 @@ overrides. See [installation and usage](../INSTALL.md#apple-silicon-macos).
 Existing PyTorch models and checkpoints are retained. Training is outside this
 inference qualification.
 
+Validated implementation: `d1a444261286860d565211c27f903a8baed86dbe`.
+Contribution: [upstream PR #778](https://github.com/facebookresearch/sam2/pull/778).
+
 ## Workload and gates
 
 Measured on 27 October 2026 with an Apple M3 Pro, 36 GiB unified memory,
