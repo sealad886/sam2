@@ -3,7 +3,6 @@
 # This source code is licensed under the license found in the
 # LICENSE file in the root directory of this source tree.
 
-import contextlib
 import logging
 import os
 import uuid
@@ -35,6 +34,7 @@ from inference.data_types import (
 )
 from pycocotools.mask import decode as decode_masks, encode as encode_masks
 from sam2.build_sam import build_sam2_video_predictor
+from sam2.utils.device import get_device, inference_context
 
 
 logger = logging.getLogger(__name__)
@@ -65,12 +65,7 @@ class InferenceAPI:
         force_cpu_device = os.environ.get("SAM2_DEMO_FORCE_CPU_DEVICE", "0") == "1"
         if force_cpu_device:
             logger.info("forcing CPU device for SAM 2 demo")
-        if torch.cuda.is_available() and not force_cpu_device:
-            device = torch.device("cuda")
-        elif torch.backends.mps.is_available() and not force_cpu_device:
-            device = torch.device("mps")
-        else:
-            device = torch.device("cpu")
+        device = get_device("cpu" if force_cpu_device else None)
         logger.info(f"using device: {device}")
 
         if device.type == "cuda":
@@ -78,12 +73,6 @@ class InferenceAPI:
             if torch.cuda.get_device_properties(0).major >= 8:
                 torch.backends.cuda.matmul.allow_tf32 = True
                 torch.backends.cudnn.allow_tf32 = True
-        elif device.type == "mps":
-            logging.warning(
-                "\nSupport for MPS devices is preliminary. SAM 2 is trained with CUDA and might "
-                "give numerically different outputs and sometimes degraded performance on MPS. "
-                "See e.g. https://github.com/pytorch/pytorch/issues/84936 for a discussion."
-            )
 
         self.device = device
         self.predictor = build_sam2_video_predictor(
@@ -92,10 +81,7 @@ class InferenceAPI:
         self.inference_lock = Lock()
 
     def autocast_context(self):
-        if self.device.type == "cuda":
-            return torch.autocast("cuda", dtype=torch.bfloat16)
-        else:
-            return contextlib.nullcontext()
+        return inference_context(self.device)
 
     def start_session(self, request: StartSessionRequest) -> StartSessionResponse:
         with self.autocast_context(), self.inference_lock:

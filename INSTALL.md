@@ -2,9 +2,9 @@
 
 ### Requirements
 
-- Linux with Python ≥ 3.10, PyTorch ≥ 2.5.1 and [torchvision](https://github.com/pytorch/vision/) that matches the PyTorch installation. Install them together at https://pytorch.org to ensure this.
+- Linux or Apple Silicon macOS 14+ with Python ≥ 3.10, PyTorch ≥ 2.5.1 and [torchvision](https://github.com/pytorch/vision/) that matches the PyTorch installation. Install them together at https://pytorch.org to ensure this.
   * Note older versions of Python or PyTorch may also work. However, the versions above are strongly recommended to provide all features such as `torch.compile`.
-- [CUDA toolkits](https://developer.nvidia.com/cuda-toolkit-archive) that match the CUDA version for your PyTorch installation. This should typically be CUDA 12.1 if you follow the default installation command.
+- For the optional NVIDIA CUDA extension: [CUDA toolkits](https://developer.nvidia.com/cuda-toolkit-archive) that match the CUDA version for your PyTorch installation. This should typically be CUDA 12.1 if you follow the default installation command.
 - If you are installing on Windows, it's strongly recommended to use [Windows Subsystem for Linux (WSL)](https://learn.microsoft.com/en-us/windows/wsl/install) with Ubuntu.
 
 Then, install SAM 2 from the root of this repository via
@@ -17,15 +17,80 @@ Note that you may skip building the SAM 2 CUDA extension during installation via
 # skip the SAM 2 CUDA extension
 SAM2_BUILD_CUDA=0 pip install -e ".[notebooks]"
 ```
-This would also skip the post-processing step at runtime (removing small holes and sprinkles in the output masks, which requires the CUDA extension), but shouldn't affect the results in most cases.
+On macOS this is already the default. Explicit `SAM2_BUILD_CUDA=1` requests
+a CUDA build on any platform. Disabling CUDA also avoids importing its build
+tooling, including when `SAM2_BUILD_ALLOW_ERRORS=0`.
+
+Small-hole and speckle cleanup remains available: connected components use the
+CUDA extension when available and suitable, otherwise SciPy on CPU. Only this
+post-processing stage transfers masks to CPU; its labels and area maps return
+to the original device. SciPy is installed as a core dependency.
+
+### Apple Silicon macOS
+
+Use native arm64 Python and an MPS-enabled PyTorch installation on macOS 14 or
+later. Run locally: Docker on macOS does not expose MPS. Create a project virtual
+environment, then install without any CUDA variables or toolkit:
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install --upgrade pip
+python -m pip install torch torchvision
+python -m pip install -e .
+python -c 'import torch; print(torch.backends.mps.is_available())'
+```
+
+The last command must print `True` for GPU inference. Builders select MPS
+automatically when CUDA is unavailable. Pass `device="mps"` to require it or
+`device="cpu"` to choose CPU. Both strings and `torch.device` objects are accepted.
+MPS inference and stored video memory use float32. Use
+`sam2.utils.device.inference_context(model.device)` with `torch.inference_mode()`
+for backend-appropriate precision; CUDA-only autocast is unnecessary on MPS.
+`vos_optimized=True` and `compile_image_encoder=True` require CUDA and raise
+before model construction on other backends.
+
+Video frames default to CPU storage on MPS to reduce GPU memory use. Override
+with `init_state(..., offload_video_to_cpu=False)` to store them on the selected
+device. `offload_state_to_cpu=True` also stores tracking state on CPU. Both
+synchronous and asynchronous JPEG loaders normalize in float32 before transfer.
+JPEG directories need no video decoder; MP4 input requires the optional
+`av>=13.0.0` dependency (`pip install 'av>=13.0.0'`), included in the
+notebook and interactive-demo extras. PyAV provides native Apple Silicon wheels.
+
+Start with the tiny checkpoint and a short clip. MPS results can differ
+numerically from CPU/CUDA, and memory use depends on model, frames, and objects.
+When a PyTorch MPS build lacks bicubic interpolation, SAM 2 interpolates only
+the small positional embedding grid on CPU and returns it to MPS. No blanket
+`PYTORCH_ENABLE_MPS_FALLBACK=1` setting is needed for the validated workload.
+Training remains governed by the separate CUDA/CPU trainer.
+
+To reproduce image/automatic-mask/two-object-video qualification against CPU,
+download the official tiny checkpoint and run from the repository root:
+
+```bash
+curl -L --fail -o checkpoints/sam2.1_hiera_tiny.pt \
+  https://dl.fbaipublicfiles.com/segment_anything_2/092824/sam2.1_hiera_tiny.pt
+python -m tools.validate_inference --device mps --reference-device cpu \
+  --output /tmp/sam2-qualification.json
+```
+
+The command checks fixed mask-agreement thresholds, reset/reuse, three sessions,
+and retained GPU allocations, and reports synchronized timings, input settings,
+environment and checkpoint hash. It exits nonzero on a failed gate. This is a
+small regression workload, not an accuracy benchmark, peak-memory measurement,
+or guarantee for larger checkpoints. See [qualification evidence](docs/apple-silicon.md).
 
 ### Building the SAM 2 CUDA extension
 
 By default, we allow the installation to proceed even if the SAM 2 CUDA extension fails to build. (In this case, the build errors are hidden unless using `-v` for verbose output in `pip install`.)
 
-If you see a message like `Skipping the post-processing step due to the error above` at runtime or `Failed to build the SAM 2 CUDA extension due to the error above` during installation, it indicates that the SAM 2 CUDA extension failed to build in your environment. In this case, **you can still use SAM 2 for both image and video applications**. The post-processing step (removing small holes and sprinkles in the output masks) will be skipped, but this shouldn't affect the results in most cases.
+A `Failed to build the SAM 2 CUDA extension` installation warning leaves image
+and video inference available with CPU connected components. A runtime
+`Skipping the post-processing step` warning indicates a separate cleanup failure;
+inspect its preceding exception rather than treating cleanup as successful.
 
-If you would like to enable this post-processing step, you can reinstall SAM 2 on a GPU machine with environment variable `SAM2_BUILD_ALLOW_ERRORS=0` to force building the CUDA extension (and raise errors if it fails to build), as follows
+If you would like to accelerate this post-processing step, you can reinstall SAM 2 on a CUDA GPU machine with environment variable `SAM2_BUILD_ALLOW_ERRORS=0` to force building the CUDA extension (and raise errors if it fails to build), as follows
 ```bash
 pip uninstall -y SAM-2 && \
 rm -f ./sam2/*.so && \
@@ -46,9 +111,9 @@ I got `ImportError: cannot import name '_C' from 'sam2'`
 </summary>
 <br/>
 
-This is usually because you haven't run the `pip install -e ".[notebooks]"` step above or the installation failed. Please install SAM 2 first, and see the other issues if your installation fails.
-
-In some systems, you may need to run `python setup.py build_ext --inplace` in the SAM 2 repo root as suggested in https://github.com/facebookresearch/sam2/issues/77.
+The extension is optional. Current image/video cleanup automatically uses SciPy
+when it cannot be imported. Direct imports of `sam2._C` still require a successful
+CUDA build; they are not part of the portable inference path.
 </details>
 
 <details>

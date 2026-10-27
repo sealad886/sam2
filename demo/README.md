@@ -103,7 +103,6 @@ cd demo/backend/server/
 ```
 
 ```bash
-PYTORCH_ENABLE_MPS_FALLBACK=1 \
 APP_ROOT="$(pwd)/../../../" \
 API_URL=http://localhost:7263 \
 MODEL_SIZE=base_plus \

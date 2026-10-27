@@ -4,6 +4,7 @@
 # This source code is licensed under the license found in the
 # LICENSE file in the root directory of this source tree.
 import os
+import sys
 
 from setuptools import find_packages, setup
 
@@ -25,6 +26,7 @@ REQUIRED_PACKAGES = [
     "torch>=2.5.1",
     "torchvision>=0.20.1",
     "numpy>=1.24.4",
+    "scipy>=1.10.0",
     "tqdm>=4.66.1",
     "hydra-core>=1.3.2",
     "iopath>=0.1.10",
@@ -36,14 +38,13 @@ EXTRA_PACKAGES = {
         "matplotlib>=3.9.1",
         "jupyter>=1.0.0",
         "opencv-python>=4.7.0",
-        "eva-decord>=0.6.1",
+        "av>=13.0.0",
     ],
     "interactive-demo": [
         "Flask>=3.0.3",
         "Flask-Cors>=5.0.0",
         "av>=13.0.0",
         "dataclasses-json>=0.6.7",
-        "eva-decord>=0.6.1",
         "gunicorn>=23.0.0",
         "imagesize>=1.4.1",
         "pycocotools>=2.0.8",
@@ -64,9 +65,11 @@ EXTRA_PACKAGES = {
     ],
 }
 
-# By default, we also build the SAM 2 CUDA extension.
-# You may turn off CUDA build with `export SAM2_BUILD_CUDA=0`.
-BUILD_CUDA = os.getenv("SAM2_BUILD_CUDA", "1") == "1"
+# CUDA is not available on macOS. Explicit build overrides take precedence.
+# You may turn off CUDA build with `export SAM2_BUILD_CUDA=0` on other platforms.
+BUILD_CUDA = (
+    os.getenv("SAM2_BUILD_CUDA", "0" if sys.platform == "darwin" else "1") == "1"
+)
 # By default, we allow SAM 2 installation to proceed even with build errors.
 # You may force stopping on errors with `export SAM2_BUILD_ALLOW_ERRORS=0`.
 BUILD_ALLOW_ERRORS = os.getenv("SAM2_BUILD_ALLOW_ERRORS", "1") == "1"
@@ -77,8 +80,7 @@ BUILD_ALLOW_ERRORS = os.getenv("SAM2_BUILD_ALLOW_ERRORS", "1") == "1"
 CUDA_ERROR_MSG = (
     "{}\n\n"
     "Failed to build the SAM 2 CUDA extension due to the error above. "
-    "You can still use SAM 2 and it's OK to ignore the error above, although some "
-    "post-processing functionality may be limited (which doesn't affect the results in most cases; "
+    "SAM 2 inference remains available with CPU connected-component post-processing "
     "(see https://github.com/facebookresearch/sam2/blob/main/INSTALL.md).\n"
 )
 
@@ -111,46 +113,47 @@ def get_extensions():
     return ext_modules
 
 
-try:
-    from torch.utils.cpp_extension import BuildExtension
+cmdclass = {}
+if BUILD_CUDA:
+    try:
+        from torch.utils.cpp_extension import BuildExtension
 
-    class BuildExtensionIgnoreErrors(BuildExtension):
+        class BuildExtensionIgnoreErrors(BuildExtension):
 
-        def finalize_options(self):
-            try:
-                super().finalize_options()
-            except Exception as e:
-                print(CUDA_ERROR_MSG.format(e))
-                self.extensions = []
+            def finalize_options(self):
+                try:
+                    super().finalize_options()
+                except Exception as e:
+                    print(CUDA_ERROR_MSG.format(e))
+                    self.extensions = []
 
-        def build_extensions(self):
-            try:
-                super().build_extensions()
-            except Exception as e:
-                print(CUDA_ERROR_MSG.format(e))
-                self.extensions = []
+            def build_extensions(self):
+                try:
+                    super().build_extensions()
+                except Exception as e:
+                    print(CUDA_ERROR_MSG.format(e))
+                    self.extensions = []
 
-        def get_ext_filename(self, ext_name):
-            try:
-                return super().get_ext_filename(ext_name)
-            except Exception as e:
-                print(CUDA_ERROR_MSG.format(e))
-                self.extensions = []
-                return "_C.so"
+            def get_ext_filename(self, ext_name):
+                try:
+                    return super().get_ext_filename(ext_name)
+                except Exception as e:
+                    print(CUDA_ERROR_MSG.format(e))
+                    self.extensions = []
+                    return "_C.so"
 
-    cmdclass = {
-        "build_ext": (
-            BuildExtensionIgnoreErrors.with_options(no_python_abi_suffix=True)
-            if BUILD_ALLOW_ERRORS
-            else BuildExtension.with_options(no_python_abi_suffix=True)
-        )
-    }
-except Exception as e:
-    cmdclass = {}
-    if BUILD_ALLOW_ERRORS:
-        print(CUDA_ERROR_MSG.format(e))
-    else:
-        raise e
+        cmdclass = {
+            "build_ext": (
+                BuildExtensionIgnoreErrors.with_options(no_python_abi_suffix=True)
+                if BUILD_ALLOW_ERRORS
+                else BuildExtension.with_options(no_python_abi_suffix=True)
+            )
+        }
+    except Exception as e:
+        if BUILD_ALLOW_ERRORS:
+            print(CUDA_ERROR_MSG.format(e))
+        else:
+            raise e
 
 
 # Setup configuration

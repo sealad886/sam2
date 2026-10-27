@@ -1,0 +1,73 @@
+name: Inference portability
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  contracts:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-14]
+        pytorch: [minimum, current]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install minimum PyTorch
+        if: matrix.pytorch == 'minimum'
+        env:
+          PIP_INDEX_URL: ${{ runner.os == 'Linux' && 'https://download.pytorch.org/whl/cpu' || 'https://pypi.org/simple' }}
+        run: python -m pip install torch==2.5.1 torchvision==0.20.1
+      - name: Install current PyTorch
+        if: matrix.pytorch == 'current'
+        env:
+          PIP_INDEX_URL: ${{ runner.os == 'Linux' && 'https://download.pytorch.org/whl/cpu' || 'https://pypi.org/simple' }}
+        run: python -m pip install torch torchvision
+      - name: Install without CUDA tooling
+        env:
+          SAM2_BUILD_CUDA: '0'
+          SAM2_BUILD_ALLOW_ERRORS: '0'
+        run: |
+          python -m pip install setuptools wheel
+          python -m pip install --no-build-isolation -e . pytest 'av>=13.0.0'
+      - name: Run inference contracts
+        run: python -m pytest -q tests
+      - name: Check formatting
+        run: |
+          python -m pip install black==24.2.0 usort==1.0.2 ufmt==2.0.0b2
+          python -m ufmt check sam2 tools tests setup.py
+
+  cpu-checkpoint:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install CPU inference dependencies
+        env:
+          SAM2_BUILD_CUDA: '0'
+          SAM2_BUILD_ALLOW_ERRORS: '0'
+        run: |
+          python -m pip install torch==2.5.1 torchvision==0.20.1 --index-url https://download.pytorch.org/whl/cpu
+          python -m pip install setuptools wheel
+          python -m pip install --no-build-isolation -e .
+      - name: Download official tiny checkpoint
+        run: curl --fail --location -o checkpoints/sam2.1_hiera_tiny.pt https://dl.fbaipublicfiles.com/segment_anything_2/092824/sam2.1_hiera_tiny.pt
+      - name: Run real-checkpoint regression workload
+        env:
+          OMP_NUM_THREADS: '2'
+          MKL_NUM_THREADS: '2'
+        run: python -m tools.validate_inference --device cpu --reference-device cpu

@@ -1,0 +1,236 @@
+{
+  "environment": {
+    "machine": "arm64",
+    "macos": "27.2",
+    "platform": "macOS-27.2-arm64-arm-64bit",
+    "python": "3.12.16",
+    "pytorch": "2.5.1",
+    "cpu_threads": 6,
+    "checkpoint_sha256": "7402e0d864fa82708a20fbd15bc84245c2f26dff0eb43a4b5b93452deb34be69",
+    "chip": "Apple M3 Pro",
+    "ram_bytes": "38654705664"
+  },
+  "device": "mps",
+  "reference_device": "cpu",
+  "settings": {
+    "config": "configs/sam2.1/sam2.1_hiera_t.yaml",
+    "checkpoint": "checkpoints/sam2.1_hiera_tiny.pt",
+    "image": "notebooks/images/truck.jpg",
+    "image_shape": [
+      1200,
+      1800,
+      3
+    ],
+    "image_prompt": [
+      [
+        500,
+        375
+      ]
+    ],
+    "image_cleanup_area": 8,
+    "automatic_points_per_side": 8,
+    "automatic_points_per_batch": 4,
+    "automatic_min_mask_region_area": 0,
+    "video_frames": [
+      "00000.jpg",
+      "00001.jpg",
+      "00002.jpg"
+    ],
+    "video_prompts": {
+      "2": [
+        [
+          200,
+          300
+        ]
+      ],
+      "3": [
+        [
+          400,
+          150
+        ]
+      ]
+    },
+    "video_frame_storage": "default, explicit device, explicit CPU"
+  },
+  "limitations": [
+    "JPEG video only; MP4 decoder not qualified",
+    "No peak-memory measurement",
+    "Small regression workload; not dataset accuracy"
+  ],
+  "backends": {
+    "cpu": {
+      "image": {
+        "embedding_seconds": 0.6861124579954776,
+        "prompt_warmup_seconds": 0.06650945799628971,
+        "cached_prompt_seconds": [
+          0.0282325000007404,
+          0.14122725000197534,
+          0.14982637500361307
+        ],
+        "automatic_seconds": 3.0281815420021303,
+        "automatic_mask_count": 12,
+        "model_input_size": 1024
+      },
+      "video": {
+        "warmup_and_reset_reuse_seconds": 9.663665375002893,
+        "sessions": [
+          {
+            "total_seconds": 5.524620916003187,
+            "propagation_seconds": 4.802487916997052,
+            "frames_per_second": 0.6246762202945573,
+            "offload_state_to_cpu": false,
+            "offload_video_to_cpu": null
+          },
+          {
+            "total_seconds": 11.474197249997815,
+            "propagation_seconds": 10.666027624996786,
+            "frames_per_second": 0.28126685074106056,
+            "offload_state_to_cpu": true,
+            "offload_video_to_cpu": false
+          },
+          {
+            "total_seconds": 4.405853417003527,
+            "propagation_seconds": 3.5379840829991736,
+            "frames_per_second": 0.8479405021677993,
+            "offload_state_to_cpu": false,
+            "offload_video_to_cpu": true
+          }
+        ],
+        "cleaned_session_memory": [
+          {},
+          {},
+          {}
+        ]
+      }
+    },
+    "mps": {
+      "image": {
+        "embedding_seconds": 1.8755401250018622,
+        "prompt_warmup_seconds": 0.5472299169996404,
+        "cached_prompt_seconds": [
+          0.033632291000685655,
+          0.027942000000621192,
+          0.022418291999201756
+        ],
+        "automatic_seconds": 3.553200292000838,
+        "automatic_mask_count": 12,
+        "model_input_size": 1024
+      },
+      "video": {
+        "warmup_and_reset_reuse_seconds": 3.2856895000004442,
+        "sessions": [
+          {
+            "total_seconds": 1.3919887499941979,
+            "propagation_seconds": 1.0590400000000955,
+            "frames_per_second": 2.8327541924759494,
+            "offload_state_to_cpu": false,
+            "offload_video_to_cpu": null
+          },
+          {
+            "total_seconds": 1.3939715000014985,
+            "propagation_seconds": 1.0504748339953949,
+            "frames_per_second": 2.8558513758866035,
+            "offload_state_to_cpu": true,
+            "offload_video_to_cpu": false
+          },
+          {
+            "total_seconds": 1.4936215839989018,
+            "propagation_seconds": 1.1389169999965816,
+            "frames_per_second": 2.6340813246347228,
+            "offload_state_to_cpu": false,
+            "offload_video_to_cpu": true
+          }
+        ],
+        "cleaned_session_memory": [
+          {
+            "live_bytes": 460949760,
+            "driver_bytes": 6573473792
+          },
+          {
+            "live_bytes": 460949760,
+            "driver_bytes": 6573473792
+          },
+          {
+            "live_bytes": 460949760,
+            "driver_bytes": 6567182336
+          }
+        ]
+      }
+    }
+  },
+  "agreement": {
+    "image_iou": 1.0,
+    "automatic_matched_fraction": 1.0,
+    "video_iou": {
+      "0:2": 1.0,
+      "0:3": 1.0,
+      "1:2": 0.9975166497347331,
+      "1:3": 0.998149005090236,
+      "2:2": 0.9965193370165746,
+      "2:3": 0.9975484733675062
+    },
+    "video_sessions": {
+      "cpu": [
+        {
+          "0:2": 1.0,
+          "0:3": 1.0,
+          "1:2": 1.0,
+          "1:3": 1.0,
+          "2:2": 1.0,
+          "2:3": 1.0
+        },
+        {
+          "0:2": 1.0,
+          "0:3": 1.0,
+          "1:2": 1.0,
+          "1:3": 1.0,
+          "2:2": 1.0,
+          "2:3": 1.0
+        },
+        {
+          "0:2": 1.0,
+          "0:3": 1.0,
+          "1:2": 1.0,
+          "1:3": 1.0,
+          "2:2": 1.0,
+          "2:3": 1.0
+        }
+      ],
+      "mps": [
+        {
+          "0:2": 1.0,
+          "0:3": 1.0,
+          "1:2": 0.9975166497347331,
+          "1:3": 0.998149005090236,
+          "2:2": 0.9976776333978435,
+          "2:3": 0.999108138238573
+        },
+        {
+          "0:2": 1.0,
+          "0:3": 1.0,
+          "1:2": 0.9985312394079765,
+          "1:3": 0.998149005090236,
+          "2:2": 0.9965193370165746,
+          "2:3": 0.9975484733675062
+        },
+        {
+          "0:2": 1.0,
+          "0:3": 1.0,
+          "1:2": 0.9985312394079765,
+          "1:3": 0.9993047508690615,
+          "2:2": 0.996739791125601,
+          "2:3": 0.9993309545049064
+        }
+      ]
+    }
+  },
+  "gates": {
+    "image_iou_at_least_0.99": true,
+    "automatic_fraction_at_least_0.90_at_iou_0.95": true,
+    "video_iou_at_least_0.98": true,
+    "three_repeated_sessions": true,
+    "live_memory_growth_at_most_16_mib": true
+  },
+  "live_memory_growth_bytes": 0,
+  "passed": true
+}
