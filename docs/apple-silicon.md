@@ -4,6 +4,7 @@ The inference APIs select CUDA, then MPS, then CPU, with explicit device
 overrides. See [installation and usage](../INSTALL.md#apple-silicon-macos).
 The global baseline is **PyTorch >= 2.14.1 and matching TorchVision >= 0.29.1**.
 Existing PyTorch models and checkpoints retain their formats.
+Validated source revision: `d976cc5ae620313b2d6577d1a9b4ea71f4dfe351`.
 Contribution: [upstream PR #778](https://github.com/facebookresearch/sam2/pull/778).
 
 ## Native Hiera and workload

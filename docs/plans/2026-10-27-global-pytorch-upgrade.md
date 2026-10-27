@@ -70,7 +70,7 @@ worktree, release, deployment or upstream merge is authorized.
 - [x] Implement loading, packaging and native Hiera changes.
 - [x] Complete local validation and refresh qualification evidence.
 - [x] Independent review and corrections.
-- [ ] Signed commits and verified PR update (active).
+- [x] Signed implementation commit and verified PR update.
 
 ## Lifecycle and evidence
 
@@ -95,3 +95,19 @@ base image retains externally managed Ubuntu Python. The Dockerfile now creates
 a virtual environment with system-site-package access before installing the
 application. All nine torch.load sites, loading callers, dependency/CI floors,
 packaging sources and native Hiera were reviewed; no actionable finding remains.
+
+## Contribution receipt
+
+Signed implementation commit `d976cc5ae620313b2d6577d1a9b4ea71f4dfe351` was
+verified and pushed to `sealad886/sam2:codex/apple-silicon-inference`. Upstream
+[PR #778](https://github.com/facebookresearch/sam2/pull/778) points to that
+implementation and its description was updated and read back. Meta CLA Check
+now succeeds and the PR has the `cla signed` label. No human reviews or inline
+review threads were present at readback. Both Actions workflows require
+upstream maintainer approval before any job can start. This is a provider
+approval gap, not a passing hosted test run. No merge or release was performed.
+
+Independent review's source checksum
+`81294f54778708516526821254fecdb37055e8ae7ca9633e1215f59c7fec4598` matches the
+committed code/packaging/test files. Subsequent handoff edits are documentation
+only; the full locally validated implementation remains unchanged.
