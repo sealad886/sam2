@@ -27,9 +27,6 @@ def do_pool(x: torch.Tensor, pool: nn.Module, norm: nn.Module = None) -> torch.T
         return x
     # (B, H, W, C) -> (B, C, H, W)
     x = x.permute(0, 3, 1, 2)
-    if x.device.type == "mps":
-        # MPS pooling can misread the strided query view produced by QKV unbind.
-        x = x.contiguous()
     x = pool(x)
     # (B, C, H', W') -> (B, H', W', C)
     x = x.permute(0, 2, 3, 1)
@@ -270,22 +267,13 @@ class Hiera(nn.Module):
 
         if weights_path is not None:
             with g_pathmgr.open(weights_path, "rb") as f:
-                chkpt = torch.load(f, map_location="cpu")
+                chkpt = torch.load(f, map_location="cpu", weights_only=True)
             logging.info("loading Hiera", self.load_state_dict(chkpt, strict=False))
 
     def _get_pos_embed(self, hw: Tuple[int, int]) -> torch.Tensor:
         h, w = hw
         window_embed = self.pos_embed_window
-        try:
-            pos_embed = F.interpolate(self.pos_embed, size=(h, w), mode="bicubic")
-        except NotImplementedError:
-            if self.pos_embed.device.type != "mps":
-                raise
-            # Some MPS builds lack bicubic interpolation. Transfer only this
-            # small positional grid, keeping the backbone computation on MPS.
-            pos_embed = F.interpolate(
-                self.pos_embed.cpu(), size=(h, w), mode="bicubic"
-            ).to(self.pos_embed.device)
+        pos_embed = F.interpolate(self.pos_embed, size=(h, w), mode="bicubic")
         pos_embed = pos_embed + window_embed.tile(
             [x // y for x, y in zip(pos_embed.shape, window_embed.shape)]
         )

@@ -5,12 +5,17 @@
 # LICENSE file in the root directory of this source tree.
 
 import builtins
+import os
 import runpy
+import shutil
+import subprocess
 import sys
+import tarfile
 from pathlib import Path
 from types import ModuleType
 
 import pytest
+from packaging.requirements import Requirement
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -62,6 +67,45 @@ def test_mac_default_installs_without_cuda_build_tools(run_setup):
     package = run_setup("darwin", tools_available=False)
     assert package["ext_modules"] == []
     assert package["cmdclass"] == {}
+
+
+@pytest.mark.parametrize(
+    ("name", "minimum", "older"),
+    [("torch", "2.14.1", "2.14.0"), ("torchvision", "0.29.1", "0.29.0")],
+)
+def test_installation_requires_native_mps_support(run_setup, name, minimum, older):
+    package = run_setup("darwin", tools_available=False)
+    requirements = {
+        requirement.name: requirement
+        for requirement in map(Requirement, package["install_requires"])
+    }
+    assert minimum in requirements[name].specifier
+    assert older not in requirements[name].specifier
+
+
+def test_sdist_without_cuda_tooling_retains_cuda_sources(tmp_path):
+    """A source archive built on a Mac must still support CUDA installation."""
+    source = tmp_path / "source"
+    source.mkdir()
+    for name in ("setup.py", "pyproject.toml", "MANIFEST.in", "README.md", "LICENSE"):
+        shutil.copy2(ROOT / name, source / name)
+    shutil.copytree(
+        ROOT / "sam2", source / "sam2", ignore=shutil.ignore_patterns("__pycache__")
+    )
+    subprocess.run(
+        [sys.executable, "setup.py", "sdist", "--dist-dir", str(tmp_path / "dist")],
+        cwd=source,
+        env={**os.environ, "SAM2_BUILD_CUDA": "0", "SAM2_BUILD_ALLOW_ERRORS": "0"},
+        check=True,
+        capture_output=True,
+        text=True,
+    )
+    archive = next((tmp_path / "dist").glob("*.tar.gz"))
+    with tarfile.open(archive) as package:
+        paths = {
+            Path(name).relative_to(package.getnames()[0]) for name in package.getnames()
+        }
+    assert Path("sam2/csrc/connected_components.cu") in paths
 
 
 @pytest.mark.parametrize("platform", ["darwin", "linux", "win32"])

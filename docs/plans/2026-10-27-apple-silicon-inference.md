@@ -1,5 +1,10 @@
 # Apple Silicon inference delivery
 
+Historical initial delivery plan. The later approved
+[global PyTorch upgrade](2026-10-27-global-pytorch-upgrade.md) supersedes its
+old runtime qualification and Hiera workarounds. Current evidence is in
+[Apple Silicon qualification](../apple-silicon.md).
+
 User-approved direction: retain PyTorch and existing checkpoints, make MPS a
 supported inference backend, and contribute the change through a personal fork.
 Training, native MLX, custom Metal kernels, and deployment are outside scope.

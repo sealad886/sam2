@@ -190,6 +190,7 @@ def load_checkpoint(
     path_list: List[str],
     pick_recursive_keys: Optional[List[str]] = None,
     map_location: str = "cpu",
+    weights_only: bool = True,
 ) -> Any:
     """
     Loads a checkpoint from the specified path.
@@ -202,6 +203,9 @@ def load_checkpoint(
             For pick_recursive_keys = ["a", "b"], will return checkpoint_dict["a"]["b"]
         map_location (str): a function, torch.device, string or a dict specifying how to
             remap storage locations
+        weights_only (bool): Restrict loading to tensors and safe primitive state.
+            Set False only for trusted checkpoints that require Python objects;
+            unrestricted pickle loading can execute code.
 
     Returns: Model with the matchin pre-trained weights loaded.
     """
@@ -215,7 +219,7 @@ def load_checkpoint(
         raise ValueError(f"No path exists in {path_list}")
 
     with g_pathmgr.open(path, "rb") as f:
-        checkpoint = torch.load(f, map_location=map_location)
+        checkpoint = torch.load(f, map_location=map_location, weights_only=weights_only)
 
     logging.info(f"Loaded checkpoint from {path}")
     if pick_recursive_keys is not None:
@@ -249,6 +253,7 @@ def load_checkpoint_and_apply_kernels(
     checkpoint_kernels: List[Callable] = None,
     ckpt_state_dict_keys: Tuple[str] = ("state_dict",),
     map_location: str = "cpu",
+    weights_only: bool = True,
 ) -> nn.Module:
     """
     Performs checkpoint loading with a variety of pre-processing kernel applied in
@@ -263,6 +268,9 @@ def load_checkpoint_and_apply_kernels(
         ckpt_state_dict_keys (str): Keys containing the model state dict.
         map_location (str): a function, torch.device, string or a dict specifying how to
             remap storage locations
+        weights_only (bool): Restrict loading to tensors and safe primitive state.
+            Set False only for trusted checkpoints that require Python objects;
+            unrestricted pickle loading can execute code.
 
     Returns: Model with the matchin pre-trained weights loaded.
     """
@@ -272,7 +280,7 @@ def load_checkpoint_and_apply_kernels(
 
     # Load the checkpoint on CPU to avoid GPU mem spike.
     with g_pathmgr.open(checkpoint_path, "rb") as f:
-        checkpoint = torch.load(f, map_location=map_location)
+        checkpoint = torch.load(f, map_location=map_location, weights_only=weights_only)
 
     pre_train_dict = get_state_dict(checkpoint, ckpt_state_dict_keys)
 

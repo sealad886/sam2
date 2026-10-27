@@ -2,13 +2,17 @@
 
 The inference APIs select CUDA, then MPS, then CPU, with explicit device
 overrides. See [installation and usage](../INSTALL.md#apple-silicon-macos).
-Existing PyTorch models and checkpoints are retained. Training is outside this
-inference qualification.
-
-Validated implementation: `d1a444261286860d565211c27f903a8baed86dbe`.
+The global baseline is **PyTorch >= 2.14.1 and matching TorchVision >= 0.29.1**.
+Existing PyTorch models and checkpoints retain their formats.
 Contribution: [upstream PR #778](https://github.com/facebookresearch/sam2/pull/778).
 
-## Workload and gates
+## Native Hiera and workload
+
+The baseline supports native MPS bicubic positional-grid interpolation and the
+strided MaxPool2d query views used by Hiera. The former positional-grid CPU
+fallback and MPS pooling copy have been removed. A public backbone-forward test
+compares CPU/MPS outputs. The [JSON evidence](validation/apple-silicon-pytorch-2.14.1.json)
+records the tested Hiera source hash.
 
 Measured on 27 October 2026 with an Apple M3 Pro, 36 GiB unified memory,
 macOS 27.2, native arm64 Python 3.12.16 and six CPU threads. The official
@@ -18,109 +22,110 @@ SAM 2.1 tiny checkpoint has SHA-256
 The workload uses the bundled 1800x1200 truck image, prompt `(500, 375)`, a fixed
 8x8 automatic-mask grid (batch size four), and bedroom frames `00000.jpg` through
 `00002.jpg` at 960x540. Two video objects receive positive prompts `(200, 300)`
-and `(400, 150)`. Model input resolution remains 1024. CPU float32 is the
-reference; MPS uses float32, including stored video memory.
+and `(400, 150)`. Model input resolution remains 1024. CPU and MPS use float32,
+including stored MPS video memory. `PYTORCH_ENABLE_MPS_FALLBACK` was unset.
 
-Before measurement, the delivery plan specified image mask IoU >= 0.99,
-at least 90% of CPU automatic masks matched one-to-one to MPS masks at IoU >=
-0.95, every video object/frame/session IoU >= 0.98, and live GPU allocation
-growth <= 16 MiB over three cleaned sessions. Each backend also exercises
-reset/reuse, default frame storage, explicit device frame storage with CPU
-tracking-state offload, and explicit CPU frame storage. The harness checks
-finite outputs, nonempty masks, object IDs and shapes. Global
-`PYTORCH_ENABLE_MPS_FALLBACK` was unset for qualification.
+Prospective gates remain image IoU >= 0.99, at least 90% of CPU automatic masks
+matched one-to-one at IoU >= 0.95, every video object/frame/session IoU >= 0.98,
+and live GPU allocation growth <= 16 MiB over three cleaned sessions. Each
+backend exercises reset/reuse, default frame storage, explicit device frame
+storage with CPU tracking-state offload, and explicit CPU frame storage. The
+harness checks finite outputs, nonempty masks, object IDs and shapes.
 
-## PyTorch 2.5.1 results
-
-[Full machine-readable evidence](validation/apple-silicon-pytorch-2.5.1.json)
-includes environment, settings, synchronized timings, per-session comparisons
-and memory readings.
-
-| Check | Observed result |
-| --- | --- |
-| Image mask IoU | 1.0 |
-| Automatic mask matching | 12/12 masks at IoU >= 0.95 |
-| Minimum video IoU, all sessions | 0.996519 |
-| Reset/reuse and all storage variants | Passed |
-| Three-session live allocation growth | 0 bytes |
-| Live allocation after each cleaned session | 460,949,760 bytes (model remains loaded) |
-| MPS propagation throughput | 2.63–2.86 frames/s for this two-object, three-frame workload |
-| Cached image prompt latency | 22–34 ms, excluding image embedding |
-| Automatic mask generation | 3.55 s, one fixed-grid sample |
-
-These are local regression measurements, not a performance ceiling or a dataset
-accuracy score. Image embedding and warmup are reported separately in JSON.
-Driver allocations include reusable caches and are not peak live-tensor memory.
-Other work on the machine can affect timings.
-
-## PyTorch 2.14.1 results
-
-The current release was independently exercised using the same workload,
-checkpoint and gates. [Full evidence](validation/apple-silicon-pytorch-2.14.1.json)
-records every measured storage variant.
-
-| Check | Observed result |
+| Check | Native Hiera result, PyTorch 2.14.1 |
 | --- | --- |
 | Image mask IoU | 1.0 |
 | Automatic mask matching | 12/12 masks at IoU >= 0.95 |
 | Minimum video IoU, all sessions | 0.999768 |
 | Reset/reuse and all storage variants | Passed |
 | Three-session live allocation growth | 0 bytes |
-| Live allocation after each cleaned session | 280,506,624 bytes (model remains loaded) |
-| MPS propagation throughput | 1.68–1.71 frames/s for this workload |
-| Cached image prompt latency | 17–21 ms, excluding image embedding |
-| Automatic mask generation | 5.73 s, one fixed-grid sample |
+| Live allocation after each cleaned session | 279,851,264 bytes (model remains loaded) |
+| MPS propagation throughput | 2.85–2.94 frames/s for this workload |
+| Cached image prompt latency | 12–17 ms, excluding image embedding |
+| Automatic mask generation | 2.45 s, one fixed-grid sample |
 
-Timing samples came from separate local runs; they do not establish a controlled
-performance comparison between PyTorch releases. PyTorch 2.14.1 also emits a
-deprecation warning for the existing `torch.jit.script` transform.
-
-## Confirmed backend corrections
-
-Two failures were reproduced with the minimum supported PyTorch version:
-
-- MPS MaxPool2d misread the noncontiguous query view created by QKV unbinding
-  during Hiera stage transitions. Making only MPS pooling inputs contiguous
-  reduced maximum error in a small public backbone-forward regression from
-  about 0.186 to below 1e-6. CUDA/CPU pooling paths remain unchanged.
-- MPS lacked bicubic interpolation. The backbone catches that specific
-  unsupported operation and interpolates the small positional embedding grid
-  on CPU, then returns it to MPS. MPS builds with native support keep that path.
+These are local regression measurements. They establish neither a performance
+ceiling nor a controlled comparison with older implementations or releases.
+Image embedding and warmup are reported separately. Driver allocations include
+reusable caches and are not peak live-tensor memory.
 
 Connected components use SciPy on CPU when the CUDA extension is unavailable or
 inapplicable, preserving 8-connectivity, area maps and the caller's device.
 Async JPEG input is normalized to float32 before transfer. MPS video frames
 default to CPU storage; explicit choices remain authoritative.
 
-The former optional `eva-decord` package had no Apple Silicon wheel. The shared
-MP4 path/bytes loader now uses PyAV, already a demo dependency, and both notebook
-and demo extras request it. Generated colored MP4 clips test RGB channel order,
-frame order, source dimensions, resizing, float32 normalization and CPU/MPS frame
-storage for paths and bytes. Extras dependency resolution was checked on arm64.
+The shared MP4 path/bytes loader uses PyAV, which has native Apple Silicon
+wheels. Notebook and demo extras both request it. Generated colored clips test
+RGB/frame order, source dimensions, resizing, normalization and CPU/MPS storage.
+A [fresh real-checkpoint MP4 run](validation/apple-silicon-mp4.json) with native
+Hiera and PyAV 19.0.2 used three frames re-encoded from the bundled bedroom MP4.
+Both objects, all frames and reset/reuse passed; minimum CPU/MPS IoU was 0.999770.
 
-A [separate real-checkpoint MP4 run](validation/apple-silicon-mp4.json) on
-PyTorch 2.14.1/PyAV 19.0.2 used three frames re-encoded from the bundled bedroom
-MP4. Both objects, all frames and reset/reuse passed, with minimum CPU/MPS mask
-IoU 0.999550. This is separate from the JPEG workload above.
+## Upgrade and loading validation
 
-The final automated suite passed **82 tests**, with **six CUDA-only hardware
-skips**, on both PyTorch 2.5.1/PyAV 13.0.0 and PyTorch 2.14.1/PyAV 19.0.2.
-Formatting and local documentation links were checked. The running web demo
-and complete notebook sessions were not exercised.
+PyTorch changed `torch.load` to restricted weight loading by default starting
+with 2.6. Model and Hiera weights explicitly retain `weights_only=True`.
+Generic checkpoint helpers default to that policy and expose `weights_only=False`
+only as an explicit opt-in for trusted Python state. Trainer resume and internal
+worker-object transport explicitly deserialize their full state; their checkpoint
+sources, workers and shared directories must be trusted. Unrestricted pickle
+loading can execute code. No global safety override is used. See
+[PyTorch's serialization guidance](https://docs.pytorch.org/docs/2.14/notes/serialization.html#torch-load-with-weights-only-true).
 
-A strict Mac editable installation and a CUDA-free wheel build succeeded. Every
-Python source in the wheel matched the checkout. Importing that wheel from
-outside the repository loaded its packaged tiny configuration, official
-checkpoint and CPU connected-component cleanup successfully.
+The automated suite passed **91 tests**, with **six CUDA hardware skips** on
+PyTorch 2.14.1/TorchVision 0.29.1/PyAV 19.0.2. It includes safe-default rejection,
+trusted NumPy checkpoint loading, a real CPU Adam/GradScaler save/resume followed
+by an equivalent optimizer update, and real two-rank CPU Gloo object exchange
+through memory/filesystem gather and disk/memory broadcast. The installed wheel
+also passed decoder/backbone regressions with the minimum PyAV 13.0.0.
+
+A separate [full CPU training smoke](validation/pytorch-2.14.1-cpu-training.json)
+loaded the tiny checkpoint into `SAM2Train`, with all 38,962,498 parameters
+trainable, two synthetic 1024x1024 frames and one moving object. Canonical
+focal/Dice/IoU/object-score losses produced finite core loss 0.0604674. Backward
+produced finite gradients, including all 162 image-encoder gradient tensors;
+one AdamW step changed parameters in the image encoder, temporal memory and
+prompt/mask decoders. Peak process RSS was 6.01 GB. Canonical MOSE augmentations
+and collation also passed for three seeds with finite normalized images,
+boolean masks and preserved identities. This is CPU smoke evidence; it does not
+qualify MPS training, CUDA training, a full training job or convergence.
+
+Strict Mac editable installation, source-archive installation and wheel
+installation succeeded in a fresh virtual environment. All 47 packaged Python
+sources matched the checkout. The wheel loaded its packaged tiny configuration,
+official checkpoint, CPU image prediction, native TorchVision NMS and connected
+components from outside the repository. The source archive retains CUDA source
+even when built without CUDA tooling. Python 3.10 dependency resolution passed
+for macOS 14 arm64 and the Linux CPU PyTorch/TorchVision pair; runtime tests used
+Python 3.12.16.
+
+Notebook, demo and development extras installed together. The local demo loaded
+the tiny model on MPS and passed health and GraphQL requests. Complete notebook
+sessions and browser-driven demo interactions were not exercised. Formatting,
+documentation links and Docker Compose configuration passed. Hadolint passed
+at its error threshold, retaining warnings for unpinned apt/pip packages and
+shell-form CMD.
+The existing TorchScript transform emits a deprecation warning on PyTorch 2.14.1.
+
+The demo image is the published `pytorch/pytorch:2.14.1-cuda12.6-cudnn9-runtime`.
+It installs the complete package before copying the server, uses one installed
+package location, and has a `dependencies` build target without checkpoint
+fetches. A container virtual environment with system-site-package access reuses
+the image's PyTorch and permits application installation under PEP 668. The
+obsolete Conda ffmpeg path was removed. An actual Docker build/run
+was unavailable: the local daemon was stopped and host free space was 11 GiB.
 
 ## Reproduction and limits
 
-Run [the qualification command](../INSTALL.md#apple-silicon-macos) on the target
-Mac after installing the tiny checkpoint. Unit tests run with
-`python -m pytest -q tests`; accelerator tests skip when their hardware is
-unavailable. Hosted Linux/macOS CI checks installation and contracts; a separate
-CPU job exercises the real checkpoint. Hardware skips do not qualify MPS/CUDA.
+Run [the qualification command](../INSTALL.md#apple-silicon-macos) after installing
+the tiny checkpoint. Tests run with `python -m pytest -q tests`; install `.[dev]`
+and PyAV to include training-state and decoder contracts. Accelerator tests skip
+when hardware is unavailable. Hosted Linux/macOS CI covers minimum/current
+PyTorch and a separate CPU checkpoint workload. Hardware skips do not qualify an
+accelerator.
 
-CUDA hardware was unavailable locally. Larger checkpoints, long clips,
-full notebook execution, the running web demo and training are not covered by
-this workload. No custom Metal kernel, MLX port or package release is included.
+CUDA extension compilation/execution, CUDA training, compiled VOS, larger
+checkpoints, long clips and complete notebook sessions remain unqualified on
+this Mac. Rebuild CUDA extensions against the upgraded PyTorch and matching
+CUDA toolkit. No custom Metal kernel, MLX port, package release or upstream merge
+is included.

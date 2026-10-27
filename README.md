@@ -29,7 +29,7 @@
 
 ## Installation
 
-SAM 2 needs to be installed first before use. The code requires `python>=3.10`, as well as `torch>=2.5.1` and `torchvision>=0.20.1`. Please follow the instructions [here](https://pytorch.org/get-started/locally/) to install both PyTorch and TorchVision dependencies. You can install SAM 2 on Linux or an Apple Silicon Mac using:
+SAM 2 needs to be installed first before use. The code requires `python>=3.10`, as well as `torch>=2.14.1` and `torchvision>=0.29.1`. Please follow the instructions [here](https://pytorch.org/get-started/locally/) to install matching PyTorch and TorchVision dependencies together. You can install SAM 2 on Linux or an Apple Silicon Mac using:
 
 ```bash
 git clone https://github.com/facebookresearch/sam2.git && cd sam2
@@ -45,7 +45,7 @@ pip install -e ".[notebooks]"
 ```
 
 Note:
-1. It's recommended to create a new Python environment via [Anaconda](https://www.anaconda.com/) for this installation and install PyTorch 2.5.1 (or higher) via `pip` following https://pytorch.org/. If you have a PyTorch version lower than 2.5.1 in your current environment, the installation command above will try to upgrade it to the latest PyTorch version using `pip`.
+1. Create a project virtual environment and install PyTorch 2.14.1 (or higher) and matching TorchVision via `pip` following https://pytorch.org/. If your current environment has an older PyTorch version, the installation command above will upgrade it. Rebuild any locally compiled CUDA extensions against the new PyTorch installation.
 2. The optional CUDA extension needs the `nvcc` compiler and matching [CUDA toolkits](https://developer.nvidia.com/cuda-toolkit-archive). On macOS it is disabled by default; CUDA is not needed for MPS inference.
 3. If the CUDA extension is unavailable, mask hole/speckle cleanup uses SciPy on CPU and returns results to the selected device.
 

@@ -1,7 +1,7 @@
-ARG BASE_IMAGE=pytorch/pytorch:2.5.1-cuda12.1-cudnn9-runtime
+ARG BASE_IMAGE=pytorch/pytorch:2.14.1-cuda12.6-cudnn9-runtime
 ARG MODEL_SIZE=base_plus
 
-FROM ${BASE_IMAGE}
+FROM ${BASE_IMAGE} AS dependencies
 
 # Gunicorn environment variables
 ENV GUNICORN_WORKERS=1
@@ -12,7 +12,6 @@ ENV GUNICORN_PORT=5000
 ENV APP_ROOT=/opt/sam2
 ENV PYTHONUNBUFFERED=1
 ENV SAM2_BUILD_CUDA=0
-ENV MODEL_SIZE=${MODEL_SIZE}
 
 # Install system requirements
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -23,26 +22,28 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libswscale-dev \
     pkg-config \
     build-essential \
-    libffi-dev
+    libffi-dev \
+    python3-venv \
+    && rm -rf /var/lib/apt/lists/*
 
-COPY setup.py .
-COPY README.md .
+# Reuse the image's PyTorch while installing application dependencies in a venv.
+RUN python3 -m venv --system-site-packages /opt/venv
+ENV PATH="/opt/venv/bin:${PATH}"
 
-RUN pip install --upgrade pip setuptools
-RUN pip install -e ".[interactive-demo]"
+WORKDIR ${APP_ROOT}
+COPY setup.py pyproject.toml MANIFEST.in README.md LICENSE LICENSE_cctorch ./
+COPY sam2 ./sam2
+COPY training ./training
 
-# https://github.com/Kosinkadink/ComfyUI-VideoHelperSuite/issues/69#issuecomment-1826764707
-RUN rm /opt/conda/bin/ffmpeg && ln -s /bin/ffmpeg /opt/conda/bin/ffmpeg
+RUN python -m pip install --no-cache-dir --upgrade pip setuptools wheel \
+    && python -m pip install --no-cache-dir --no-build-isolation ".[interactive-demo]"
 
-# Make app directory. This directory will host all files required for the
-# backend and SAM 2 inference files.
-RUN mkdir ${APP_ROOT}
+FROM dependencies AS runtime
+ARG MODEL_SIZE
+ENV MODEL_SIZE=${MODEL_SIZE}
 
 # Copy backend server files
 COPY demo/backend/server ${APP_ROOT}/server
-
-# Copy SAM 2 inference files
-COPY sam2 ${APP_ROOT}/server/sam2
 
 # Download SAM 2.1 checkpoints
 ADD https://dl.fbaipublicfiles.com/segment_anything_2/092824/sam2.1_hiera_tiny.pt ${APP_ROOT}/checkpoints/sam2.1_hiera_tiny.pt

@@ -2,9 +2,8 @@
 
 ### Requirements
 
-- Linux or Apple Silicon macOS 14+ with Python ≥ 3.10, PyTorch ≥ 2.5.1 and [torchvision](https://github.com/pytorch/vision/) that matches the PyTorch installation. Install them together at https://pytorch.org to ensure this.
-  * Note older versions of Python or PyTorch may also work. However, the versions above are strongly recommended to provide all features such as `torch.compile`.
-- For the optional NVIDIA CUDA extension: [CUDA toolkits](https://developer.nvidia.com/cuda-toolkit-archive) that match the CUDA version for your PyTorch installation. This should typically be CUDA 12.1 if you follow the default installation command.
+- Linux or Apple Silicon macOS 14+ with Python ≥ 3.10, PyTorch ≥ 2.14.1 and matching [TorchVision](https://github.com/pytorch/vision/) ≥ 0.29.1. Install the pair together following https://pytorch.org.
+- For the optional NVIDIA CUDA extension: [CUDA toolkits](https://developer.nvidia.com/cuda-toolkit-archive) that match the CUDA version for your installed PyTorch wheel. Check `torch.version.cuda`; the demo container uses CUDA 12.6. Rebuild the extension after upgrading PyTorch.
 - If you are installing on Windows, it's strongly recommended to use [Windows Subsystem for Linux (WSL)](https://learn.microsoft.com/en-us/windows/wsl/install) with Ubuntu.
 
 Then, install SAM 2 from the root of this repository via
@@ -60,9 +59,10 @@ notebook and interactive-demo extras. PyAV provides native Apple Silicon wheels.
 
 Start with the tiny checkpoint and a short clip. MPS results can differ
 numerically from CPU/CUDA, and memory use depends on model, frames, and objects.
-When a PyTorch MPS build lacks bicubic interpolation, SAM 2 interpolates only
-the small positional embedding grid on CPU and returns it to MPS. No blanket
-`PYTORCH_ENABLE_MPS_FALLBACK=1` setting is needed for the validated workload.
+The required PyTorch baseline supports native MPS bicubic interpolation and
+the strided pooling used by Hiera. No positional-grid CPU transfer or pooling
+copy is needed. No blanket `PYTORCH_ENABLE_MPS_FALLBACK=1` setting is needed
+for the validated workload.
 Training remains governed by the separate CUDA/CPU trainer.
 
 To reproduce image/automatic-mask/two-object-video qualification against CPU,
@@ -97,7 +97,7 @@ rm -f ./sam2/*.so && \
 SAM2_BUILD_ALLOW_ERRORS=0 pip install -v -e ".[notebooks]"
 ```
 
-Note that PyTorch needs to be installed first before building the SAM 2 CUDA extension. It's also necessary to install [CUDA toolkits](https://developer.nvidia.com/cuda-toolkit-archive) that match the CUDA version for your PyTorch installation. (This should typically be CUDA 12.1 if you follow the default installation command.) After installing the CUDA toolkits, you can check its version via `nvcc --version`.
+Note that PyTorch needs to be installed first before building the SAM 2 CUDA extension. Install [CUDA toolkits](https://developer.nvidia.com/cuda-toolkit-archive) that match `torch.version.cuda`, then check the toolkit with `nvcc --version`. Build against the same PyTorch installation used at runtime with `pip install --no-build-isolation -e .`.
 
 Please check the section below on common installation issues if the CUDA extension fails to build during installation or load at runtime.
 
@@ -186,9 +186,7 @@ I got `undefined symbol: _ZN3c1015SmallVectorBaseIjE8grow_podEPKvmm` (or similar
 
 This usually happens because you have multiple versions of dependencies (PyTorch or CUDA) in your environment. During installation, the SAM 2 library is compiled against one version library while at run time it links against another version. This might be due to that you have different versions of PyTorch or CUDA installed separately via `pip` or `conda`. You may delete one of the duplicates to only keep a single PyTorch and CUDA version.
 
-In particular, if you have a lower PyTorch version than 2.5.1, it's recommended to upgrade to PyTorch 2.5.1 or higher first. Otherwise, the installation script will try to upgrade to the latest PyTorch using `pip`, which could sometimes lead to duplicated PyTorch installation if you have previously installed another PyTorch version using `conda`.
-
-We have been building SAM 2 against PyTorch 2.5.1 internally. However, a few user comments (e.g. https://github.com/facebookresearch/sam2/issues/22, https://github.com/facebookresearch/sam2/issues/14) suggested that downgrading to PyTorch 2.1.0 might resolve this problem. In case the error persists, you may try changing the restriction from `torch>=2.5.1` to `torch==2.1.0` in both [`pyproject.toml`](pyproject.toml) and [`setup.py`](setup.py) to allow PyTorch 2.1.0.
+Install the required PyTorch/TorchVision pair in one project environment, then rebuild the extension against that environment using `--no-build-isolation`. Remove an obsolete extension only after identifying its location. Downgrading below the required PyTorch baseline is unsupported; use a toolkit and wheel combination published by PyTorch instead.
 </details>
 
 <details>

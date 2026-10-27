@@ -60,38 +60,38 @@
   "backends": {
     "cpu": {
       "image": {
-        "embedding_seconds": 1.175245417005499,
-        "prompt_warmup_seconds": 0.1864609170006588,
+        "embedding_seconds": 0.5663922080057091,
+        "prompt_warmup_seconds": 0.08385770799941383,
         "cached_prompt_seconds": [
-          0.05830466699990211,
-          0.06683558299846482,
-          0.07571274999645539
+          0.02692645800561877,
+          0.02481320800143294,
+          0.025077457998122554
         ],
-        "automatic_seconds": 7.4087937910007895,
+        "automatic_seconds": 1.8897587079991354,
         "automatic_mask_count": 12,
         "model_input_size": 1024
       },
       "video": {
-        "warmup_and_reset_reuse_seconds": 11.362359667000419,
+        "warmup_and_reset_reuse_seconds": 5.748297333993833,
         "sessions": [
           {
-            "total_seconds": 7.083730499994999,
-            "propagation_seconds": 5.551927084001363,
-            "frames_per_second": 0.5403529179345511,
+            "total_seconds": 2.8766691250057193,
+            "propagation_seconds": 2.290670583002793,
+            "frames_per_second": 1.309660159020928,
             "offload_state_to_cpu": false,
             "offload_video_to_cpu": null
           },
           {
-            "total_seconds": 6.7895785000000615,
-            "propagation_seconds": 5.413873457997397,
-            "frames_per_second": 0.5541319026525061,
+            "total_seconds": 2.8595775830035564,
+            "propagation_seconds": 2.3192328329969314,
+            "frames_per_second": 1.293531187260477,
             "offload_state_to_cpu": true,
             "offload_video_to_cpu": false
           },
           {
-            "total_seconds": 5.827478291997977,
-            "propagation_seconds": 4.561918459003209,
-            "frames_per_second": 0.6576180672583761,
+            "total_seconds": 2.8606372919966816,
+            "propagation_seconds": 2.2885039579996374,
+            "frames_per_second": 1.3109000705518883,
             "offload_state_to_cpu": false,
             "offload_video_to_cpu": true
           }
@@ -105,54 +105,54 @@
     },
     "mps": {
       "image": {
-        "embedding_seconds": 3.392354167001031,
-        "prompt_warmup_seconds": 5.8522372910010745,
+        "embedding_seconds": 0.487519959002384,
+        "prompt_warmup_seconds": 0.27068229200085625,
         "cached_prompt_seconds": [
-          0.020955832995241508,
-          0.01687895799841499,
-          0.020778208003321197
+          0.01189633300236892,
+          0.013863292006135453,
+          0.016687415998603683
         ],
-        "automatic_seconds": 5.730099041000358,
+        "automatic_seconds": 2.4514556659996742,
         "automatic_mask_count": 12,
         "model_input_size": 1024
       },
       "video": {
-        "warmup_and_reset_reuse_seconds": 5.3309775840025395,
+        "warmup_and_reset_reuse_seconds": 2.4938333749960293,
         "sessions": [
           {
-            "total_seconds": 2.026418041998113,
-            "propagation_seconds": 1.7815352079996956,
-            "frames_per_second": 1.6839408991351872,
+            "total_seconds": 1.2398676250013523,
+            "propagation_seconds": 1.05356600000232,
+            "frames_per_second": 2.8474722988340493,
             "offload_state_to_cpu": false,
             "offload_video_to_cpu": null
           },
           {
-            "total_seconds": 2.182453624998743,
-            "propagation_seconds": 1.7583488750024117,
-            "frames_per_second": 1.7061460570479139,
+            "total_seconds": 1.2062415830005193,
+            "propagation_seconds": 1.0227393749955809,
+            "frames_per_second": 2.93329862264564,
             "offload_state_to_cpu": true,
             "offload_video_to_cpu": false
           },
           {
-            "total_seconds": 2.098596791998716,
-            "propagation_seconds": 1.7538143339988892,
-            "frames_per_second": 1.710557350252504,
+            "total_seconds": 1.1917403339975863,
+            "propagation_seconds": 1.0199981660043704,
+            "frames_per_second": 2.9411817589357763,
             "offload_state_to_cpu": false,
             "offload_video_to_cpu": true
           }
         ],
         "cleaned_session_memory": [
           {
-            "live_bytes": 280506624,
-            "driver_bytes": 2400354304
+            "live_bytes": 279851264,
+            "driver_bytes": 2412871680
           },
           {
-            "live_bytes": 280506624,
-            "driver_bytes": 2400354304
+            "live_bytes": 279851264,
+            "driver_bytes": 2412871680
           },
           {
-            "live_bytes": 280506624,
-            "driver_bytes": 2400354304
+            "live_bytes": 279851264,
+            "driver_bytes": 2412871680
           }
         ]
       }
@@ -232,5 +232,10 @@
     "live_memory_growth_at_most_16_mib": true
   },
   "live_memory_growth_bytes": 0,
-  "passed": true
+  "passed": true,
+  "implementation": {
+    "native_hiera": true,
+    "blanket_mps_fallback": false,
+    "hieradet_sha256": "ab6ca7e1ff917ef3371479b401a8680fcca2c89510d3be3a68fb21b733b3f493"
+  }
 }
