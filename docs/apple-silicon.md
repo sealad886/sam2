@@ -56,8 +56,10 @@ Async JPEG input is normalized to float32 before transfer. MPS video frames
 default to CPU storage; explicit choices remain authoritative.
 
 The shared MP4 path/bytes loader uses PyAV, which has native Apple Silicon
-wheels. Notebook and demo extras both request it. Generated colored clips test
-RGB/frame order, source dimensions, resizing, normalization and CPU/MPS storage.
+wheels. Notebook and demo extras now require PyAV 15 or later so the demo can
+read decoded-frame rotation metadata and preserve rotated upload dimensions.
+Generated colored clips test RGB/frame order, source dimensions, resizing,
+normalization and CPU/MPS storage.
 A [fresh real-checkpoint MP4 run](validation/apple-silicon-mp4.json) with native
 Hiera and PyAV 19.0.2 used three frames re-encoded from the bundled bedroom MP4.
 Both objects, all frames and reset/reuse passed; minimum CPU/MPS IoU was 0.999770.
@@ -78,7 +80,8 @@ PyTorch 2.14.1/TorchVision 0.29.1/PyAV 19.0.2. It includes safe-default rejectio
 trusted NumPy checkpoint loading, a real CPU Adam/GradScaler save/resume followed
 by an equivalent optimizer update, and real two-rank CPU Gloo object exchange
 through memory/filesystem gather and disk/memory broadcast. The installed wheel
-also passed decoder/backbone regressions with the minimum PyAV 13.0.0.
+also passed decoder/backbone regressions with the then-minimum PyAV 13.0.0.
+Those measurements predate the demo rotation repair and its PyAV 15 minimum.
 
 A separate [full CPU training smoke](validation/pytorch-2.14.1-cpu-training.json)
 loaded the tiny checkpoint into `SAM2Train`, with all 38,962,498 parameters
