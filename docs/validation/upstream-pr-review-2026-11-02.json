@@ -1,0 +1,2666 @@
+{
+  "schema_version": 1,
+  "reviewed_at": "2026-11-02",
+  "upstream_repository": "facebookresearch/sam2",
+  "fork_repository": "sealad886/sam2",
+  "comparison_revision": "ba6db50a86af940f5de9a5869946abb90f75966a",
+  "inventory_count": 67,
+  "reviewed_count": 67,
+  "inventory_sha256": "1d78b96d4618c7ea08eb581f1d8362bc507af1c14ddd3714f10a578a342c9e55",
+  "method": "Frozen open-PR inventory, paginated file patches, issue comments, review submissions and inline comments reviewed against current owning code. Missing notebook functional patches supplemented with source-cell inspection. No untrusted upstream PR code was executed. Selected candidate behavior is subject to separate adaptation and validation.",
+  "counts": {
+    "already_covered": 17,
+    "adapt_now": 7,
+    "needs_design_or_hardware": 11,
+    "defer": 21,
+    "out_of_scope_or_invalid": 8,
+    "duplicate": 3
+  },
+  "selected_current_batch": [
+    777,
+    776,
+    766,
+    718
+  ],
+  "next_bounded_candidates": [
+    475,
+    285,
+    370
+  ],
+  "frontend_dependency_group": [
+    755,
+    754,
+    752,
+    750,
+    745,
+    744,
+    743
+  ],
+  "records": [
+    {
+      "number": 778,
+      "title": "Add first-class Apple Silicon MPS inference support",
+      "author": "sealad886",
+      "url": "https://github.com/facebookresearch/sam2/pull/778",
+      "head_sha": "ba6db50a86af940f5de9a5869946abb90f75966a",
+      "base_ref": "main",
+      "base_sha": "2b90b9f5ceec907a1c18123530e92e794ad901a4",
+      "draft": false,
+      "changed_paths": [
+        ".github/workflows/inference.yml",
+        "CONTRIBUTING.md",
+        "INSTALL.md",
+        "MANIFEST.in",
+        "README.md",
+        "backend.Dockerfile",
+        "demo/README.md",
+        "demo/backend/server/inference/predictor.py",
+        "docs/apple-silicon.md",
+        "docs/plans/2026-10-27-apple-silicon-inference.md",
+        "docs/plans/2026-10-27-global-pytorch-upgrade.md",
+        "docs/validation/apple-silicon-mp4.json",
+        "docs/validation/apple-silicon-pytorch-2.14.1.json",
+        "docs/validation/pytorch-2.14.1-cpu-training.json",
+        "notebooks/automatic_mask_generator_example.ipynb",
+        "notebooks/image_predictor_example.ipynb",
+        "notebooks/video_predictor_example.ipynb",
+        "pyproject.toml",
+        "sam2/build_sam.py",
+        "sam2/modeling/backbones/hieradet.py",
+        "sam2/sam2_video_predictor.py",
+        "sam2/utils/device.py",
+        "sam2/utils/misc.py",
+        "setup.py",
+        "tests/test_checkpoint_loading.py",
+        "tests/test_device.py",
+        "tests/test_distributed_loading.py",
+        "tests/test_installation.py",
+        "tests/test_mps_attention.py",
+        "tests/test_postprocessing.py",
+        "tests/test_validation.py",
+        "tests/test_video_decoding.py",
+        "tests/test_video_defaults.py",
+        "tools/README.md",
+        "tools/validate_inference.py",
+        "tools/vos_inference.py",
+        "training/trainer.py",
+        "training/utils/checkpoint_utils.py",
+        "training/utils/distributed.py"
+      ],
+      "disposition": "already_covered",
+      "reason": "Our own MPS/PyTorch contribution is already the local baseline ba6db50; move its review destination to the fork rather than replaying its code.",
+      "current_fork_comparison": "Our own MPS/PyTorch contribution is already the local baseline ba6db50; move its review destination to the fork rather than replaying its code.",
+      "tests_needed": [
+        "Fork PR, README and Actions readback; preserve existing native MPS qualification."
+      ],
+      "duplicate_of": [],
+      "selected_for_current_batch": false,
+      "delivery_state": "review_recommendation_only",
+      "comparison_revision": "ba6db50a86af940f5de9a5869946abb90f75966a",
+      "patch_sha256": "80a3c1388c18d04d1dc49776c41a2b69246eb71d89f81921212647402f372488",
+      "discussion_sha256": "a848dabd7e253c8cc88df87be36478dcb60a470c40df1df0053debc320a6bb8f",
+      "discussion_counts": {
+        "issue_comments": 1,
+        "reviews": 0,
+        "review_comments": 0
+      },
+      "discussion_considered": true,
+      "review_limits": [
+        "Static patch/current-caller review; no untrusted PR code executed. Hardware/performance/feature claims remain unqualified unless separately stated."
+      ]
+    },
+    {
+      "number": 777,
+      "title": "Fix per-object memory clearing during video corrections",
+      "author": "Afloat16",
+      "url": "https://github.com/facebookresearch/sam2/pull/777",
+      "head_sha": "24029db7c0efacbe166d0b7b4cc94fd985fbe506",
+      "base_ref": "main",
+      "base_sha": "2b90b9f5ceec907a1c18123530e92e794ad901a4",
+      "draft": false,
+      "changed_paths": [
+        "sam2/sam2_video_predictor.py",
+        "tests/test_video_memory_clearing.py"
+      ],
+      "disposition": "adapt_now",
+      "reason": "Both correction call sites invoke a missing per-object helper. The existing helper clears every object. Clear old memory for only the corrected object before merging pending outputs so nearby corrections cannot erase each other.",
+      "current_fork_comparison": "Both correction call sites invoke a missing per-object helper. The existing helper clears every object. Clear old memory for only the corrected object before merging pending outputs so nearby corrections cannot erase each other.",
+      "tests_needed": [
+        "Real predictor preflight/propagation, multiple objects, nearby corrections, stride boundaries and removal/reindexing."
+      ],
+      "duplicate_of": [],
+      "selected_for_current_batch": true,
+      "delivery_state": "implemented_tested_pending_publication",
+      "comparison_revision": "ba6db50a86af940f5de9a5869946abb90f75966a",
+      "patch_sha256": "cc58a58353dacadcd69fa72a84990aa1e38d24e9c774e5cb0640e704347011e8",
+      "discussion_sha256": "1465417a8a7b5483a17f20e0f1a34ce9f2e366b81b57c1ef224c10e3cae9a2d5",
+      "discussion_counts": {
+        "issue_comments": 0,
+        "reviews": 0,
+        "review_comments": 0
+      },
+      "discussion_considered": true,
+      "review_limits": [
+        "Static patch/current-caller review; no untrusted PR code executed. Hardware/performance/feature claims remain unqualified unless separately stated."
+      ],
+      "tests_executed": [
+        "Adjacent corrections on a real CPU predictor; clear-memory enabled/disabled; conditioning/non-conditioning correction storage; other-object memory preserved.",
+        "Conditioning-frame propagation exercises the corrected per-object helper."
+      ],
+      "additional_verification_not_run": [
+        "Dedicated memory-stride boundary cases and object-removal/reindexing variants."
+      ],
+      "independent_code_review": "No open findings, reported by the primary agent."
+    },
+    {
+      "number": 776,
+      "title": "Fix mask-only prompt batches in SAM2ImagePredictor",
+      "author": "Afloat16",
+      "url": "https://github.com/facebookresearch/sam2/pull/776",
+      "head_sha": "36d0d711fbcfc8e023f9b7f6862deda37b951339",
+      "base_ref": "main",
+      "base_sha": "2b90b9f5ceec907a1c18123530e92e794ad901a4",
+      "draft": false,
+      "changed_paths": [
+        "sam2/sam2_image_predictor.py",
+        "tests/test_image_mask_batch.py"
+      ],
+      "disposition": "adapt_now",
+      "reason": "Mask-only prompt batches have dense/sparse embedding batch size >1 but no concat_points, so repeat_image remains false and decoder batch validation fails. Derive repetition from prompt embeddings.",
+      "current_fork_comparison": "Mask-only prompt batches have dense/sparse embedding batch size >1 but no concat_points, so repeat_image remains false and decoder batch validation fails. Derive repetition from prompt embeddings.",
+      "tests_needed": [
+        "Public predict/predict_batch mask-only batches against individual predictions; point/box combinations and batch size one."
+      ],
+      "duplicate_of": [],
+      "selected_for_current_batch": true,
+      "delivery_state": "implemented_tested_pending_publication",
+      "comparison_revision": "ba6db50a86af940f5de9a5869946abb90f75966a",
+      "patch_sha256": "e92ea178f70756cd803ec55230e9b15e426c270183b0a899047cb25d59d20641",
+      "discussion_sha256": "1465417a8a7b5483a17f20e0f1a34ce9f2e366b81b57c1ef224c10e3cae9a2d5",
+      "discussion_counts": {
+        "issue_comments": 0,
+        "reviews": 0,
+        "review_comments": 0
+      },
+      "discussion_considered": true,
+      "review_limits": [
+        "Static patch/current-caller review; no untrusted PR code executed. Hardware/performance/feature claims remain unqualified unless separately stated."
+      ],
+      "tests_executed": [
+        "One/two mask-only prompts compared with individual public predictions for single/multimask output.",
+        "Two images accept independent mask-prompt batch sizes.",
+        "Official tiny-checkpoint native MPS mask-batch qualification: batch/serial IoU1 on both backends; nonempty CPU/MPS IoU1 and0.9999575624. Empty point-logit refinement is reported separately without a foreground-quality claim."
+      ],
+      "additional_verification_not_run": [
+        "Dedicated full point/box/mask combination cross-product."
+      ],
+      "independent_code_review": "No open findings, reported by the primary agent."
+    },
+    {
+      "number": 775,
+      "title": "Add optional CUDA Graph fast path for the image encoder",
+      "author": "trueoneplusone",
+      "url": "https://github.com/facebookresearch/sam2/pull/775",
+      "head_sha": "0a49a94886ba6ccb44957a7b1c3b11d5d041d165",
+      "base_ref": "main",
+      "base_sha": "2b90b9f5ceec907a1c18123530e92e794ad901a4",
+      "draft": false,
+      "changed_paths": [
+        "README.md",
+        "sam2/build_sam.py",
+        "sam2/modeling/sam2_base.py",
+        "tests/test_cuda_graph_image_encoder.py"
+      ],
+      "disposition": "needs_design_or_hardware",
+      "reason": "Adds CUDA Graph capture/replay state and an alternative image-encoder path. It is independent of MPS support and needs CUDA ownership, recapture, stream, autocast and performance qualification before adoption.",
+      "current_fork_comparison": "Adds CUDA Graph capture/replay state and an alternative image-encoder path. It is independent of MPS support and needs CUDA ownership, recapture, stream, autocast and performance qualification before adoption.",
+      "tests_needed": [
+        "CUDA eager/graph parity, replay output ownership, changing signatures, mode/weight changes, memory and controlled benchmarks."
+      ],
+      "duplicate_of": [],
+      "selected_for_current_batch": false,
+      "delivery_state": "review_recommendation_only",
+      "comparison_revision": "ba6db50a86af940f5de9a5869946abb90f75966a",
+      "patch_sha256": "482a029cae84d57ff2f86ea209018980d4236ca915744f56d3c382ff73dfe607",
+      "discussion_sha256": "1465417a8a7b5483a17f20e0f1a34ce9f2e366b81b57c1ef224c10e3cae9a2d5",
+      "discussion_counts": {
+        "issue_comments": 0,
+        "reviews": 0,
+        "review_comments": 0
+      },
+      "discussion_considered": true,
+      "review_limits": [
+        "Static patch/current-caller review; no untrusted PR code executed. Hardware/performance/feature claims remain unqualified unless separately stated."
+      ]
+    },
+    {
+      "number": 774,
+      "title": "docs: add Simplified Chinese translation (README.zh.md)",
+      "author": "JasonYeYuhe",
+      "url": "https://github.com/facebookresearch/sam2/pull/774",
+      "head_sha": "9fbaa042134d22403c0218f775590dfd19eb6ad6",
+      "base_ref": "main",
+      "base_sha": "2b90b9f5ceec907a1c18123530e92e794ad901a4",
+      "draft": false,
+      "changed_paths": [
+        "README.md",
+        "README.zh.md"
+      ],
+      "disposition": "defer",
+      "reason": "The translation preserves upstream research credit but still instructs torch>=2.5.1 and cloning facebookresearch. Rebase it onto the fork README and obtain language review before publishing a maintained translation.",
+      "current_fork_comparison": "The translation preserves upstream research credit but still instructs torch>=2.5.1 and cloning facebookresearch. Rebase it onto the fork README and obtain language review before publishing a maintained translation.",
+      "tests_needed": [
+        "Native-language review, fork-specific installation parity, links and examples."
+      ],
+      "duplicate_of": [],
+      "selected_for_current_batch": false,
+      "delivery_state": "review_recommendation_only",
+      "comparison_revision": "ba6db50a86af940f5de9a5869946abb90f75966a",
+      "patch_sha256": "dd82395b42ecf33501891e16a999ffb1f7426da4d2b4743307506baefd3bb0c0",
+      "discussion_sha256": "230e779272486a3cfb0a24829ea47fb208fe76008f5adf4c934f8a27245d38b0",
+      "discussion_counts": {
+        "issue_comments": 0,
+        "reviews": 1,
+        "review_comments": 0
+      },
+      "discussion_considered": true,
+      "review_limits": [
+        "Installation/link/attribution review; translation quality has not received a native-language review."
+      ]
+    },
+    {
+      "number": 771,
+      "title": "Support filesystem paths for `config_file` in `build_sam2` / `build_sam2_video_predictor`",
+      "author": "Sanjays2402",
+      "url": "https://github.com/facebookresearch/sam2/pull/771",
+      "head_sha": "132cadf1b363422533e2efd14ce502a00552ed9e",
+      "base_ref": "main",
+      "base_sha": "2b90b9f5ceec907a1c18123530e92e794ad901a4",
+      "draft": false,
+      "changed_paths": [
+        "sam2/build_sam.py"
+      ],
+      "disposition": "needs_design_or_hardware",
+      "reason": "Filesystem configs are useful, but this patch temporarily registers UUID wrappers in global Hydra ConfigStore and removes entries through its internal repo. Define config ownership/composition and concurrency behavior before adding that stateful workaround.",
+      "current_fork_comparison": "Filesystem configs are useful, but this patch temporarily registers UUID wrappers in global Hydra ConfigStore and removes entries through its internal repo. Define config ownership/composition and concurrency behavior before adding that stateful workaround.",
+      "tests_needed": [
+        "Absolute/relative paths, defaults/subconfigs/groups, overrides, repeated calls and concurrent initialized-Hydra contexts."
+      ],
+      "duplicate_of": [
+        188
+      ],
+      "selected_for_current_batch": false,
+      "delivery_state": "review_recommendation_only",
+      "comparison_revision": "ba6db50a86af940f5de9a5869946abb90f75966a",
+      "patch_sha256": "9fa2b5a5a72ebf92fa8acdc6c0853ca6bcf4a33a6ca0dbc971e0a51feec51248",
+      "discussion_sha256": "1465417a8a7b5483a17f20e0f1a34ce9f2e366b81b57c1ef224c10e3cae9a2d5",
+      "discussion_counts": {
+        "issue_comments": 0,
+        "reviews": 0,
+        "review_comments": 0
+      },
+      "discussion_considered": true,
+      "review_limits": [
+        "Static patch/current-caller review; no untrusted PR code executed. Hardware/performance/feature claims remain unqualified unless separately stated."
+      ]
+    },
+    {
+      "number": 770,
+      "title": "Perf/reduce redundant inference work",
+      "author": "SimBuddy",
+      "url": "https://github.com/facebookresearch/sam2/pull/770",
+      "head_sha": "a2e958b8a65cebddfe6f8caa59cbf412765c9b99",
+      "base_ref": "main",
+      "base_sha": "2b90b9f5ceec907a1c18123530e92e794ad901a4",
+      "draft": false,
+      "changed_paths": [
+        "sam2/automatic_mask_generator.py",
+        "sam2/sam2_image_predictor.py",
+        "sam2/utils/amg.py",
+        "sam2/utils/misc.py",
+        "tests/test_amg_filtering.py",
+        "tests/test_amg_lifetime.py",
+        "tests/test_image_batch.py",
+        "tests/test_mask_rle.py",
+        "tests/test_video_loading.py"
+      ],
+      "disposition": "defer",
+      "reason": "JPEG float32 work is already covered. The remaining early AMG postprocessing filter, positional-encoding reuse and CUDA RLE fast path are a mixed performance change; split them and require mask parity and measured benefit instead of retaining two loader dtype policies.",
+      "current_fork_comparison": "JPEG float32 work is already covered. The remaining early AMG postprocessing filter, positional-encoding reuse and CUDA RLE fast path are a mixed performance change; split them and require mask parity and measured benefit instead of retaining two loader dtype policies.",
+      "tests_needed": [
+        "CPU/MPS/CUDA AMG parity across empty crops, cleanup and refinement; raw-logit thresholds, allocation lifetime and controlled timing."
+      ],
+      "duplicate_of": [
+        590
+      ],
+      "selected_for_current_batch": false,
+      "delivery_state": "review_recommendation_only",
+      "comparison_revision": "ba6db50a86af940f5de9a5869946abb90f75966a",
+      "patch_sha256": "3fe0d57e6784a51262a29aa0fd04936fc6b940c2d7740d31d3abab0d5039042e",
+      "discussion_sha256": "0ae8dbbf3ee85ff3283561d15bf2368f1ddcdde9228dec84dda84d3774605ba5",
+      "discussion_counts": {
+        "issue_comments": 2,
+        "reviews": 0,
+        "review_comments": 0
+      },
+      "discussion_considered": true,
+      "review_limits": [
+        "Static patch/current-caller review; no untrusted PR code executed. Hardware/performance/feature claims remain unqualified unless separately stated."
+      ]
+    },
+    {
+      "number": 766,
+      "title": "Fix empty crop_boxes shape in automatic mask generation",
+      "author": "Dev-Aayush-Kumar",
+      "url": "https://github.com/facebookresearch/sam2/pull/766",
+      "head_sha": "03bdc108893be3ca643912bd41b68bbbe4f24b7b",
+      "base_ref": "main",
+      "base_sha": "2b90b9f5ceec907a1c18123530e92e794ad901a4",
+      "draft": false,
+      "changed_paths": [
+        "sam2/automatic_mask_generator.py",
+        "tests/test_automatic_mask_generator.py"
+      ],
+      "disposition": "adapt_now",
+      "reason": "When a crop yields no RLE masks, constructing crop_boxes from an empty list yields shape (0,), which violates box_area Nx4 during multi-crop suppression. Preserve (0,4) for empty crops.",
+      "current_fork_comparison": "When a crop yields no RLE masks, constructing crop_boxes from an empty list yields shape (0,), which violates box_area Nx4 during multi-crop suppression. Preserve (0,4) for empty crops.",
+      "tests_needed": [
+        "Automatic-mask generation with empty, nonempty and mixed crops; all-filtered outputs remain empty without shape errors."
+      ],
+      "duplicate_of": [],
+      "selected_for_current_batch": true,
+      "delivery_state": "implemented_tested_pending_publication",
+      "comparison_revision": "ba6db50a86af940f5de9a5869946abb90f75966a",
+      "patch_sha256": "1640c6b13e8e13ab579e3132c52d1a4c864802d88abd44e95bcf178b9021e786",
+      "discussion_sha256": "1465417a8a7b5483a17f20e0f1a34ce9f2e366b81b57c1ef224c10e3cae9a2d5",
+      "discussion_counts": {
+        "issue_comments": 0,
+        "reviews": 0,
+        "review_comments": 0
+      },
+      "discussion_considered": true,
+      "review_limits": [
+        "Static patch/current-caller review; no untrusted PR code executed. Hardware/performance/feature claims remain unqualified unless separately stated."
+      ],
+      "tests_executed": [
+        "All detections filtered out with zero/one crop layer returns an empty result without a box-shape failure."
+      ],
+      "additional_verification_not_run": [
+        "Dedicated mixed empty/nonempty crop fixture."
+      ],
+      "independent_code_review": "No open findings, reported by the primary agent."
+    },
+    {
+      "number": 764,
+      "title": "SAM2",
+      "author": "sketchyz88",
+      "url": "https://github.com/facebookresearch/sam2/pull/764",
+      "head_sha": "2b90b9f5ceec907a1c18123530e92e794ad901a4",
+      "base_ref": "sam2.1",
+      "base_sha": "aa9b8722d0585b661ded4b3dff1bd103540554ae",
+      "draft": false,
+      "changed_paths": [
+        ".gitignore",
+        "INSTALL.md",
+        "MANIFEST.in",
+        "README.md",
+        "RELEASE_NOTES.md",
+        "backend.Dockerfile",
+        "demo/README.md",
+        "demo/backend/server/app.py",
+        "demo/frontend/src/demo/DemoConfig.tsx",
+        "docker-compose.yaml",
+        "notebooks/automatic_mask_generator_example.ipynb",
+        "notebooks/image_predictor_example.ipynb",
+        "notebooks/video_predictor_example.ipynb",
+        "pyproject.toml",
+        "sam2/benchmark.py",
+        "sam2/build_sam.py",
+        "sam2/configs/sam2.1/sam2.1_hiera_b+.yaml",
+        "sam2/configs/sam2.1/sam2.1_hiera_l.yaml",
+        "sam2/configs/sam2.1/sam2.1_hiera_s.yaml",
+        "sam2/configs/sam2.1/sam2.1_hiera_t.yaml",
+        "sam2/configs/sam2.1_training/sam2.1_hiera_b+_MOSE_finetune.yaml",
+        "sam2/configs/sam2/sam2_hiera_b+.yaml",
+        "sam2/configs/sam2/sam2_hiera_l.yaml",
+        "sam2/configs/sam2/sam2_hiera_s.yaml",
+        "sam2/configs/sam2/sam2_hiera_t.yaml",
+        "sam2/modeling/backbones/utils.py",
+        "sam2/modeling/position_encoding.py",
+        "sam2/modeling/sam/prompt_encoder.py",
+        "sam2/modeling/sam/transformer.py",
+        "sam2/modeling/sam2_base.py",
+        "sam2/sam2_video_predictor.py",
+        "sam2/sam2_video_predictor_legacy.py",
+        "sam2/utils/misc.py",
+        "sam2/utils/transforms.py",
+        "setup.py",
+        "tools/vos_inference.py"
+      ],
+      "disposition": "already_covered",
+      "reason": "This PR targets upstream sam2.1 rather than main; its head is exactly upstream main 2b90b9f5, the fork ancestor. Its 36-file historical update is already included and must not be replayed.",
+      "current_fork_comparison": "This PR targets upstream sam2.1 rather than main; its head is exactly upstream main 2b90b9f5, the fork ancestor. Its 36-file historical update is already included and must not be replayed.",
+      "tests_needed": [
+        "None for replay; ancestry and exact head identity establish deduplication."
+      ],
+      "duplicate_of": [],
+      "selected_for_current_batch": false,
+      "delivery_state": "review_recommendation_only",
+      "comparison_revision": "ba6db50a86af940f5de9a5869946abb90f75966a",
+      "patch_sha256": "6062ee2380aca87c96f919adaf06752cb124bb40b50e2e3d929da86d326d6257",
+      "discussion_sha256": "8972c8c9c48d72bd049f528dd62475151172100727f6aa07aba004fa22d3bf4c",
+      "discussion_counts": {
+        "issue_comments": 1,
+        "reviews": 0,
+        "review_comments": 0
+      },
+      "discussion_considered": true,
+      "review_limits": [
+        "Ancestry/base-head deduplication and changed-file/hunk inspection; no line-by-line re-review of the already inherited historical implementation."
+      ]
+    },
+    {
+      "number": 763,
+      "title": "fix: add missing @torch.no_grad() to predict, predict_batch, get_imag\u2026",
+      "author": "Julianblock",
+      "url": "https://github.com/facebookresearch/sam2/pull/763",
+      "head_sha": "bf585a38694f94ecef62c47217a7d73cbe0d051a",
+      "base_ref": "main",
+      "base_sha": "2b90b9f5ceec907a1c18123530e92e794ad901a4",
+      "draft": false,
+      "changed_paths": [
+        "sam2/sam2_image_predictor.py"
+      ],
+      "disposition": "already_covered",
+      "reason": "set_image/set_image_batch and the decoder owner _predict already run under no_grad; get_image_embedding returns those detached cached tensors. Extra public decorators do not repair a demonstrated gradient leak in the current path.",
+      "current_fork_comparison": "set_image/set_image_batch and the decoder owner _predict already run under no_grad; get_image_embedding returns those detached cached tensors. Extra public decorators do not repair a demonstrated gradient leak in the current path.",
+      "tests_needed": [
+        "If reopened, demonstrate a public output that retains a graph under normal predictor use before adding decorators."
+      ],
+      "duplicate_of": [],
+      "selected_for_current_batch": false,
+      "delivery_state": "review_recommendation_only",
+      "comparison_revision": "ba6db50a86af940f5de9a5869946abb90f75966a",
+      "patch_sha256": "573b973de8b236723d47b52d44ffa2041b23eadc5002ed3a1e485a27b9ddb39e",
+      "discussion_sha256": "1465417a8a7b5483a17f20e0f1a34ce9f2e366b81b57c1ef224c10e3cae9a2d5",
+      "discussion_counts": {
+        "issue_comments": 0,
+        "reviews": 0,
+        "review_comments": 0
+      },
+      "discussion_considered": true,
+      "review_limits": [
+        "Static patch/current-caller review; no untrusted PR code executed. Hardware/performance/feature claims remain unqualified unless separately stated."
+      ]
+    },
+    {
+      "number": 761,
+      "title": "fix: remove stale image_format param from set_image docstring",
+      "author": "Julianblock",
+      "url": "https://github.com/facebookresearch/sam2/pull/761",
+      "head_sha": "987727a38ba7cda04ff2ad0a3634f7c0469d7dd8",
+      "base_ref": "main",
+      "base_sha": "2b90b9f5ceec907a1c18123530e92e794ad901a4",
+      "draft": false,
+      "changed_paths": [
+        "sam2/sam2_image_predictor.py"
+      ],
+      "disposition": "defer",
+      "reason": "The stale image_format argument and PIL WHC wording are real doc defects, but the public signature already has no image_format. Fold the small doc correction into predictor documentation work rather than a standalone runtime fix.",
+      "current_fork_comparison": "The stale image_format argument and PIL WHC wording are real doc defects, but the public signature already has no image_format. Fold the small doc correction into predictor documentation work rather than a standalone runtime fix.",
+      "tests_needed": [
+        "Doc/signature inspection; no new automated wording test."
+      ],
+      "duplicate_of": [],
+      "selected_for_current_batch": false,
+      "delivery_state": "review_recommendation_only",
+      "comparison_revision": "ba6db50a86af940f5de9a5869946abb90f75966a",
+      "patch_sha256": "4df4e8858efe7c4da48a3c07aeb6e157466aa1b3920fa182060645a245d282a0",
+      "discussion_sha256": "1465417a8a7b5483a17f20e0f1a34ce9f2e366b81b57c1ef224c10e3cae9a2d5",
+      "discussion_counts": {
+        "issue_comments": 0,
+        "reviews": 0,
+        "review_comments": 0
+      },
+      "discussion_considered": true,
+      "review_limits": [
+        "Static patch/current-caller review; no untrusted PR code executed. Hardware/performance/feature claims remain unqualified unless separately stated."
+      ]
+    },
+    {
+      "number": 755,
+      "title": "Bump postcss from 8.4.33 to 8.5.10 in /demo/frontend",
+      "author": "dependabot[bot]",
+      "url": "https://github.com/facebookresearch/sam2/pull/755",
+      "head_sha": "f439116ebd13015b71fdf75973062a0de3d644b6",
+      "base_ref": "main",
+      "base_sha": "2b90b9f5ceec907a1c18123530e92e794ad901a4",
+      "draft": false,
+      "changed_paths": [
+        "demo/frontend/package.json",
+        "demo/frontend/yarn.lock"
+      ],
+      "disposition": "defer",
+      "reason": "Updates direct PostCSS floor plus nanoid/picocolors/source-map lock entries. Combine compatible frontend dependency updates in one regenerated lockfile after checking current advisories and the demo build; do not replay overlapping lock patches independently.",
+      "current_fork_comparison": "Updates direct PostCSS floor plus nanoid/picocolors/source-map lock entries. Combine compatible frontend dependency updates in one regenerated lockfile after checking current advisories and the demo build; do not replay overlapping lock patches independently.",
+      "tests_needed": [
+        "Yarn reproducible install, frontend typecheck/build/lint and focused security advisory review."
+      ],
+      "duplicate_of": [
+        754,
+        750,
+        745,
+        744,
+        743
+      ],
+      "selected_for_current_batch": false,
+      "delivery_state": "review_recommendation_only",
+      "comparison_revision": "ba6db50a86af940f5de9a5869946abb90f75966a",
+      "patch_sha256": "d173bf08a1c3b7209952c911fa3d65b8f5b4a301d068505071422399fb2418ef",
+      "discussion_sha256": "1465417a8a7b5483a17f20e0f1a34ce9f2e366b81b57c1ef224c10e3cae9a2d5",
+      "discussion_counts": {
+        "issue_comments": 0,
+        "reviews": 0,
+        "review_comments": 0
+      },
+      "discussion_considered": true,
+      "review_limits": [
+        "Static patch/current-caller review; no untrusted PR code executed. Hardware/performance/feature claims remain unqualified unless separately stated."
+      ]
+    },
+    {
+      "number": 754,
+      "title": "Bump tmp from 0.2.3 to 0.2.6 in /demo/frontend",
+      "author": "dependabot[bot]",
+      "url": "https://github.com/facebookresearch/sam2/pull/754",
+      "head_sha": "9bc61ec726bc6f5b052ef908a385f08c68f80b85",
+      "base_ref": "main",
+      "base_sha": "2b90b9f5ceec907a1c18123530e92e794ad901a4",
+      "draft": false,
+      "changed_paths": [
+        "demo/frontend/yarn.lock"
+      ],
+      "disposition": "defer",
+      "reason": "Updates transitive tmp 0.2.3 to 0.2.6 within the existing ~0.2.1 constraint. It belongs in the single frontend dependency refresh so the shared lockfile is resolved once.",
+      "current_fork_comparison": "Updates transitive tmp 0.2.3 to 0.2.6 within the existing ~0.2.1 constraint. It belongs in the single frontend dependency refresh so the shared lockfile is resolved once.",
+      "tests_needed": [
+        "Yarn lock/install and frontend build; verify package advisory against actual resolved version."
+      ],
+      "duplicate_of": [
+        755
+      ],
+      "selected_for_current_batch": false,
+      "delivery_state": "review_recommendation_only",
+      "comparison_revision": "ba6db50a86af940f5de9a5869946abb90f75966a",
+      "patch_sha256": "52bd24fd08f89ec363e4c95902bceb6dc70e3dcbcc8ecc03045b1a2262bfb7fb",
+      "discussion_sha256": "1465417a8a7b5483a17f20e0f1a34ce9f2e366b81b57c1ef224c10e3cae9a2d5",
+      "discussion_counts": {
+        "issue_comments": 0,
+        "reviews": 0,
+        "review_comments": 0
+      },
+      "discussion_considered": true,
+      "review_limits": [
+        "Static patch/current-caller review; no untrusted PR code executed. Hardware/performance/feature claims remain unqualified unless separately stated."
+      ]
+    },
+    {
+      "number": 752,
+      "title": "Bump vite from 5.0.11 to 6.4.2 in /demo/frontend",
+      "author": "dependabot[bot]",
+      "url": "https://github.com/facebookresearch/sam2/pull/752",
+      "head_sha": "fd5636545dd3c11277bda7fbb6b411f8fa3c9219",
+      "base_ref": "main",
+      "base_sha": "2b90b9f5ceec907a1c18123530e92e794ad901a4",
+      "draft": false,
+      "changed_paths": [
+        "demo/frontend/package.json",
+        "demo/frontend/yarn.lock"
+      ],
+      "disposition": "needs_design_or_hardware",
+      "reason": "Raises Vite from major 5 to major 6 and changes esbuild/Rollup lock dependencies. Treat as an explicit frontend toolchain migration, not a blind security cherry-pick.",
+      "current_fork_comparison": "Raises Vite from major 5 to major 6 and changes esbuild/Rollup lock dependencies. Treat as an explicit frontend toolchain migration, not a blind security cherry-pick.",
+      "tests_needed": [
+        "Supported Node version, Vite plugin compatibility, production build, dev server and browser smoke."
+      ],
+      "duplicate_of": [
+        743,
+        755
+      ],
+      "selected_for_current_batch": false,
+      "delivery_state": "review_recommendation_only",
+      "comparison_revision": "ba6db50a86af940f5de9a5869946abb90f75966a",
+      "patch_sha256": "cf3ffcfc0a2189f10a670bd3184ff9ef51b272020c9dced6e73da8c087328dc0",
+      "discussion_sha256": "1465417a8a7b5483a17f20e0f1a34ce9f2e366b81b57c1ef224c10e3cae9a2d5",
+      "discussion_counts": {
+        "issue_comments": 0,
+        "reviews": 0,
+        "review_comments": 0
+      },
+      "discussion_considered": true,
+      "review_limits": [
+        "Static patch/current-caller review; no untrusted PR code executed. Hardware/performance/feature claims remain unqualified unless separately stated."
+      ]
+    },
+    {
+      "number": 750,
+      "title": "Bump picomatch from 2.3.1 to 2.3.2 in /demo/frontend",
+      "author": "dependabot[bot]",
+      "url": "https://github.com/facebookresearch/sam2/pull/750",
+      "head_sha": "e4fb7104fce846540a23a622187f01cccd72cd57",
+      "base_ref": "main",
+      "base_sha": "2b90b9f5ceec907a1c18123530e92e794ad901a4",
+      "draft": false,
+      "changed_paths": [
+        "demo/frontend/yarn.lock"
+      ],
+      "disposition": "defer",
+      "reason": "Updates transitive picomatch 2.3.1 to 2.3.2 within existing constraints. Consolidate with the other frontend lock updates and verify the referenced advisories rather than copying integrity entries alone.",
+      "current_fork_comparison": "Updates transitive picomatch 2.3.1 to 2.3.2 within existing constraints. Consolidate with the other frontend lock updates and verify the referenced advisories rather than copying integrity entries alone.",
+      "tests_needed": [
+        "Frozen-lock install, actual resolution/advisory check and frontend build."
+      ],
+      "duplicate_of": [
+        755
+      ],
+      "selected_for_current_batch": false,
+      "delivery_state": "review_recommendation_only",
+      "comparison_revision": "ba6db50a86af940f5de9a5869946abb90f75966a",
+      "patch_sha256": "1670cfb95831e316224724cfe2bd5885e96e6e684c2096ce82ae528804db8456",
+      "discussion_sha256": "1465417a8a7b5483a17f20e0f1a34ce9f2e366b81b57c1ef224c10e3cae9a2d5",
+      "discussion_counts": {
+        "issue_comments": 0,
+        "reviews": 0,
+        "review_comments": 0
+      },
+      "discussion_considered": true,
+      "review_limits": [
+        "Static patch/current-caller review; no untrusted PR code executed. Hardware/performance/feature claims remain unqualified unless separately stated."
+      ]
+    },
+    {
+      "number": 749,
+      "title": "Make Hiera input channels and video normalization configurable",
+      "author": "AryanMoradi",
+      "url": "https://github.com/facebookresearch/sam2/pull/749",
+      "head_sha": "d1e657cd089953d98acdebf84390075d7ef87b8f",
+      "base_ref": "main",
+      "base_sha": "2b90b9f5ceec907a1c18123530e92e794ad901a4",
+      "draft": false,
+      "changed_paths": [
+        "sam2/modeling/backbones/hieradet.py",
+        "sam2/sam2_video_predictor.py",
+        "sam2/utils/misc.py"
+      ],
+      "disposition": "needs_design_or_hardware",
+      "reason": "Adds Hiera in_chans and grayscale video normalization, but official RGB checkpoints have three input channels, eager/async/MP4/image paths need one coherent channel contract, and non-RGB normalization/checkpoint conversion is not specified.",
+      "current_fork_comparison": "Adds Hiera in_chans and grayscale video normalization, but official RGB checkpoints have three input channels, eager/async/MP4/image paths need one coherent channel contract, and non-RGB normalization/checkpoint conversion is not specified.",
+      "tests_needed": [
+        "Grayscale/multichannel loader parity, checkpoint adaptation, mean/std validation and image/video preprocessing consistency."
+      ],
+      "duplicate_of": [],
+      "selected_for_current_batch": false,
+      "delivery_state": "review_recommendation_only",
+      "comparison_revision": "ba6db50a86af940f5de9a5869946abb90f75966a",
+      "patch_sha256": "bbf3083cb14f4069665a567af392cc3e96a4c6292b39ab27335f9057cbd5c73f",
+      "discussion_sha256": "bf4eb834b0f4518d4ca245c8249da922bbf8aa20c2d865a02a53a7f5effe09ba",
+      "discussion_counts": {
+        "issue_comments": 3,
+        "reviews": 0,
+        "review_comments": 0
+      },
+      "discussion_considered": true,
+      "review_limits": [
+        "Static patch/current-caller review; no untrusted PR code executed. Hardware/performance/feature claims remain unqualified unless separately stated."
+      ]
+    },
+    {
+      "number": 745,
+      "title": "Bump flatted from 3.2.9 to 3.4.2 in /demo/frontend",
+      "author": "dependabot[bot]",
+      "url": "https://github.com/facebookresearch/sam2/pull/745",
+      "head_sha": "f1be1e6cb928bcf1c0d72f06d643aae7bcf1c939",
+      "base_ref": "main",
+      "base_sha": "2b90b9f5ceec907a1c18123530e92e794ad901a4",
+      "draft": false,
+      "changed_paths": [
+        "demo/frontend/yarn.lock"
+      ],
+      "disposition": "defer",
+      "reason": "Updates transitive flatted 3.2.9 to 3.4.2 for the eslint cache chain. Include it in the single frontend lock refresh with advisory verification and tooling checks.",
+      "current_fork_comparison": "Updates transitive flatted 3.2.9 to 3.4.2 for the eslint cache chain. Include it in the single frontend lock refresh with advisory verification and tooling checks.",
+      "tests_needed": [
+        "Yarn resolution, eslint/cache behavior and frontend build."
+      ],
+      "duplicate_of": [
+        755
+      ],
+      "selected_for_current_batch": false,
+      "delivery_state": "review_recommendation_only",
+      "comparison_revision": "ba6db50a86af940f5de9a5869946abb90f75966a",
+      "patch_sha256": "8ed6cb78a7aea7f526cdf0e035833228601cf61bf7b94402e25f870d334e17e2",
+      "discussion_sha256": "1465417a8a7b5483a17f20e0f1a34ce9f2e366b81b57c1ef224c10e3cae9a2d5",
+      "discussion_counts": {
+        "issue_comments": 0,
+        "reviews": 0,
+        "review_comments": 0
+      },
+      "discussion_considered": true,
+      "review_limits": [
+        "Static patch/current-caller review; no untrusted PR code executed. Hardware/performance/feature claims remain unqualified unless separately stated."
+      ]
+    },
+    {
+      "number": 744,
+      "title": "Bump immutable from 4.3.4 to 4.3.8 in /demo/frontend",
+      "author": "dependabot[bot]",
+      "url": "https://github.com/facebookresearch/sam2/pull/744",
+      "head_sha": "bfa125aac60be9c189eb5dddd25df682025c1766",
+      "base_ref": "main",
+      "base_sha": "2b90b9f5ceec907a1c18123530e92e794ad901a4",
+      "draft": false,
+      "changed_paths": [
+        "demo/frontend/yarn.lock"
+      ],
+      "disposition": "defer",
+      "reason": "Updates immutable 4.3.4 to 4.3.8 under ^4.0.0. Consolidate the shared lock change and check Relay/frontend consumers before adoption.",
+      "current_fork_comparison": "Updates immutable 4.3.4 to 4.3.8 under ^4.0.0. Consolidate the shared lock change and check Relay/frontend consumers before adoption.",
+      "tests_needed": [
+        "Reproducible lock install, Relay/frontend typecheck/build and current advisory verification."
+      ],
+      "duplicate_of": [
+        755
+      ],
+      "selected_for_current_batch": false,
+      "delivery_state": "review_recommendation_only",
+      "comparison_revision": "ba6db50a86af940f5de9a5869946abb90f75966a",
+      "patch_sha256": "664fc80a7c07e6f7fc588b8f1c76e121be69e957874a53f59b4cf2ed9b6fb851",
+      "discussion_sha256": "1465417a8a7b5483a17f20e0f1a34ce9f2e366b81b57c1ef224c10e3cae9a2d5",
+      "discussion_counts": {
+        "issue_comments": 0,
+        "reviews": 0,
+        "review_comments": 0
+      },
+      "discussion_considered": true,
+      "review_limits": [
+        "Static patch/current-caller review; no untrusted PR code executed. Hardware/performance/feature claims remain unqualified unless separately stated."
+      ]
+    },
+    {
+      "number": 743,
+      "title": "Bump rollup from 4.9.5 to 4.59.0 in /demo/frontend",
+      "author": "dependabot[bot]",
+      "url": "https://github.com/facebookresearch/sam2/pull/743",
+      "head_sha": "6f1f62274ed1dd430d7ae62857378a426dca21ed",
+      "base_ref": "main",
+      "base_sha": "2b90b9f5ceec907a1c18123530e92e794ad901a4",
+      "draft": false,
+      "changed_paths": [
+        "demo/frontend/yarn.lock"
+      ],
+      "disposition": "defer",
+      "reason": "Updates Rollup 4.9.5 and platform-specific native packages to 4.59.0. Resolve once alongside Vite decisions; handwritten or sequential overlapping lock edits can leave incompatible native entries.",
+      "current_fork_comparison": "Updates Rollup 4.9.5 and platform-specific native packages to 4.59.0. Resolve once alongside Vite decisions; handwritten or sequential overlapping lock edits can leave incompatible native entries.",
+      "tests_needed": [
+        "Yarn install on Linux/macOS, Rollup native loading and production bundle."
+      ],
+      "duplicate_of": [
+        752,
+        755
+      ],
+      "selected_for_current_batch": false,
+      "delivery_state": "review_recommendation_only",
+      "comparison_revision": "ba6db50a86af940f5de9a5869946abb90f75966a",
+      "patch_sha256": "253ed6eb0d133ad221d5eb9745f5ddcd30c1b25b38f01798b4609dcc8f1e5be2",
+      "discussion_sha256": "1465417a8a7b5483a17f20e0f1a34ce9f2e366b81b57c1ef224c10e3cae9a2d5",
+      "discussion_counts": {
+        "issue_comments": 0,
+        "reviews": 0,
+        "review_comments": 0
+      },
+      "discussion_considered": true,
+      "review_limits": [
+        "Static patch/current-caller review; no untrusted PR code executed. Hardware/performance/feature claims remain unqualified unless separately stated."
+      ]
+    },
+    {
+      "number": 730,
+      "title": "marge sam2 with old version",
+      "author": "chen-haijin",
+      "url": "https://github.com/facebookresearch/sam2/pull/730",
+      "head_sha": "91ea3a933a1c32d244c5c7fdfa4a5726f0335b28",
+      "base_ref": "main",
+      "base_sha": "2b90b9f5ceec907a1c18123530e92e794ad901a4",
+      "draft": false,
+      "changed_paths": [
+        "demo/backend/server/app.py",
+        "demo/backend/server/app_conf.py",
+        "demo/backend/server/inference/predictor.py"
+      ],
+      "disposition": "out_of_scope_or_invalid",
+      "reason": "Adds numerous image HTTP routes, arbitrary URL/local-path loading and request-selected embedding-cache paths, alongside new model instances. This introduces network/filesystem trust boundaries and resource lifecycle changes unrelated to the fork pivot; do not expose it without a separate API/security design.",
+      "current_fork_comparison": "Adds numerous image HTTP routes, arbitrary URL/local-path loading and request-selected embedding-cache paths, alongside new model instances. This introduces network/filesystem trust boundaries and resource lifecycle changes unrelated to the fork pivot; do not expose it without a separate API/security design.",
+      "tests_needed": [
+        "Explicit API scope, input/path/URL authorization, bounded downloads and model/cache lifecycle tests before reconsideration."
+      ],
+      "duplicate_of": [
+        643,
+        397,
+        117
+      ],
+      "selected_for_current_batch": false,
+      "delivery_state": "review_recommendation_only",
+      "comparison_revision": "ba6db50a86af940f5de9a5869946abb90f75966a",
+      "patch_sha256": "14355a5ab5fc76a8dc90d40f1c46a5b984e27ccd6aa1b60ca6539864b19c7776",
+      "discussion_sha256": "b6f2565c9d07a07959ada6fd99a23a583e913fd78e93ce91da06867f7ae99ddc",
+      "discussion_counts": {
+        "issue_comments": 1,
+        "reviews": 1,
+        "review_comments": 0
+      },
+      "discussion_considered": true,
+      "review_limits": [
+        "Scope and reachable network/filesystem boundary review sufficient to defer; not an exhaustive security audit of this new API."
+      ]
+    },
+    {
+      "number": 718,
+      "title": "Fix PyAV compatibility issue with DISPLAYMATRIX access",
+      "author": "paruparu",
+      "url": "https://github.com/facebookresearch/sam2/pull/718",
+      "head_sha": "49a6c179d59537eeda4848caa17fe1288f47363a",
+      "base_ref": "main",
+      "base_sha": "2b90b9f5ceec907a1c18123530e92e794ad901a4",
+      "draft": false,
+      "changed_paths": [
+        "demo/backend/server/data/transcoder.py"
+      ],
+      "disposition": "adapt_now",
+      "reason": "Confirmed on local PyAV19.0.2: get_video_metadata(bedroom.mp4) raises AttributeError because stream.side_data is absent. Adapt the compatibility fix while preserving rotation dimensions instead of silently treating all modern videos as unrotated.",
+      "current_fork_comparison": "Confirmed on local PyAV19.0.2: get_video_metadata(bedroom.mp4) raises AttributeError because stream.side_data is absent. Adapt the compatibility fix while preserving rotation dimensions instead of silently treating all modern videos as unrotated.",
+      "tests_needed": [
+        "Real unrotated/rotated MP4 metadata, dimension orientation, old/minimum PyAV behavior and decoder resource cleanup."
+      ],
+      "duplicate_of": [
+        514
+      ],
+      "selected_for_current_batch": true,
+      "delivery_state": "implemented_tested_pending_publication",
+      "comparison_revision": "ba6db50a86af940f5de9a5869946abb90f75966a",
+      "patch_sha256": "898cdb2c95eae9d8a6512b24a4a675a33b29b9076d291cfae54f02c72295745d",
+      "discussion_sha256": "1465417a8a7b5483a17f20e0f1a34ce9f2e366b81b57c1ef224c10e3cae9a2d5",
+      "discussion_counts": {
+        "issue_comments": 0,
+        "reviews": 0,
+        "review_comments": 0
+      },
+      "discussion_considered": true,
+      "review_limits": [
+        "Static patch/current-caller review; no untrusted PR code executed. Hardware/performance/feature claims remain unqualified unless separately stated."
+      ],
+      "tests_executed": [
+        "Generated actual MP4 display matrices at 0, 90, 180 and -90 degrees; expected dimensions, frame count, FPS and duration verified on PyAV 15 and 19."
+      ],
+      "additional_verification_not_run": [
+        "CUDA/container/browser end-to-end demo validation remains outside these metadata tests."
+      ],
+      "independent_code_review": "No open findings, reported by the primary agent."
+    },
+    {
+      "number": 714,
+      "title": "Add section to save segmented frames as video in video_predictor_example.ipynb notebook",
+      "author": "siromermer",
+      "url": "https://github.com/facebookresearch/sam2/pull/714",
+      "head_sha": "f56985533ba199543f30d8c5375f196250f3252b",
+      "base_ref": "main",
+      "base_sha": "2b90b9f5ceec907a1c18123530e92e794ad901a4",
+      "draft": false,
+      "changed_paths": [
+        "notebooks/video_predictor_example.ipynb"
+      ],
+      "disposition": "defer",
+      "reason": "Adds an optional OpenCV MP4 export cell with hardcoded 25 fps and one blue overlay. Useful example work, but native video timing, mask shape and codec/writer failure handling should be specified and tested separately.",
+      "current_fork_comparison": "Adds an optional OpenCV MP4 export cell with hardcoded 25 fps and one blue overlay. Useful example work, but native video timing, mask shape and codec/writer failure handling should be specified and tested separately.",
+      "tests_needed": [
+        "Notebook execution on a short clip, frame count/fps/dimensions and exported-video decode."
+      ],
+      "duplicate_of": [],
+      "selected_for_current_batch": false,
+      "delivery_state": "review_recommendation_only",
+      "comparison_revision": "ba6db50a86af940f5de9a5869946abb90f75966a",
+      "patch_sha256": "6d83bc349bbf24df27af99294387bedf0b087554eec2ac5e402dcb3cab5e2faf",
+      "discussion_sha256": "0b5fff376f5283babb436f9d3e2d4c8a94c9ec9135a8923df23b0b5c0560f931",
+      "discussion_counts": {
+        "issue_comments": 1,
+        "reviews": 0,
+        "review_comments": 0
+      },
+      "discussion_considered": true,
+      "review_limits": [
+        "Static patch/current-caller review; no untrusted PR code executed. Hardware/performance/feature claims remain unqualified unless separately stated."
+      ]
+    },
+    {
+      "number": 705,
+      "title": "fix: connected_components.cu has CUDAGuard",
+      "author": "mheyman",
+      "url": "https://github.com/facebookresearch/sam2/pull/705",
+      "head_sha": "d9f02b1803ff1c9c1c366162e9ba91a49887ce3c",
+      "base_ref": "main",
+      "base_sha": "2b90b9f5ceec907a1c18123530e92e794ad901a4",
+      "draft": false,
+      "changed_paths": [
+        "sam2/csrc/connected_components.cu"
+      ],
+      "disposition": "needs_design_or_hardware",
+      "reason": "The need for a CUDA input-device guard is valid, but the submitted line refers to undefined inputs_ and lacks the explicit CUDAGuard header. Reproduce one correct device/stream fix with #679 and validate on multiple GPUs.",
+      "current_fork_comparison": "The need for a CUDA input-device guard is valid, but the submitted line refers to undefined inputs_ and lacks the explicit CUDAGuard header. Reproduce one correct device/stream fix with #679 and validate on multiple GPUs.",
+      "tests_needed": [
+        "CUDA extension compilation plus input on a non-current device and its non-default stream; original device restored."
+      ],
+      "duplicate_of": [
+        679
+      ],
+      "selected_for_current_batch": false,
+      "delivery_state": "review_recommendation_only",
+      "comparison_revision": "ba6db50a86af940f5de9a5869946abb90f75966a",
+      "patch_sha256": "6df9b2f4ef56bcdfd0ec547b87d63945473a979c2740b69a808b99a14d387ed5",
+      "discussion_sha256": "ecad327e295055f933da37902f38032939e3ab5c1aeb0da74e6528ea309dbbb8",
+      "discussion_counts": {
+        "issue_comments": 2,
+        "reviews": 0,
+        "review_comments": 0
+      },
+      "discussion_considered": true,
+      "review_limits": [
+        "Static patch/current-caller review; no untrusted PR code executed. Hardware/performance/feature claims remain unqualified unless separately stated."
+      ]
+    },
+    {
+      "number": 679,
+      "title": "Add Multi-GPU Parallel Support to Connected Components CUDA Extension",
+      "author": "moqingyan",
+      "url": "https://github.com/facebookresearch/sam2/pull/679",
+      "head_sha": "11f90ceeb7547907be3ce14bcd29d6d377c6b302",
+      "base_ref": "main",
+      "base_sha": "2b90b9f5ceec907a1c18123530e92e794ad901a4",
+      "draft": false,
+      "changed_paths": [
+        "sam2/csrc/connected_components.cu"
+      ],
+      "disposition": "needs_design_or_hardware",
+      "reason": "Selecting getCurrentCUDAStream(inputs.device().index()) alone does not select the CUDA launch device. Deduplicate with a proper device guard; the claim of general multi-GPU parallelism exceeds this one-line change.",
+      "current_fork_comparison": "Selecting getCurrentCUDAStream(inputs.device().index()) alone does not select the CUDA launch device. Deduplicate with a proper device guard; the claim of general multi-GPU parallelism exceeds this one-line change.",
+      "tests_needed": [
+        "Multi-GPU current-device mismatch, per-device stream correctness and CUDA build/runtime tests."
+      ],
+      "duplicate_of": [
+        705
+      ],
+      "selected_for_current_batch": false,
+      "delivery_state": "review_recommendation_only",
+      "comparison_revision": "ba6db50a86af940f5de9a5869946abb90f75966a",
+      "patch_sha256": "9986ee58aded21f1eb40aa015ad1e00d7eb87c1fa85d2f8dbe4def48898a8e89",
+      "discussion_sha256": "549770e5a8a39b3806960e496bfa2285ec821c5d6d2da23db9dbcd9ae8924b6a",
+      "discussion_counts": {
+        "issue_comments": 3,
+        "reviews": 0,
+        "review_comments": 0
+      },
+      "discussion_considered": true,
+      "review_limits": [
+        "Static patch/current-caller review; no untrusted PR code executed. Hardware/performance/feature claims remain unqualified unless separately stated."
+      ]
+    },
+    {
+      "number": 676,
+      "title": "Fix rm ffmpeg not found in docker",
+      "author": "tornikeo",
+      "url": "https://github.com/facebookresearch/sam2/pull/676",
+      "head_sha": "75deef0b21eaa33311830e0b048871ba3749b9eb",
+      "base_ref": "main",
+      "base_sha": "2b90b9f5ceec907a1c18123530e92e794ad901a4",
+      "draft": false,
+      "changed_paths": [
+        "backend.Dockerfile"
+      ],
+      "disposition": "already_covered",
+      "reason": "The fork removed the entire obsolete /opt/conda/bin/ffmpeg removal/symlink path while updating its PyTorch image, so adding rm -f has no remaining target.",
+      "current_fork_comparison": "The fork removed the entire obsolete /opt/conda/bin/ffmpeg removal/symlink path while updating its PyTorch image, so adding rm -f has no remaining target.",
+      "tests_needed": [
+        "Existing Dockerfile lint/layout review; actual container runtime remains a separate gate."
+      ],
+      "duplicate_of": [
+        549,
+        617,
+        498,
+        513
+      ],
+      "selected_for_current_batch": false,
+      "delivery_state": "review_recommendation_only",
+      "comparison_revision": "ba6db50a86af940f5de9a5869946abb90f75966a",
+      "patch_sha256": "be79e389d4981ed9d2e71cb8af63ee14c5c30311d0d5d65c22d667be17d4355b",
+      "discussion_sha256": "705339eb9cf28b9c37920a7665b10bba8744d1f19544721d3ea929750139f7bd",
+      "discussion_counts": {
+        "issue_comments": 1,
+        "reviews": 0,
+        "review_comments": 0
+      },
+      "discussion_considered": true,
+      "review_limits": [
+        "Static patch/current-caller review; no untrusted PR code executed. Hardware/performance/feature claims remain unqualified unless separately stated."
+      ]
+    },
+    {
+      "number": 643,
+      "title": "Make image predictor thread-safe",
+      "author": "adamp87",
+      "url": "https://github.com/facebookresearch/sam2/pull/643",
+      "head_sha": "2244c0ef0cfd07ba29b4c132e3b7764431553913",
+      "base_ref": "main",
+      "base_sha": "2b90b9f5ceec907a1c18123530e92e794ad901a4",
+      "draft": false,
+      "changed_paths": [
+        "sam2/sam2_image_predictor.py"
+      ],
+      "disposition": "needs_design_or_hardware",
+      "reason": "Introduces explicit image-predictor state plus a compatibility stateful interface, changing setter return values and every prediction path. Combine this with embedding import/export proposals into one state-ownership design before claiming thread safety.",
+      "current_fork_comparison": "Introduces explicit image-predictor state plus a compatibility stateful interface, changing setter return values and every prediction path. Combine this with embedding import/export proposals into one state-ownership design before claiming thread safety.",
+      "tests_needed": [
+        "Concurrent request isolation, batched state, model/device changes, mutation safety and AMG integration."
+      ],
+      "duplicate_of": [
+        397,
+        117
+      ],
+      "selected_for_current_batch": false,
+      "delivery_state": "review_recommendation_only",
+      "comparison_revision": "ba6db50a86af940f5de9a5869946abb90f75966a",
+      "patch_sha256": "d2a6fc2ac50fcd8024c353b1e3abee524633e57744ce9e44795b77d0d0cdfa2f",
+      "discussion_sha256": "1465417a8a7b5483a17f20e0f1a34ce9f2e366b81b57c1ef224c10e3cae9a2d5",
+      "discussion_counts": {
+        "issue_comments": 0,
+        "reviews": 0,
+        "review_comments": 0
+      },
+      "discussion_considered": true,
+      "review_limits": [
+        "Static patch/current-caller review; no untrusted PR code executed. Hardware/performance/feature claims remain unqualified unless separately stated."
+      ]
+    },
+    {
+      "number": 617,
+      "title": "Update backend.Dockerfile",
+      "author": "arturandre",
+      "url": "https://github.com/facebookresearch/sam2/pull/617",
+      "head_sha": "6970650eb0274099172db5cc6561b1a11a57b986",
+      "base_ref": "main",
+      "base_sha": "2b90b9f5ceec907a1c18123530e92e794ad901a4",
+      "draft": false,
+      "changed_paths": [
+        "backend.Dockerfile"
+      ],
+      "disposition": "already_covered",
+      "reason": "The proposed conditional rm/symlink still assumes a Conda directory. The new official image uses system Python and the fork removed that path entirely.",
+      "current_fork_comparison": "The proposed conditional rm/symlink still assumes a Conda directory. The new official image uses system Python and the fork removed that path entirely.",
+      "tests_needed": [
+        "No old-image patch replay; container build/run remains disclosed."
+      ],
+      "duplicate_of": [
+        676,
+        549,
+        498,
+        513
+      ],
+      "selected_for_current_batch": false,
+      "delivery_state": "review_recommendation_only",
+      "comparison_revision": "ba6db50a86af940f5de9a5869946abb90f75966a",
+      "patch_sha256": "34b900a28acc603556e7c3a6ffcc5e85329fd8b4be1e7ba13902885280ade9ee",
+      "discussion_sha256": "0b453fb2080cbc23665860fcc6805d4e2ea59ecbb5412ea687947d88394d7c9a",
+      "discussion_counts": {
+        "issue_comments": 2,
+        "reviews": 0,
+        "review_comments": 0
+      },
+      "discussion_considered": true,
+      "review_limits": [
+        "Static patch/current-caller review; no untrusted PR code executed. Hardware/performance/feature claims remain unqualified unless separately stated."
+      ]
+    },
+    {
+      "number": 614,
+      "title": "[HOTFIX] Update setuptools version requirements in pyproject.toml to reflect changes in pytorch",
+      "author": "Bloodrammer",
+      "url": "https://github.com/facebookresearch/sam2/pull/614",
+      "head_sha": "f89e32767f1690c4152495183932b3beba6b021d",
+      "base_ref": "main",
+      "base_sha": "2b90b9f5ceec907a1c18123530e92e794ad901a4",
+      "draft": false,
+      "changed_paths": [
+        "pyproject.toml"
+      ],
+      "disposition": "already_covered",
+      "reason": "Caps setuptools below75.9 as an old-PyTorch workaround. The upgraded baseline built and installed with setuptools84.2.1, so this upper bound would restore an obsolete constraint.",
+      "current_fork_comparison": "Caps setuptools below75.9 as an old-PyTorch workaround. The upgraded baseline built and installed with setuptools84.2.1, so this upper bound would restore an obsolete constraint.",
+      "tests_needed": [
+        "Current strict editable/sdist/wheel build evidence covers the intended installation path."
+      ],
+      "duplicate_of": [],
+      "selected_for_current_batch": false,
+      "delivery_state": "review_recommendation_only",
+      "comparison_revision": "ba6db50a86af940f5de9a5869946abb90f75966a",
+      "patch_sha256": "12515a62aadd87a89152fb45ddc95db28d77576c6664f6387de72c566e3787d0",
+      "discussion_sha256": "9c28b5820cc0c39048df5bf956fee6db35faa1d76ffd6e0a1384a97e2c89670a",
+      "discussion_counts": {
+        "issue_comments": 1,
+        "reviews": 0,
+        "review_comments": 0
+      },
+      "discussion_considered": true,
+      "review_limits": [
+        "Static patch/current-caller review; no untrusted PR code executed. Hardware/performance/feature claims remain unqualified unless separately stated."
+      ]
+    },
+    {
+      "number": 604,
+      "title": "added ability to merge 2 objects",
+      "author": "kolt-mcb",
+      "url": "https://github.com/facebookresearch/sam2/pull/604",
+      "head_sha": "79685237c9b93a2f5346d65fd0bed350bac5e0d6",
+      "base_ref": "main",
+      "base_sha": "2b90b9f5ceec907a1c18123530e92e794ad901a4",
+      "draft": false,
+      "changed_paths": [
+        "sam2/sam2_video_predictor.py"
+      ],
+      "disposition": "needs_design_or_hardware",
+      "reason": "Object union is a new state-changing API. The patch records candidate object IDs before confirming a usable mask and calls low-resolution stored pred_masks video-resolution masks; removal/identity/temporal-memory semantics require design and atomic-failure tests.",
+      "current_fork_comparison": "Object union is a new state-changing API. The patch records candidate object IDs before confirming a usable mask and calls low-resolution stored pred_masks video-resolution masks; removal/identity/temporal-memory semantics require design and atomic-failure tests.",
+      "tests_needed": [
+        "Missing-mask/id cases, union resolution, representative identity, object removal and future propagation after merge."
+      ],
+      "duplicate_of": [],
+      "selected_for_current_batch": false,
+      "delivery_state": "review_recommendation_only",
+      "comparison_revision": "ba6db50a86af940f5de9a5869946abb90f75966a",
+      "patch_sha256": "489daa1cd8e670685449301170cad8a6a54298b1c49934ab7c3bc2d0a13d9da5",
+      "discussion_sha256": "5696d304cd92c0dfc95209c2e378b22386f48ede8b07ab6060e903aa382336cb",
+      "discussion_counts": {
+        "issue_comments": 2,
+        "reviews": 0,
+        "review_comments": 0
+      },
+      "discussion_considered": true,
+      "review_limits": [
+        "Static patch/current-caller review; no untrusted PR code executed. Hardware/performance/feature claims remain unqualified unless separately stated."
+      ]
+    },
+    {
+      "number": 598,
+      "title": "Updated submodule to default to cpu when cuda not available",
+      "author": "nikita-azalea",
+      "url": "https://github.com/facebookresearch/sam2/pull/598",
+      "head_sha": "15537f100749a8e2782e0724ec581c7ca47dbd4c",
+      "base_ref": "main",
+      "base_sha": "2b90b9f5ceec907a1c18123530e92e794ad901a4",
+      "draft": false,
+      "changed_paths": [
+        "sam2/build_sam.py",
+        "sam2/sam2_camera_predictor.py"
+      ],
+      "disposition": "needs_design_or_hardware",
+      "reason": "Despite its title, the diff adds a roughly1470-line camera predictor copied from the old stateful implementation plus a new builder. CPU fallback is already covered; live-camera support needs bounded memory and one shared predictor architecture.",
+      "current_fork_comparison": "Despite its title, the diff adds a roughly1470-line camera predictor copied from the old stateful implementation plus a new builder. CPU fallback is already covered; live-camera support needs bounded memory and one shared predictor architecture.",
+      "tests_needed": [
+        "Live-source lifecycle, bounded buffering, object updates, reset and CPU/MPS/CUDA behavior."
+      ],
+      "duplicate_of": [
+        377,
+        46
+      ],
+      "selected_for_current_batch": false,
+      "delivery_state": "review_recommendation_only",
+      "comparison_revision": "ba6db50a86af940f5de9a5869946abb90f75966a",
+      "patch_sha256": "83f2f57c09d242aae37e796096d2deafeeae173a3adf75f72530176c9e683583",
+      "discussion_sha256": "1a8e953b4759f12acaa69afe1ab6ecd3e4432f27865c8b038b13c10e2bfee4d8",
+      "discussion_counts": {
+        "issue_comments": 1,
+        "reviews": 0,
+        "review_comments": 0
+      },
+      "discussion_considered": true,
+      "review_limits": [
+        "Static patch/current-caller review; no untrusted PR code executed. Hardware/performance/feature claims remain unqualified unless separately stated."
+      ]
+    },
+    {
+      "number": 590,
+      "title": "Optimize the frame loading",
+      "author": "showarp",
+      "url": "https://github.com/facebookresearch/sam2/pull/590",
+      "head_sha": "6ec9f9dc194bb353ae6b1885b91fa68586533c93",
+      "base_ref": "main",
+      "base_sha": "2b90b9f5ceec907a1c18123530e92e794ad901a4",
+      "draft": false,
+      "changed_paths": [
+        "sam2/utils/misc.py"
+      ],
+      "disposition": "defer",
+      "reason": "Moving transforms to the GPU changes resize interpolation/antialiasing, RGB conversion and allocation behavior. Current float32-before-transfer loading already removes the Mac failure; adopt only a measured, numerically qualified loader change.",
+      "current_fork_comparison": "Moving transforms to the GPU changes resize interpolation/antialiasing, RGB conversion and allocation behavior. Current float32-before-transfer loading already removes the Mac failure; adopt only a measured, numerically qualified loader change.",
+      "tests_needed": [
+        "RGB/grayscale/RGBA input, sync/async/offload parity, mask agreement, memory and controlled speed measurements."
+      ],
+      "duplicate_of": [
+        770
+      ],
+      "selected_for_current_batch": false,
+      "delivery_state": "review_recommendation_only",
+      "comparison_revision": "ba6db50a86af940f5de9a5869946abb90f75966a",
+      "patch_sha256": "bf751a57eee095d39dd2a822cce3967f8a81262b035fe5216f43d703fb16cc2d",
+      "discussion_sha256": "1465417a8a7b5483a17f20e0f1a34ce9f2e366b81b57c1ef224c10e3cae9a2d5",
+      "discussion_counts": {
+        "issue_comments": 0,
+        "reviews": 0,
+        "review_comments": 0
+      },
+      "discussion_considered": true,
+      "review_limits": [
+        "Static patch/current-caller review; no untrusted PR code executed. Hardware/performance/feature claims remain unqualified unless separately stated."
+      ]
+    },
+    {
+      "number": 589,
+      "title": "Add support for BMP/PNG when loading image sequence from a folder",
+      "author": "Petingo",
+      "url": "https://github.com/facebookresearch/sam2/pull/589",
+      "head_sha": "cda09300a87739e6d8daedf078caac7c66dd246a",
+      "base_ref": "main",
+      "base_sha": "2b90b9f5ceec907a1c18123530e92e794ad901a4",
+      "draft": false,
+      "changed_paths": [
+        "sam2/utils/misc.py"
+      ],
+      "disposition": "defer",
+      "reason": "PNG/BMP frame directories are useful and overlap #183. Extend one canonical loader and all callers/tests; avoid adding a compatibility wrapper merely to retain JPEG-specific naming.",
+      "current_fork_comparison": "PNG/BMP frame directories are useful and overlap #183. Extend one canonical loader and all callers/tests; avoid adding a compatibility wrapper merely to retain JPEG-specific naming.",
+      "tests_needed": [
+        "Mixed extensions/case, RGB conversion, numeric ordering, empty folders and eager/async CPU/MPS parity."
+      ],
+      "duplicate_of": [
+        183
+      ],
+      "selected_for_current_batch": false,
+      "delivery_state": "review_recommendation_only",
+      "comparison_revision": "ba6db50a86af940f5de9a5869946abb90f75966a",
+      "patch_sha256": "674ea60546758f510365bf09685a075b6ffaf517bf49a2f05f6abad8ccf87880",
+      "discussion_sha256": "1465417a8a7b5483a17f20e0f1a34ce9f2e366b81b57c1ef224c10e3cae9a2d5",
+      "discussion_counts": {
+        "issue_comments": 0,
+        "reviews": 0,
+        "review_comments": 0
+      },
+      "discussion_considered": true,
+      "review_limits": [
+        "Static patch/current-caller review; no untrusted PR code executed. Hardware/performance/feature claims remain unqualified unless separately stated."
+      ]
+    },
+    {
+      "number": 578,
+      "title": "Improve Hugging Face Documentation for SAM2",
+      "author": "ronanvirmani",
+      "url": "https://github.com/facebookresearch/sam2/pull/578",
+      "head_sha": "a86784235ca68a57ee8301535b16a75ea10fa21c",
+      "base_ref": "main",
+      "base_sha": "2b90b9f5ceec907a1c18123530e92e794ad901a4",
+      "draft": false,
+      "changed_paths": [
+        "README.md"
+      ],
+      "disposition": "out_of_scope_or_invalid",
+      "reason": "The expanded HF guide claims reduced local storage and that revision=main guarantees stability; downloads are still cached and main is mutable. It also documents revision forwarding before builders support it. Keep concise correct cache/pinned-revision guidance after the HF API fix.",
+      "current_fork_comparison": "The expanded HF guide claims reduced local storage and that revision=main guarantees stability; downloads are still cached and main is mutable. It also documents revision forwarding before builders support it. Keep concise correct cache/pinned-revision guidance after the HF API fix.",
+      "tests_needed": [
+        "Confirm supported hub kwargs and demonstrate immutable revision/cache behavior before documenting examples."
+      ],
+      "duplicate_of": [
+        285
+      ],
+      "selected_for_current_batch": false,
+      "delivery_state": "review_recommendation_only",
+      "comparison_revision": "ba6db50a86af940f5de9a5869946abb90f75966a",
+      "patch_sha256": "904c5e8c1a3fd26f8f9eeca27c0490e7d2b98538a778ae6fab8c33388d583b14",
+      "discussion_sha256": "1465417a8a7b5483a17f20e0f1a34ce9f2e366b81b57c1ef224c10e3cae9a2d5",
+      "discussion_counts": {
+        "issue_comments": 0,
+        "reviews": 0,
+        "review_comments": 0
+      },
+      "discussion_considered": true,
+      "review_limits": [
+        "Static patch/current-caller review; no untrusted PR code executed. Hardware/performance/feature claims remain unqualified unless separately stated."
+      ]
+    },
+    {
+      "number": 567,
+      "title": "fix: add workaround for mps inference",
+      "author": "wep21",
+      "url": "https://github.com/facebookresearch/sam2/pull/567",
+      "head_sha": "924cec368d1d6ee7314d6af8995054fdc11adf1e",
+      "base_ref": "main",
+      "base_sha": "2b90b9f5ceec907a1c18123530e92e794ad901a4",
+      "draft": false,
+      "changed_paths": [
+        "sam2/modeling/sam/transformer.py"
+      ],
+      "disposition": "already_covered",
+      "reason": "The historical MPS mixed-dtype failure is addressed by the fork float32 inference and stored-video-memory policy, with attention/image/video parity tests. Unconditional k/v casts would also alter CUDA/training behavior without a current reproduction.",
+      "current_fork_comparison": "The historical MPS mixed-dtype failure is addressed by the fork float32 inference and stored-video-memory policy, with attention/image/video parity tests. Unconditional k/v casts would also alter CUDA/training behavior without a current reproduction.",
+      "tests_needed": [
+        "Existing MPS float32 and RoPE parity evidence; require a new precise failing dtype case before widening casts."
+      ],
+      "duplicate_of": [],
+      "selected_for_current_batch": false,
+      "delivery_state": "review_recommendation_only",
+      "comparison_revision": "ba6db50a86af940f5de9a5869946abb90f75966a",
+      "patch_sha256": "fbd85f519fb793c0483bcc75cdf2bd4638b299be592d470c005e76e30d8a10fe",
+      "discussion_sha256": "eaa39bcbd81c5ee931e706ef9a1a129f8f617d7adfe386a7c9929a0a44155435",
+      "discussion_counts": {
+        "issue_comments": 3,
+        "reviews": 0,
+        "review_comments": 0
+      },
+      "discussion_considered": true,
+      "review_limits": [
+        "Static patch/current-caller review; no untrusted PR code executed. Hardware/performance/feature claims remain unqualified unless separately stated."
+      ]
+    },
+    {
+      "number": 561,
+      "title": "The case with only one small island is not covered",
+      "author": "vinnik-dmitry07",
+      "url": "https://github.com/facebookresearch/sam2/pull/561",
+      "head_sha": "5f2258a67fc7a93c9ae0ec088d8e0f08f7e56a08",
+      "base_ref": "main",
+      "base_sha": "2b90b9f5ceec907a1c18123530e92e794ad901a4",
+      "draft": false,
+      "changed_paths": [
+        "sam2/utils/amg.py"
+      ],
+      "disposition": "out_of_scope_or_invalid",
+      "reason": "Changing the early return to len(small_regions)<=1 skips a valid single small island or hole. Current cleanup correctly removes one tiny island beside a large component and keeps a largest component if all islands are tiny.",
+      "current_fork_comparison": "Changing the early return to len(small_regions)<=1 skips a valid single small island or hole. Current cleanup correctly removes one tiny island beside a large component and keeps a largest component if all islands are tiny.",
+      "tests_needed": [
+        "Retain existing one-small-region semantics; no adoption of the incorrect early return."
+      ],
+      "duplicate_of": [],
+      "selected_for_current_batch": false,
+      "delivery_state": "review_recommendation_only",
+      "comparison_revision": "ba6db50a86af940f5de9a5869946abb90f75966a",
+      "patch_sha256": "adee6193498e520747e9006bc2814af99953d2f1b8bfd5a1ddbb54de7200a3ec",
+      "discussion_sha256": "1465417a8a7b5483a17f20e0f1a34ce9f2e366b81b57c1ef224c10e3cae9a2d5",
+      "discussion_counts": {
+        "issue_comments": 0,
+        "reviews": 0,
+        "review_comments": 0
+      },
+      "discussion_considered": true,
+      "review_limits": [
+        "Static patch/current-caller review; no untrusted PR code executed. Hardware/performance/feature claims remain unqualified unless separately stated."
+      ]
+    },
+    {
+      "number": 549,
+      "title": "Demo (backend): pytorch 2.5.1 docker image does not have ffmpeg installed in conda env so no need to remove",
+      "author": "imprs",
+      "url": "https://github.com/facebookresearch/sam2/pull/549",
+      "head_sha": "008c2499a8b1ae10e97146979faecf754be62983",
+      "base_ref": "main",
+      "base_sha": "2b90b9f5ceec907a1c18123530e92e794ad901a4",
+      "draft": false,
+      "changed_paths": [
+        "backend.Dockerfile"
+      ],
+      "disposition": "already_covered",
+      "reason": "A review confirms this fixed the old image, but the fork now removes the obsolete Conda ffmpeg operation entirely. Its historical approval does not justify reintroducing a dead path.",
+      "current_fork_comparison": "A review confirms this fixed the old image, but the fork now removes the obsolete Conda ffmpeg operation entirely. Its historical approval does not justify reintroducing a dead path.",
+      "tests_needed": [
+        "No code replay required."
+      ],
+      "duplicate_of": [
+        676,
+        617,
+        498,
+        513
+      ],
+      "selected_for_current_batch": false,
+      "delivery_state": "review_recommendation_only",
+      "comparison_revision": "ba6db50a86af940f5de9a5869946abb90f75966a",
+      "patch_sha256": "240be4e0050924af0ccc5d95d252b6c8b2b5276216b88b1e18c57bc2297d7f9d",
+      "discussion_sha256": "b4efca3f4de63a04592b9920481624d0b0ee568565ec56230970f5c7b3e0576e",
+      "discussion_counts": {
+        "issue_comments": 2,
+        "reviews": 1,
+        "review_comments": 0
+      },
+      "discussion_considered": true,
+      "review_limits": [
+        "Static patch/current-caller review; no untrusted PR code executed. Hardware/performance/feature claims remain unqualified unless separately stated."
+      ]
+    },
+    {
+      "number": 514,
+      "title": "Update backend.Dockerfile: Forcing PyAV 13.1.0",
+      "author": "ahoman",
+      "url": "https://github.com/facebookresearch/sam2/pull/514",
+      "head_sha": "96fbd3fab7bb1179d907c51b46bf7e16558cfe3a",
+      "base_ref": "main",
+      "base_sha": "2b90b9f5ceec907a1c18123530e92e794ad901a4",
+      "draft": false,
+      "changed_paths": [
+        "backend.Dockerfile"
+      ],
+      "disposition": "duplicate",
+      "reason": "Pinning av13.1.0 is an old workaround for the same absent-side_data demo crash. Keep the supported PyAV range and fix metadata access in #718 instead of forcing an older decoder.",
+      "current_fork_comparison": "Pinning av13.1.0 is an old workaround for the same absent-side_data demo crash. Keep the supported PyAV range and fix metadata access in #718 instead of forcing an older decoder.",
+      "tests_needed": [
+        "Actual PyAV13/current metadata and rotation tests belong with the canonical #718 adaptation."
+      ],
+      "duplicate_of": [
+        718
+      ],
+      "selected_for_current_batch": false,
+      "delivery_state": "review_recommendation_only",
+      "comparison_revision": "ba6db50a86af940f5de9a5869946abb90f75966a",
+      "patch_sha256": "acb73929bdd2b7bb14af343d83e44e849519a93a8e5634041241181babef02db",
+      "discussion_sha256": "59d693e2c7ce63e86d9dec0ceee7ee9b0fbcf7736566dc057b4c3276e60da879",
+      "discussion_counts": {
+        "issue_comments": 1,
+        "reviews": 0,
+        "review_comments": 0
+      },
+      "discussion_considered": true,
+      "review_limits": [
+        "Static patch/current-caller review; no untrusted PR code executed. Hardware/performance/feature claims remain unqualified unless separately stated."
+      ]
+    },
+    {
+      "number": 513,
+      "title": "Update backend.Dockerfile to improve ffmpeg error.",
+      "author": "ahoman",
+      "url": "https://github.com/facebookresearch/sam2/pull/513",
+      "head_sha": "803d299db23812f148fc44e6f9a0ef616f258dbc",
+      "base_ref": "main",
+      "base_sha": "2b90b9f5ceec907a1c18123530e92e794ad901a4",
+      "draft": false,
+      "changed_paths": [
+        "backend.Dockerfile"
+      ],
+      "disposition": "already_covered",
+      "reason": "The old-image ffmpeg removal/symlink changes are superseded by the new system-Python image. Adding libx264-dev alone does not establish PyAV wheel codec support; native PyAV19 libx264 encoding already passed qualification.",
+      "current_fork_comparison": "The old-image ffmpeg removal/symlink changes are superseded by the new system-Python image. Adding libx264-dev alone does not establish PyAV wheel codec support; native PyAV19 libx264 encoding already passed qualification.",
+      "tests_needed": [
+        "Actual container codecs/build can be checked when Docker runtime is available."
+      ],
+      "duplicate_of": [
+        676,
+        549,
+        617,
+        498
+      ],
+      "selected_for_current_batch": false,
+      "delivery_state": "review_recommendation_only",
+      "comparison_revision": "ba6db50a86af940f5de9a5869946abb90f75966a",
+      "patch_sha256": "08da97e0d377f0c878ad37beee2a4e69104885e41b82c4b1fe0b6602bcc60d2a",
+      "discussion_sha256": "8d13f341f9eb2c0604b73df2f0a3e8c084004d013114fe33f891362e03f9abf3",
+      "discussion_counts": {
+        "issue_comments": 2,
+        "reviews": 0,
+        "review_comments": 0
+      },
+      "discussion_considered": true,
+      "review_limits": [
+        "Static patch/current-caller review; no untrusted PR code executed. Hardware/performance/feature claims remain unqualified unless separately stated."
+      ]
+    },
+    {
+      "number": 507,
+      "title": "Fix Typo in sam2/build_sam.py: \u201csucessfully\u201d to \u201csuccessfully\u201d",
+      "author": "kmkkiii",
+      "url": "https://github.com/facebookresearch/sam2/pull/507",
+      "head_sha": "9881143b4f5c193d6013edbb086f9ba7ef2baf2a",
+      "base_ref": "main",
+      "base_sha": "2b90b9f5ceec907a1c18123530e92e794ad901a4",
+      "draft": false,
+      "changed_paths": [
+        "sam2/build_sam.py"
+      ],
+      "disposition": "defer",
+      "reason": "Corrects only the checkpoint-load success log typo. Safe cosmetic follow-up, but it does not repair loading behavior and should not displace the verified correctness fixes.",
+      "current_fork_comparison": "Corrects only the checkpoint-load success log typo. Safe cosmetic follow-up, but it does not repair loading behavior and should not displace the verified correctness fixes.",
+      "tests_needed": [
+        "Formatting/spelling inspection; no exact log-wording test."
+      ],
+      "duplicate_of": [],
+      "selected_for_current_batch": false,
+      "delivery_state": "review_recommendation_only",
+      "comparison_revision": "ba6db50a86af940f5de9a5869946abb90f75966a",
+      "patch_sha256": "8040f0d146306f873d13c431d9f18ab3895a7d6c35880f5c17bf60dfd99da60b",
+      "discussion_sha256": "3ad4a9fb628c98eddf56dcbc1293fc64ef8b7682bb4fbedf33a15926890fbc52",
+      "discussion_counts": {
+        "issue_comments": 2,
+        "reviews": 0,
+        "review_comments": 0
+      },
+      "discussion_considered": true,
+      "review_limits": [
+        "Static patch/current-caller review; no untrusted PR code executed. Hardware/performance/feature claims remain unqualified unless separately stated."
+      ]
+    },
+    {
+      "number": 506,
+      "title": "[sam2][demo][1/x] Remove adding object constraint after popagation",
+      "author": "raedle",
+      "url": "https://github.com/facebookresearch/sam2/pull/506",
+      "head_sha": "d2f83d0d54b256c22be0938a384aed582543e78c",
+      "base_ref": "main",
+      "base_sha": "2b90b9f5ceec907a1c18123530e92e794ad901a4",
+      "draft": true,
+      "changed_paths": [
+        "demo/frontend/src/common/components/annotations/AddObjectButton.tsx",
+        "demo/frontend/src/demo/DemoConfig.tsx",
+        "demo/frontend/src/demo/atoms.ts"
+      ],
+      "disposition": "defer",
+      "reason": "The model supports adding objects after propagation, but the frontend disables the button. This patch enables it and aborts an active stream without awaiting completion; review asynchronous session/tracklet transitions before adopting.",
+      "current_fork_comparison": "The model supports adding objects after propagation, but the frontend disables the button. This patch enables it and aborts an active stream without awaiting completion; review asynchronous session/tracklet transitions before adopting.",
+      "tests_needed": [
+        "Browser add-object after propagation and during streaming, cancellation ordering and server/client object consistency."
+      ],
+      "duplicate_of": [],
+      "selected_for_current_batch": false,
+      "delivery_state": "review_recommendation_only",
+      "comparison_revision": "ba6db50a86af940f5de9a5869946abb90f75966a",
+      "patch_sha256": "f9f2db241ad4ce301b7fe73c4536bd47f1e468aa17da97142f80404797bb6d70",
+      "discussion_sha256": "1465417a8a7b5483a17f20e0f1a34ce9f2e366b81b57c1ef224c10e3cae9a2d5",
+      "discussion_counts": {
+        "issue_comments": 0,
+        "reviews": 0,
+        "review_comments": 0
+      },
+      "discussion_considered": true,
+      "review_limits": [
+        "Static patch/current-caller review; no untrusted PR code executed. Hardware/performance/feature claims remain unqualified unless separately stated."
+      ]
+    },
+    {
+      "number": 498,
+      "title": "Proceed building the demo image even when /opt/conda/bin/ffmpeg does not exist",
+      "author": "tabe",
+      "url": "https://github.com/facebookresearch/sam2/pull/498",
+      "head_sha": "618a47f16d6a3dd1a9958060123a21e64cc37079",
+      "base_ref": "main",
+      "base_sha": "2b90b9f5ceec907a1c18123530e92e794ad901a4",
+      "draft": false,
+      "changed_paths": [
+        "backend.Dockerfile"
+      ],
+      "disposition": "already_covered",
+      "reason": "Changes rm to rm -f for the old /opt/conda/bin/ffmpeg replacement. Current Dockerfile removed that obsolete replacement entirely when changing to the PyTorch 2.14.1 image; applying this line would reintroduce an irrelevant Conda path.",
+      "current_fork_comparison": "backend.Dockerfile has no /opt/conda ffmpeg deletion/symlink, and installs ffmpeg through apt.",
+      "tests_needed": [
+        "No additional test for this superseded line; retain Docker lint/build smoke."
+      ],
+      "duplicate_of": [
+        549,
+        676,
+        513,
+        617
+      ],
+      "selected_for_current_batch": false,
+      "delivery_state": "review_recommendation_only",
+      "comparison_revision": "ba6db50a86af940f5de9a5869946abb90f75966a",
+      "patch_sha256": "809e34c741c9452aa0f0d105f896c89084a6615e94c1756629d0d8db05b02860",
+      "discussion_sha256": "564059551ac2d40ea9905badc4e9c5fdcce1fd430216019bf8ceb3bfebba64f3",
+      "discussion_counts": {
+        "issue_comments": 2,
+        "reviews": 0,
+        "review_comments": 0
+      },
+      "discussion_considered": true,
+      "review_limits": [
+        "Source/patch review; upstream branch was not executed or merged."
+      ]
+    },
+    {
+      "number": 475,
+      "title": "Added support for pathlib Paths when loading videos",
+      "author": "smorrin28",
+      "url": "https://github.com/facebookresearch/sam2/pull/475",
+      "head_sha": "518eb6355830a74d3f7fd3cfc57f9fa7ead9eb23",
+      "base_ref": "main",
+      "base_sha": "c2ec8e14a185632b0a5d8b161928ceb50197eddc",
+      "draft": false,
+      "changed_paths": [
+        "sam2/utils/misc.py"
+      ],
+      "disposition": "adapt_now",
+      "reason": "Normalizes pathlib.Path to str before video dispatch. Current load_video_frames checks isinstance(str), so valid Path directories and MP4 files are rejected before their existing loaders run. Adapt intent once at the shared public dispatch boundary using os.fspath for general PathLike support, preserving bytes video input.",
+      "current_fork_comparison": "Current load_video_frames(Path(...),8,True,compute_device=\"cpu\") reproduced NotImplementedError. Existing JPEG/MP4 loaders already support string paths.",
+      "tests_needed": [
+        "Path and custom os.PathLike for JPEG directory and MP4; unchanged str/bytes support; CPU/MPS storage and invalid path behavior."
+      ],
+      "duplicate_of": [],
+      "selected_for_current_batch": false,
+      "delivery_state": "review_recommendation_only",
+      "comparison_revision": "ba6db50a86af940f5de9a5869946abb90f75966a",
+      "patch_sha256": "42e5aacb77ad9bcde4b359a19cae60f300a9b3bf81af8a82c6bac8922f414612",
+      "discussion_sha256": "a3a257eeb19c75655fc9f1afb2fb6e0d63084c7179833597357098dd627046d1",
+      "discussion_counts": {
+        "issue_comments": 1,
+        "reviews": 0,
+        "review_comments": 0
+      },
+      "discussion_considered": true,
+      "review_limits": [
+        "Source/patch review; upstream branch was not executed or merged."
+      ]
+    },
+    {
+      "number": 472,
+      "title": "Fix typo in documentation",
+      "author": "penguoir",
+      "url": "https://github.com/facebookresearch/sam2/pull/472",
+      "head_sha": "f22f3fcca2741f7c962ef150fc1a7bb7130927b2",
+      "base_ref": "main",
+      "base_sha": "c2ec8e14a185632b0a5d8b161928ceb50197eddc",
+      "draft": false,
+      "changed_paths": [
+        "demo/README.md"
+      ],
+      "disposition": "already_covered",
+      "reason": "Corrects APP_URL to API_URL in demo startup instructions. Immutable current HEAD already contains API_URL, matching app_conf.py, so no new patch is needed.",
+      "current_fork_comparison": "git show ba6db50:demo/README.md confirms API_URL=http://localhost:7263.",
+      "tests_needed": [
+        "Documentation link/example check only."
+      ],
+      "duplicate_of": [],
+      "selected_for_current_batch": false,
+      "delivery_state": "review_recommendation_only",
+      "comparison_revision": "ba6db50a86af940f5de9a5869946abb90f75966a",
+      "patch_sha256": "4040139e9692c5c0137315020f5ee4a5327b9f1c36be37e3f4845261a111bc5b",
+      "discussion_sha256": "025b878f9ffae2262b15197a6e3809c6cf6ca3b7a1434936eab4b16f9f82ff20",
+      "discussion_counts": {
+        "issue_comments": 2,
+        "reviews": 0,
+        "review_comments": 0
+      },
+      "discussion_considered": true,
+      "review_limits": [
+        "Source/patch review; upstream branch was not executed or merged."
+      ]
+    },
+    {
+      "number": 431,
+      "title": "fix demo video downloading: Add explicit DTS/CTS in video export",
+      "author": "loicmagne",
+      "url": "https://github.com/facebookresearch/sam2/pull/431",
+      "head_sha": "5fe982544b9db357c94b851f898f64f43eeb5e1b",
+      "base_ref": "main",
+      "base_sha": "c2ec8e14a185632b0a5d8b161928ceb50197eddc",
+      "draft": false,
+      "changed_paths": [
+        "demo/frontend/src/common/codecs/VideoEncoder.ts"
+      ],
+      "disposition": "needs_design_or_hardware",
+      "reason": "Adds explicit MP4 DTS/CTS to address one-frame browser exports, but increments totalDuration before assigning timestamps, so the first sample starts one duration late, and equates CTS with DTS instead of deriving presentation timestamps from EncodedVideoChunk. Do not copy unvalidated browser codec changes.",
+      "current_fork_comparison": "Current VideoEncoder.ts leaves DTS/CTS to mp4box and maintains an ordered duration queue. Reported Linux corruption is plausible but not reproduced in this review.",
+      "tests_needed": [
+        "Real Chrome/Linux and Safari exports decoded by an independent decoder; first timestamp zero, duration/frame count, variable frame durations and composition/decode ordering."
+      ],
+      "duplicate_of": [],
+      "selected_for_current_batch": false,
+      "delivery_state": "review_recommendation_only",
+      "comparison_revision": "ba6db50a86af940f5de9a5869946abb90f75966a",
+      "patch_sha256": "09549367b855d691346aefc5279aa0661c42464d536f10fcb29de98d3e686511",
+      "discussion_sha256": "d2332c46c399cdd17af0ee833b9cd5c3b6b5305ec768baefe13276d61197ee74",
+      "discussion_counts": {
+        "issue_comments": 2,
+        "reviews": 0,
+        "review_comments": 0
+      },
+      "discussion_considered": true,
+      "review_limits": [
+        "Source/patch review; upstream branch was not executed or merged."
+      ]
+    },
+    {
+      "number": 402,
+      "title": "Update tensordict min version",
+      "author": "bhack",
+      "url": "https://github.com/facebookresearch/sam2/pull/402",
+      "head_sha": "efd07dcfef636a9d59142ad3cc7ba963a9d39565",
+      "base_ref": "main",
+      "base_sha": "c2ec8e14a185632b0a5d8b161928ceb50197eddc",
+      "draft": false,
+      "changed_paths": [
+        "setup.py"
+      ],
+      "disposition": "already_covered",
+      "reason": "Raises tensordict minimum from 0.5.0 to 0.6.0. setup.py already requires tensordict>=0.6.0.",
+      "current_fork_comparison": "Exact requested dependency floor is present in dev extras.",
+      "tests_needed": [
+        "Existing CPU training/checkpoint tests and dependency resolution suffice."
+      ],
+      "duplicate_of": [],
+      "selected_for_current_batch": false,
+      "delivery_state": "review_recommendation_only",
+      "comparison_revision": "ba6db50a86af940f5de9a5869946abb90f75966a",
+      "patch_sha256": "f39947e325f5659b2a2c30e06ab9cc2075c3c20ea35aa1e92b770433e27f77dc",
+      "discussion_sha256": "1465417a8a7b5483a17f20e0f1a34ce9f2e366b81b57c1ef224c10e3cae9a2d5",
+      "discussion_counts": {
+        "issue_comments": 0,
+        "reviews": 0,
+        "review_comments": 0
+      },
+      "discussion_considered": true,
+      "review_limits": [
+        "Source/patch review; upstream branch was not executed or merged."
+      ]
+    },
+    {
+      "number": 397,
+      "title": "Created Export & Import for img embedding",
+      "author": "nickroh",
+      "url": "https://github.com/facebookresearch/sam2/pull/397",
+      "head_sha": "4ff3bb163c662a4c92364bda44c4c9658f684ca1",
+      "base_ref": "main",
+      "base_sha": "c2ec8e14a185632b0a5d8b161928ceb50197eddc",
+      "draft": false,
+      "changed_paths": [
+        "sam2/sam2_image_predictor.py"
+      ],
+      "disposition": "defer",
+      "reason": "Adds import_fields/export_fields for private image features and original size. Useful caching concept, but imported state is accepted without checking backbone/checkpoint identity, tensor shape/device/dtype, batch state or high-resolution feature consistency. Consolidate with #117 into one deliberately specified cache-state API rather than expose raw private fields.",
+      "current_fork_comparison": "Current predictor exposes get_image_embedding but no restore/export contract; mask prediction also needs high_res_feats and correct _orig_hw/_is_batch.",
+      "tests_needed": [
+        "Round-trip prediction equality, invalid/incomplete state rejection, checkpoint/model mismatch, batch-to-single restoration, CPU/MPS transfer and memory ownership."
+      ],
+      "duplicate_of": [
+        117
+      ],
+      "selected_for_current_batch": false,
+      "delivery_state": "review_recommendation_only",
+      "comparison_revision": "ba6db50a86af940f5de9a5869946abb90f75966a",
+      "patch_sha256": "60172c8ccfb483b6d481775c47f2da174e4ce091057ec32ada062db82e3dcd93",
+      "discussion_sha256": "d9162ef6a8c1af8c13c2188d4adee4e58ac30c8d21f836b7f50e853b28f9b06b",
+      "discussion_counts": {
+        "issue_comments": 2,
+        "reviews": 0,
+        "review_comments": 0
+      },
+      "discussion_considered": true,
+      "review_limits": [
+        "Source/patch review; upstream branch was not executed or merged."
+      ]
+    },
+    {
+      "number": 377,
+      "title": "[sam2][frame-loading] Add streaming frame loading on top of lazy loading",
+      "author": "sentfb",
+      "url": "https://github.com/facebookresearch/sam2/pull/377",
+      "head_sha": "fdee8d69f779ee4bdf54255483719e3419cc1311",
+      "base_ref": "main",
+      "base_sha": "c98aa6bea377d5c000cdc80197ce402dbf5304dc",
+      "draft": false,
+      "changed_paths": [
+        "sam2/sam2_video_predictor.py",
+        "sam2/utils/misc.py",
+        "tools/vos_inference.py"
+      ],
+      "disposition": "needs_design_or_hardware",
+      "reason": "Introduces LazyVideoFrameLoader and callback-based streaming, replacing async_loading_frames with frame_load_config. The patch calls self.__len__ before self.images exists; AsyncVideoFrameLoader.get_length returns len(self.images); it also uses Image.load rather than Image.open and tqdm(len(img_paths)) rather than an iterable. It is not mergeable as written, and true growing-stream semantics need a separate predictor lifecycle design.",
+      "current_fork_comparison": "Existing AsyncVideoFrameLoader is fixed-length and covered by frame-loading tests; predictor allocates num_frames and assumes known random-access frame indices.",
+      "tests_needed": [
+        "Streaming lifecycle design plus startup, cancellation, unavailable frames, unknown/fixed lengths, bounded cache, exceptions, reverse tracking and float32 normalization."
+      ],
+      "duplicate_of": [],
+      "selected_for_current_batch": false,
+      "delivery_state": "review_recommendation_only",
+      "comparison_revision": "ba6db50a86af940f5de9a5869946abb90f75966a",
+      "patch_sha256": "791e90396c4e7476241d80c032d59d541f5f00ead25871409d2ad0662726dc5e",
+      "discussion_sha256": "5b3df8f83c1792d0bd9831e5c2156cde9e4fd14a0f9cda0037152f429dc58ca1",
+      "discussion_counts": {
+        "issue_comments": 3,
+        "reviews": 0,
+        "review_comments": 0
+      },
+      "discussion_considered": true,
+      "review_limits": [
+        "Source/patch review; upstream branch was not executed or merged."
+      ]
+    },
+    {
+      "number": 376,
+      "title": "Modify the Dice loss",
+      "author": "zifuwanggg",
+      "url": "https://github.com/facebookresearch/sam2/pull/376",
+      "head_sha": "1a80ead6e7c31b7dbb7ebd4ba61ab8444a6359d4",
+      "base_ref": "main",
+      "base_sha": "c2ec8e14a185632b0a5d8b161928ceb50197eddc",
+      "draft": false,
+      "changed_paths": [
+        "training/loss_fns.py"
+      ],
+      "disposition": "defer",
+      "reason": "Replaces Dice intersection with half the sum-minus-L1-distance, extending the objective to soft targets while preserving binary-target values. This is a training-objective feature, not a demonstrated failure of current binary-mask training, and requires accuracy/convergence evidence before changing a foundation-model loss globally.",
+      "current_fork_comparison": "training/loss_fns.py currently implements the original sigmoid Dice loss; canonical dataset masks and existing CPU smoke use Boolean targets.",
+      "tests_needed": [
+        "Binary loss/gradient equivalence, fractional-label optimum and gradients, multimask/object normalization, empty masks, and a prospective soft-label training evaluation."
+      ],
+      "duplicate_of": [],
+      "selected_for_current_batch": false,
+      "delivery_state": "review_recommendation_only",
+      "comparison_revision": "ba6db50a86af940f5de9a5869946abb90f75966a",
+      "patch_sha256": "0f4d4a9818529a86504a9bc610a65d004f6bf56afbf1d3b307782ef97dc35a4c",
+      "discussion_sha256": "b7143402fa73e448e2d52951dee555ea19cb1d6815ac1aaacf7e90ee99f7fcf0",
+      "discussion_counts": {
+        "issue_comments": 5,
+        "reviews": 0,
+        "review_comments": 0
+      },
+      "discussion_considered": true,
+      "review_limits": [
+        "Source/patch review; upstream branch was not executed or merged."
+      ]
+    },
+    {
+      "number": 370,
+      "title": "Fix training video loading bug",
+      "author": "jayisaking",
+      "url": "https://github.com/facebookresearch/sam2/pull/370",
+      "head_sha": "62cdb7064112d3dd9d2571b675f64df523dc90bf",
+      "base_ref": "main",
+      "base_sha": "c98aa6bea377d5c000cdc80197ce402dbf5304dc",
+      "draft": false,
+      "changed_paths": [
+        "training/dataset/vos_raw_dataset.py",
+        "training/dataset/vos_segment_loader.py"
+      ],
+      "disposition": "adapt_now",
+      "reason": "Filters non-directory video-root entries and nonnumeric mask filenames before integer frame-ID parsing. Current discovery includes .DS_Store and unrelated files; PalettisedPNGSegmentLoader reproduced ValueError on a directory containing .DS_Store. Adapt with explicit directory discovery plus numeric-stem PNG file filtering, not merely numeric stems that could include text or JPEG files.",
+      "current_fork_comparison": "PNGRawDataset uses unfiltered os.listdir for discovered videos; PalettisedPNGSegmentLoader calls int on every entry stem. Explicit file-list semantics should remain deliberate rather than silently hiding requested missing videos.",
+      "tests_needed": [
+        "Synthetic discovered dataset with metadata files and real video directories; valid numeric PNGs with varied zero padding; ignored junk/directories/non-PNG files; real mask/object loading; explicit file-list behavior."
+      ],
+      "duplicate_of": [],
+      "selected_for_current_batch": false,
+      "delivery_state": "review_recommendation_only",
+      "comparison_revision": "ba6db50a86af940f5de9a5869946abb90f75966a",
+      "patch_sha256": "81f69a6c11936407014157a476768d4a28e04a32680034bc828828a9c61e5d47",
+      "discussion_sha256": "1465417a8a7b5483a17f20e0f1a34ce9f2e366b81b57c1ef224c10e3cae9a2d5",
+      "discussion_counts": {
+        "issue_comments": 0,
+        "reviews": 0,
+        "review_comments": 0
+      },
+      "discussion_considered": true,
+      "review_limits": [
+        "Source/patch review; upstream branch was not executed or merged."
+      ]
+    },
+    {
+      "number": 362,
+      "title": "Add HF links to table",
+      "author": "NielsRogge",
+      "url": "https://github.com/facebookresearch/sam2/pull/362",
+      "head_sha": "e8f48ea5635eaa1272f39499216eda87975387dc",
+      "base_ref": "main",
+      "base_sha": "29267c8e3965bb7744a436ab7db555718d20391a",
+      "draft": false,
+      "changed_paths": [
+        "README.md"
+      ],
+      "disposition": "defer",
+      "reason": "Adds direct Hugging Face links to all eight model-table rows and a cross-reference. Valid small documentation improvement, but does not fix loading behavior; existing README already has HF image/video examples and links. Fold into a future model-table documentation pass rather than a standalone functional port.",
+      "current_fork_comparison": "Current README contains the Hugging Face loading section, while table rows retain original config/checkpoint links.",
+      "tests_needed": [
+        "Verify eight intended official model URLs and local anchors when editing docs."
+      ],
+      "duplicate_of": [
+        578
+      ],
+      "selected_for_current_batch": false,
+      "delivery_state": "review_recommendation_only",
+      "comparison_revision": "ba6db50a86af940f5de9a5869946abb90f75966a",
+      "patch_sha256": "bdce5234c430f256f09afeb981912f3565796eb947fed58af5abdd0356fc7b92",
+      "discussion_sha256": "1465417a8a7b5483a17f20e0f1a34ce9f2e366b81b57c1ef224c10e3cae9a2d5",
+      "discussion_counts": {
+        "issue_comments": 0,
+        "reviews": 0,
+        "review_comments": 0
+      },
+      "discussion_considered": true,
+      "review_limits": [
+        "Source/patch review; upstream branch was not executed or merged."
+      ]
+    },
+    {
+      "number": 322,
+      "title": "fix Flash Attention kernel not found issue.",
+      "author": "lzbgt",
+      "url": "https://github.com/facebookresearch/sam2/pull/322",
+      "head_sha": "2272397fd3422bd638e0632ed14449fa7ea7ed75",
+      "base_ref": "main",
+      "base_sha": "7e1596c0b6462eb1d1ba7e1492430fed95023598",
+      "draft": false,
+      "changed_paths": [
+        "sam2/modeling/sam/transformer.py"
+      ],
+      "disposition": "already_covered",
+      "reason": "Replaces the deprecated CUDA sdp_kernel context with sdpa_kernel allowing all three backends. Current transformer no longer contains sdp_kernel_context or manual kernel forcing and calls F.scaled_dot_product_attention directly, leaving dispatch to current PyTorch. Reintroducing its old context is unnecessary.",
+      "current_fork_comparison": "sam2/modeling/sam/transformer.py has direct SDPA calls at both attention classes, without the deprecated wrapper.",
+      "tests_needed": [
+        "Retain existing CPU/MPS attention parity; CUDA-specific kernel behavior still needs CUDA hardware."
+      ],
+      "duplicate_of": [],
+      "selected_for_current_batch": false,
+      "delivery_state": "review_recommendation_only",
+      "comparison_revision": "ba6db50a86af940f5de9a5869946abb90f75966a",
+      "patch_sha256": "65ff6c587153d7b5afb1739c41d400d534360733b15cec9afdd4fffa03b523a5",
+      "discussion_sha256": "091d328dbdf0724117b4d2cfbc4f6ffb1d5c7a51b113a1b789d2ee7ad80bd6fc",
+      "discussion_counts": {
+        "issue_comments": 4,
+        "reviews": 0,
+        "review_comments": 0
+      },
+      "discussion_considered": true,
+      "review_limits": [
+        "Source/patch review; upstream branch was not executed or merged."
+      ]
+    },
+    {
+      "number": 285,
+      "title": "refactor: forward HF cache_dir",
+      "author": "rickstaa",
+      "url": "https://github.com/facebookresearch/sam2/pull/285",
+      "head_sha": "ae14bc0ba9b1d00661c51175a9e48243752b692e",
+      "base_ref": "main",
+      "base_sha": "7e1596c0b6462eb1d1ba7e1492430fed95023598",
+      "draft": false,
+      "changed_paths": [
+        "sam2/build_sam.py"
+      ],
+      "disposition": "adapt_now",
+      "reason": "Forwards cache_dir to hf_hub_download for the old image-only helper. Current shared _hf_download still drops cache_dir even though public HF entrypoints accept kwargs. Adapt once in the canonical shared helper and both public builders; do not leave a duplicate image-only download implementation.",
+      "current_fork_comparison": "Mocked current build_sam2_hf(cache_dir=\"/tmp/test-cache\") called hf_hub_download with repo_id and filename only; both HF builders share this defect.",
+      "tests_needed": [
+        "Both public HF builders and from_pretrained paths forward chosen cache directory to the downloader; default None unchanged; unrelated model/predictor kwargs are not sent to downloader."
+      ],
+      "duplicate_of": [],
+      "selected_for_current_batch": false,
+      "delivery_state": "review_recommendation_only",
+      "comparison_revision": "ba6db50a86af940f5de9a5869946abb90f75966a",
+      "patch_sha256": "34a45f68dcd876ec1918ef8c8bdb4172a771f417efdb5bcdc3c815a2237786de",
+      "discussion_sha256": "df011ea4976091e68586e9264f3de1ac3d5be1149f0cef0fcbc259526f9ea0a8",
+      "discussion_counts": {
+        "issue_comments": 3,
+        "reviews": 1,
+        "review_comments": 0
+      },
+      "discussion_considered": true,
+      "review_limits": [
+        "Source/patch review; upstream branch was not executed or merged."
+      ]
+    },
+    {
+      "number": 272,
+      "title": "Fix the dependencies install command in README.md",
+      "author": "ankitkariryaa",
+      "url": "https://github.com/facebookresearch/sam2/pull/272",
+      "head_sha": "c89786a20236e3c7fc66ee6cdaebb8dde69570f5",
+      "base_ref": "main",
+      "base_sha": "7e1596c0b6462eb1d1ba7e1492430fed95023598",
+      "draft": false,
+      "changed_paths": [
+        "README.md"
+      ],
+      "disposition": "already_covered",
+      "reason": "Replaces shell background operator & with && after cd in old installation instructions. Current README already uses clone && cd followed by pip, so directory transition is sequenced correctly.",
+      "current_fork_comparison": "Current installation snippet has no backgrounded cd command.",
+      "tests_needed": [
+        "No new test; check current fork installation instructions."
+      ],
+      "duplicate_of": [],
+      "selected_for_current_batch": false,
+      "delivery_state": "review_recommendation_only",
+      "comparison_revision": "ba6db50a86af940f5de9a5869946abb90f75966a",
+      "patch_sha256": "0ea383fb68928b76ac7e8bbf4fa188bb3f89c7097c05709d00074237f5782110",
+      "discussion_sha256": "1465417a8a7b5483a17f20e0f1a34ce9f2e366b81b57c1ef224c10e3cae9a2d5",
+      "discussion_counts": {
+        "issue_comments": 0,
+        "reviews": 0,
+        "review_comments": 0
+      },
+      "discussion_considered": true,
+      "review_limits": [
+        "Source/patch review; upstream branch was not executed or merged."
+      ]
+    },
+    {
+      "number": 248,
+      "title": "Fix sorting of filenames with alphanumeric prefixes.",
+      "author": "branyang02",
+      "url": "https://github.com/facebookresearch/sam2/pull/248",
+      "head_sha": "ff80b2d82e0b194322d653666cf6375dda77f45f",
+      "base_ref": "main",
+      "base_sha": "7e1596c0b6462eb1d1ba7e1492430fed95023598",
+      "draft": false,
+      "changed_paths": [
+        "sam2/utils/misc.py"
+      ],
+      "disposition": "defer",
+      "reason": "Sorts filenames using only the first digit run and treats names without digits as zero. This broadens the documented numeric-frame contract but silently creates ties for multiple digit groups and depends on os.listdir order for equal keys. A canonical deterministic naming policy must also cover the VOS CLI and dataset loaders.",
+      "current_fork_comparison": "Current shared JPEG loader intentionally requires integer stems; tools/vos_inference.py also sorts stems as integers.",
+      "tests_needed": [
+        "Numeric-only and prefixed names, multiple digit groups, no digits, duplicates/ties and deterministic ordering shared by API/CLI."
+      ],
+      "duplicate_of": [],
+      "selected_for_current_batch": false,
+      "delivery_state": "review_recommendation_only",
+      "comparison_revision": "ba6db50a86af940f5de9a5869946abb90f75966a",
+      "patch_sha256": "dd8ff6fba7041c1ee2ff6c107c60c973ee67e20553888e1d8e4772e0d3414245",
+      "discussion_sha256": "f82774632cee2f4101c980dd6f4cab3d27d7b4314b8a11e4fd7ae3bc8687055f",
+      "discussion_counts": {
+        "issue_comments": 1,
+        "reviews": 1,
+        "review_comments": 0
+      },
+      "discussion_considered": true,
+      "review_limits": [
+        "Source/patch review; upstream branch was not executed or merged."
+      ]
+    },
+    {
+      "number": 237,
+      "title": "Black boy zeus batchwisevectorization amg utils",
+      "author": "BlackBoyZeus",
+      "url": "https://github.com/facebookresearch/sam2/pull/237",
+      "head_sha": "465e3cb1e063838e790b8b9727b0d51d18efc2e6",
+      "base_ref": "main",
+      "base_sha": "7e1596c0b6462eb1d1ba7e1492430fed95023598",
+      "draft": false,
+      "changed_paths": [
+        "notebooks/automatic_mask_generator_example.ipynb",
+        "notebooks/video_predictor_example.ipynb",
+        "sam2/utils/amg.py",
+        "sam2_configs/sam2_hiera_b+.yaml",
+        "sam2_configs/sam2_hiera_l.yaml",
+        "sam2_configs/sam2_hiera_s.yaml",
+        "sam2_configs/sam2_hiera_t.yaml"
+      ],
+      "disposition": "out_of_scope_or_invalid",
+      "reason": "Adds a separate optimized RLE implementation whose nonzero index matrix has shape [changes,2] but is concatenated with [batch,1] columns, incompatible with arbitrary per-mask run counts. Its hole filler counts all background pixels in each image instead of connected components, changing cleanup semantics. It also includes large notebook/config comment churn duplicated with #207.",
+      "current_fork_comparison": "Current canonical mask_to_rle_pytorch retains correct COCO run lengths; CPU/CUDA cleanup labels actual 8-connected components with per-component areas. New duplicate helpers would not replace callers consistently.",
+      "tests_needed": [
+        "Any future optimization must prove exact RLE decoding, ragged batch run counts, empty/full masks and 8-connected hole/speckle equivalence before performance benchmarking."
+      ],
+      "duplicate_of": [
+        207
+      ],
+      "selected_for_current_batch": false,
+      "delivery_state": "review_recommendation_only",
+      "comparison_revision": "ba6db50a86af940f5de9a5869946abb90f75966a",
+      "patch_sha256": "9c5a648f6b1a53ce00c43e80e7c99b6f531b5bc7f94f7aebd463e620359c975d",
+      "discussion_sha256": "1465417a8a7b5483a17f20e0f1a34ce9f2e366b81b57c1ef224c10e3cae9a2d5",
+      "discussion_counts": {
+        "issue_comments": 0,
+        "reviews": 0,
+        "review_comments": 0
+      },
+      "discussion_considered": true,
+      "review_limits": [
+        "Functional Python patches reviewed; generated notebook outputs and binary assets were not executed. Notebook source cells fetched separately for inspection where available."
+      ]
+    },
+    {
+      "number": 234,
+      "title": "Raise error messages for invalid prompts ",
+      "author": "jhj0517",
+      "url": "https://github.com/facebookresearch/sam2/pull/234",
+      "head_sha": "128929a250feef52c4b7fadf1f90bfdad4174d19",
+      "base_ref": "main",
+      "base_sha": "7e1596c0b6462eb1d1ba7e1492430fed95023598",
+      "draft": false,
+      "changed_paths": [
+        "sam2/sam2_image_predictor.py",
+        "sam2/sam2_video_predictor.py"
+      ],
+      "disposition": "out_of_scope_or_invalid",
+      "reason": "Adds blanket bans on multiple image box+point batches and checks video box.shape[0]>1 before normalization. The latter rejects a valid flat [x1,y1,x2,y2] box because its first dimension is four, and Python lists need not expose shape. Image prompt batches can also be valid when dimensions agree. Reproduce and validate actual shape contracts instead of adopting these restrictions.",
+      "current_fork_comparison": "Current video predictor accepts a single flat four-coordinate box then reshapes to [1,2,2]; image predictor supports batched boxes and point batches through the prompt encoder.",
+      "tests_needed": [
+        "If prompt validation is later centralized: valid flat/list/array/tensor boxes, matching batched image prompts, mismatched dimensions and actionable errors without rejecting supported inputs."
+      ],
+      "duplicate_of": [],
+      "selected_for_current_batch": false,
+      "delivery_state": "review_recommendation_only",
+      "comparison_revision": "ba6db50a86af940f5de9a5869946abb90f75966a",
+      "patch_sha256": "f3a19fda0836ff7f3912349f0172c175733ecb89212c6da9b469de48587ac27b",
+      "discussion_sha256": "1465417a8a7b5483a17f20e0f1a34ce9f2e366b81b57c1ef224c10e3cae9a2d5",
+      "discussion_counts": {
+        "issue_comments": 0,
+        "reviews": 0,
+        "review_comments": 0
+      },
+      "discussion_considered": true,
+      "review_limits": [
+        "Source/patch review; upstream branch was not executed or merged."
+      ]
+    },
+    {
+      "number": 216,
+      "title": "Use skimage.measure.label if failed in importing sam2._C module",
+      "author": "ksugar",
+      "url": "https://github.com/facebookresearch/sam2/pull/216",
+      "head_sha": "f50407f3e49e03ae49f38ca586fdc0dfa6cc0f62",
+      "base_ref": "main",
+      "base_sha": "7e1596c0b6462eb1d1ba7e1492430fed95023598",
+      "draft": false,
+      "changed_paths": [
+        "sam2/utils/misc.py"
+      ],
+      "disposition": "already_covered",
+      "reason": "Adds a skimage fallback after any exception. Fork already implements a tested SciPy CPU fallback preserving independent batches, 8-connectivity, per-pixel area maps and original device. Proposed skimage return_num returns a component count rather than the required area tensor and broad except would obscure unrelated errors.",
+      "current_fork_comparison": "sam2/utils/misc.py:get_connected_components already preserves the complete CUDA/CPU output contract and is tested on CPU/MPS.",
+      "tests_needed": [
+        "Retain current connected-components and mask-cleanup regressions; no second fallback dependency/helper."
+      ],
+      "duplicate_of": [],
+      "selected_for_current_batch": false,
+      "delivery_state": "review_recommendation_only",
+      "comparison_revision": "ba6db50a86af940f5de9a5869946abb90f75966a",
+      "patch_sha256": "b4f82a43e82490c783fc0f3e237228c1348745568f80522b0305ef3790ec4f36",
+      "discussion_sha256": "ecadc471874652ce055117f07cf6e66e74417a1b35865daf81fb5828aee263ef",
+      "discussion_counts": {
+        "issue_comments": 1,
+        "reviews": 0,
+        "review_comments": 0
+      },
+      "discussion_considered": true,
+      "review_limits": [
+        "Source/patch review; upstream branch was not executed or merged."
+      ]
+    },
+    {
+      "number": 214,
+      "title": "Fixes issue #170: allow input frame list",
+      "author": "sam31046",
+      "url": "https://github.com/facebookresearch/sam2/pull/214",
+      "head_sha": "4953d21bdb32077e32ddb7d7243ad48c41c4c3f7",
+      "base_ref": "main",
+      "base_sha": "7e1596c0b6462eb1d1ba7e1492430fed95023598",
+      "draft": false,
+      "changed_paths": [
+        "sam2/utils/misc.py"
+      ],
+      "disposition": "defer",
+      "reason": "Adds an already-sorted list of frame paths as input but accesses video_path[0] before checking empty lists and mixes tabs/indentation in the patch. Explicit frame sequences are a useful separate input contract, not required to fix PathLike directory handling; consolidate with any future streaming/sequence design.",
+      "current_fork_comparison": "Current public video input is MP4 path/bytes or a numeric JPEG directory, with one shared normalization/loading implementation.",
+      "tests_needed": [
+        "If adopted later: empty lists, all path types, missing/mixed-format frames, preserved caller ordering, async behavior, dimensions and device/dtype equivalence."
+      ],
+      "duplicate_of": [
+        377
+      ],
+      "selected_for_current_batch": false,
+      "delivery_state": "review_recommendation_only",
+      "comparison_revision": "ba6db50a86af940f5de9a5869946abb90f75966a",
+      "patch_sha256": "6751b80357f3964df13af7d678cc2caa6ae1b016b5826f1f6ec653060b84b13e",
+      "discussion_sha256": "1465417a8a7b5483a17f20e0f1a34ce9f2e366b81b57c1ef224c10e3cae9a2d5",
+      "discussion_counts": {
+        "issue_comments": 0,
+        "reviews": 0,
+        "review_comments": 0
+      },
+      "discussion_considered": true,
+      "review_limits": [
+        "Source/patch review; upstream branch was not executed or merged."
+      ]
+    },
+    {
+      "number": 207,
+      "title": ".Yaml model config Alterations ( ADDED COMMENTS)",
+      "author": "BlackBoyZeus",
+      "url": "https://github.com/facebookresearch/sam2/pull/207",
+      "head_sha": "c5b8a0dd65d8e238eec275cb56eba4ebf8b2e5ab",
+      "base_ref": "main",
+      "base_sha": "7e1596c0b6462eb1d1ba7e1492430fed95023598",
+      "draft": false,
+      "changed_paths": [
+        "Image_Predictor_Experiments.ipynb",
+        "notebooks/automatic_mask_generator_example.ipynb",
+        "notebooks/video_predictor_example.ipynb",
+        "sam2_configs/sam2_hiera_b+.yaml",
+        "sam2_configs/sam2_hiera_l.yaml",
+        "sam2_configs/sam2_hiera_s.yaml",
+        "sam2_configs/sam2_hiera_t.yaml"
+      ],
+      "disposition": "out_of_scope_or_invalid",
+      "reason": "Adds large notebook output/comment changes and speculative comments to old sam2_configs paths. Comments include calling ImageEncoder.scalp a scaling factor even though it controls feature-level truncation, and describing the config as Python-like rather than YAML. No runtime requirement justifies importing misleading comment/output churn.",
+      "current_fork_comparison": "Canonical configurations now reside under sam2/configs and current code documents feature pyramid behavior. This PR overlaps #237 configuration/notebook churn.",
+      "tests_needed": [
+        "No runtime port recommended; any future documentation corrections should be precise, current and checked against symbol definitions."
+      ],
+      "duplicate_of": [
+        237
+      ],
+      "selected_for_current_batch": false,
+      "delivery_state": "review_recommendation_only",
+      "comparison_revision": "ba6db50a86af940f5de9a5869946abb90f75966a",
+      "patch_sha256": "a0fd4acfb1a8099de5da77ef47eaeaa2a2cef276ffea6ea41d156bc4941eb1e8",
+      "discussion_sha256": "3a7f8127db9c299f011bbb5fee763b0ec0600f09f45a6027d1ecb258c439a6de",
+      "discussion_counts": {
+        "issue_comments": 0,
+        "reviews": 1,
+        "review_comments": 0
+      },
+      "discussion_considered": true,
+      "review_limits": [
+        "All configuration comment patches reviewed; generated notebook outputs/binary payloads excluded. Notebook source cells fetched separately for inspection where available."
+      ]
+    },
+    {
+      "number": 188,
+      "title": "Hydra initialization fix",
+      "author": "royvelich",
+      "url": "https://github.com/facebookresearch/sam2/pull/188",
+      "head_sha": "86576c23d38679ea04d9387bad8a53a05e354631",
+      "base_ref": "main",
+      "base_sha": "778e1127404547429b281d9c9394ddb3652b85a5",
+      "draft": false,
+      "changed_paths": [
+        "sam2/__init__.py",
+        "sam2/build_sam.py",
+        "sam2/sam2_image_predictor.py",
+        "sam2/sam2_video_predictor.py"
+      ],
+      "disposition": "duplicate",
+      "reason": "Hydra already-initialized guard and video HF return behavior are present, while the custom config-path intent overlaps the focused current #771. Its image from_pretrained change returns a bare model instead of the promised SAM2ImagePredictor and must not be copied. Use one canonical filesystem-config implementation for both builders if adopting #771.",
+      "current_fork_comparison": "sam2/__init__.py already checks GlobalHydra.instance().is_initialized; video from_pretrained already returns its builder model; image from_pretrained wraps a predictor correctly.",
+      "tests_needed": [
+        "Existing initialized-Hydra behavior, package config paths and filesystem config paths for image/video; preserve image predictor return type."
+      ],
+      "duplicate_of": [
+        771
+      ],
+      "selected_for_current_batch": false,
+      "delivery_state": "review_recommendation_only",
+      "comparison_revision": "ba6db50a86af940f5de9a5869946abb90f75966a",
+      "patch_sha256": "163d8b0f1b066adf13fc67f195f08dc3acd5ad3d2702453471b3d97436ac4124",
+      "discussion_sha256": "f3c6ef569f6ffbcd50b9be9dc2778df94426a1cea6ec7868859739142669b8a8",
+      "discussion_counts": {
+        "issue_comments": 3,
+        "reviews": 0,
+        "review_comments": 0
+      },
+      "discussion_considered": true,
+      "review_limits": [
+        "Source/patch review; upstream branch was not executed or merged."
+      ]
+    },
+    {
+      "number": 183,
+      "title": "Add support for png in load_video_frames",
+      "author": "ShuoShenDe",
+      "url": "https://github.com/facebookresearch/sam2/pull/183",
+      "head_sha": "73938b4e872b7683e499358d2d9faa01b6715fb6",
+      "base_ref": "main",
+      "base_sha": "7e1596c0b6462eb1d1ba7e1492430fed95023598",
+      "draft": false,
+      "changed_paths": [
+        "notebooks/video_predictor_example_with_png.ipynb",
+        "notebooks/videos/car/0001.png",
+        "notebooks/videos/car/0002.png",
+        "notebooks/videos/car/0003.png",
+        "notebooks/videos/car/0004.png",
+        "notebooks/videos/car/0005.png",
+        "notebooks/videos/car/0006.png",
+        "notebooks/videos/car/0007.png",
+        "notebooks/videos/car/0008.png",
+        "notebooks/videos/car/0009.png",
+        "notebooks/videos/car/0010.png",
+        "notebooks/videos/car/0011.png",
+        "notebooks/videos/car/0012.png",
+        "notebooks/videos/car/0013.png",
+        "notebooks/videos/car/0014.png",
+        "notebooks/videos/car/0015.png",
+        "notebooks/videos/car/0016.png",
+        "notebooks/videos/car/0017.png",
+        "notebooks/videos/car/0018.png",
+        "notebooks/videos/car/0019.png",
+        "notebooks/videos/car/0020.png",
+        "notebooks/videos/car/0021.png",
+        "sam2/utils/misc.py"
+      ],
+      "disposition": "duplicate",
+      "reason": "Adds PNG extension recognition and a duplicate PNG example notebook with 21 image assets. The functional input-format change overlaps broader #589 (BMP/PNG); deduplicate into the existing loader with synthetic fixtures rather than copy a new notebook and binary sample set.",
+      "current_fork_comparison": "Current loader accepts JPEG only but Pillow already converts RGB and normalizes shared image data; PNG intent remains useful and should share code with JPEG/BMP.",
+      "tests_needed": [
+        "One canonical PNG/BMP/JPEG loader: RGB/RGBA/palette/grayscale conversion, sync/async equivalence, frame order, float32 normalization and CPU/MPS storage."
+      ],
+      "duplicate_of": [
+        589
+      ],
+      "selected_for_current_batch": false,
+      "delivery_state": "review_recommendation_only",
+      "comparison_revision": "ba6db50a86af940f5de9a5869946abb90f75966a",
+      "patch_sha256": "761303a4179b677cb2d9caeaf3776cfc5f08ddb1bf0202f29898dbfd0e1b2c56",
+      "discussion_sha256": "dd089ca6e8c2756460649e5c9a7ccd83660e29f370cef8f1c637d02f088b4be5",
+      "discussion_counts": {
+        "issue_comments": 1,
+        "reviews": 1,
+        "review_comments": 0
+      },
+      "discussion_considered": true,
+      "review_limits": [
+        "Functional loader patch reviewed; sample binary PNGs were not decoded and generated notebook outputs excluded. Notebook source cells fetched separately for inspection where available."
+      ]
+    },
+    {
+      "number": 117,
+      "title": "Adding ability to set image_embeddings for predictor",
+      "author": "michaelthoreau",
+      "url": "https://github.com/facebookresearch/sam2/pull/117",
+      "head_sha": "99fa0d50776e6c5aa52370526b012f25825044be",
+      "base_ref": "main",
+      "base_sha": "d1fc9a06862c4385934206bf1371f14e537251e7",
+      "draft": false,
+      "changed_paths": [
+        "notebooks/image_predictor_example.ipynb",
+        "sam2/sam2_image_predictor.py"
+      ],
+      "disposition": "defer",
+      "reason": "Adds getters for high-resolution features and a setter for cached embeddings. Caching is useful but setter accepts incomplete or cross-model state without validation and can omit high_res_feats even though decoding expects them. Consolidate with #397 into one validated cache-state contract rather than expose two competing restoration APIs.",
+      "current_fork_comparison": "Current get_image_embedding is read-only; prediction requires low/high-resolution features plus image size and consistent batch state.",
+      "tests_needed": [
+        "Cache round-trip equality; mandatory high-resolution tensors; shape/dtype/device and checkpoint identity; detached ownership; reset/batch state; CPU/MPS restore."
+      ],
+      "duplicate_of": [
+        397
+      ],
+      "selected_for_current_batch": false,
+      "delivery_state": "review_recommendation_only",
+      "comparison_revision": "ba6db50a86af940f5de9a5869946abb90f75966a",
+      "patch_sha256": "4b4de4317dd574f0411a4e054a3c5df1b4f8dea64659cc2079553f475d4bcbb5",
+      "discussion_sha256": "1465417a8a7b5483a17f20e0f1a34ce9f2e366b81b57c1ef224c10e3cae9a2d5",
+      "discussion_counts": {
+        "issue_comments": 0,
+        "reviews": 0,
+        "review_comments": 0
+      },
+      "discussion_considered": true,
+      "review_limits": [
+        "Source/patch review; upstream branch was not executed or merged."
+      ]
+    },
+    {
+      "number": 95,
+      "title": "Update setup.py, installation instructions and transformer settings",
+      "author": "YasserElj",
+      "url": "https://github.com/facebookresearch/sam2/pull/95",
+      "head_sha": "3b817cc4bf68b1ea336c562edde7ec15dbae9a71",
+      "base_ref": "main",
+      "base_sha": "57bc94b7391e47e5968004a0698f8bf793a544d1",
+      "draft": false,
+      "changed_paths": [
+        "README.md",
+        "sam2/modeling/sam/transformer.py",
+        "setup.py"
+      ],
+      "disposition": "out_of_scope_or_invalid",
+      "reason": "Hardcodes old GPU/Flash/math settings, globally suppresses warnings in an obsolete transformer context, and packages the former sam2_configs directory. Modern fork uses current PyTorch SDPA dispatch and already packages all current YAMLs; adopting these changes would restore obsolete architecture and mask useful warnings.",
+      "current_fork_comparison": "PyTorch floor is 2.14.1; package-data/config loading was validated from an isolated installed wheel; transformer no longer uses those old kernel flags.",
+      "tests_needed": [
+        "No port; retain installed-wheel config and attention parity tests."
+      ],
+      "duplicate_of": [
+        322
+      ],
+      "selected_for_current_batch": false,
+      "delivery_state": "review_recommendation_only",
+      "comparison_revision": "ba6db50a86af940f5de9a5869946abb90f75966a",
+      "patch_sha256": "e57965c340f64124ccb16f6fbadf6b1a3690e01357fd444765f81085c66a0111",
+      "discussion_sha256": "030c80769b12000567e9ed3741f43c809cdca4676c71bcae336b445fe2f54bfe",
+      "discussion_counts": {
+        "issue_comments": 0,
+        "reviews": 5,
+        "review_comments": 0
+      },
+      "discussion_considered": true,
+      "review_limits": [
+        "Source/patch review; upstream branch was not executed or merged."
+      ]
+    },
+    {
+      "number": 78,
+      "title": "Fix typo in `connected_components.cu`",
+      "author": "danielhavir",
+      "url": "https://github.com/facebookresearch/sam2/pull/78",
+      "head_sha": "fb2c8261f348e0fbe3b08edc10aea93897656e38",
+      "base_ref": "main",
+      "base_sha": "7e1596c0b6462eb1d1ba7e1492430fed95023598",
+      "draft": false,
+      "changed_paths": [
+        "sam2/csrc/connected_components.cu",
+        "sam2/utils/misc.py"
+      ],
+      "disposition": "defer",
+      "reason": "Renames the consistently misspelled C++/pybind/Python connected-component symbol. The current spellings agree and no user-visible result is wrong. A coordinated CUDA cleanup could fix this cosmetic binding name, but it requires rebuilding the extension and CUDA execution checks; do not consume an unqualified CUDA change in the initial correctness batch.",
+      "current_fork_comparison": "Both connected_components.cu and Python call get_connected_componnets consistently; CPU fallback does not depend on that symbol.",
+      "tests_needed": [
+        "CUDA extension build/import and actual component labels/areas after any binding rename; preserve Python fallback behavior."
+      ],
+      "duplicate_of": [],
+      "selected_for_current_batch": false,
+      "delivery_state": "review_recommendation_only",
+      "comparison_revision": "ba6db50a86af940f5de9a5869946abb90f75966a",
+      "patch_sha256": "fb8f8a2aa06315328dffa2e03f91dc68ca55e6608a72552b9921fe606f1e5f8e",
+      "discussion_sha256": "5e497956514d253b6c29c8e6ead6d044675a2a2700ebca8df0336a50b16b1c75",
+      "discussion_counts": {
+        "issue_comments": 3,
+        "reviews": 2,
+        "review_comments": 1
+      },
+      "discussion_considered": true,
+      "review_limits": [
+        "Source/patch review; upstream branch was not executed or merged."
+      ]
+    },
+    {
+      "number": 76,
+      "title": "Add Multiple CUDA Compute Capabilities Support",
+      "author": "amitabe",
+      "url": "https://github.com/facebookresearch/sam2/pull/76",
+      "head_sha": "56ef1384d13d184965944cdda4d5f0be18516773",
+      "base_ref": "main",
+      "base_sha": "86827e2fbae8a293f61d51caa70a4b0602c04454",
+      "draft": false,
+      "changed_paths": [
+        "install_multiple_compute_capabilities.sh",
+        "sam2/utils/misc.py",
+        "setup.py"
+      ],
+      "disposition": "out_of_scope_or_invalid",
+      "reason": "Builds separate extension modules per compute capability and unconditionally detects/loads CUDA bindings at import time. It raises without CUDA and would break the fork CPU/MPS promise. PyTorch already provides TORCH_CUDA_ARCH_LIST for a single extension; introducing a second architecture-dispatch system is unnecessary.",
+      "current_fork_comparison": "Current extension remains optional on macOS/CPU; setup uses PyTorch CUDAExtension machinery and shared Python fallback when unavailable.",
+      "tests_needed": [
+        "No port as written; any future multi-architecture CUDA packaging should use the standard PyTorch mechanism and validate mixed-GPU deployments on real hardware."
+      ],
+      "duplicate_of": [],
+      "selected_for_current_batch": false,
+      "delivery_state": "review_recommendation_only",
+      "comparison_revision": "ba6db50a86af940f5de9a5869946abb90f75966a",
+      "patch_sha256": "559cb69c2779d18709ffb7723d93087ce95ad04b74f4f07285ae10008d4f6ac3",
+      "discussion_sha256": "6d41210b741f9624cadf17cff35a6f0955c1f840405521659948311e14cf6658",
+      "discussion_counts": {
+        "issue_comments": 2,
+        "reviews": 1,
+        "review_comments": 0
+      },
+      "discussion_considered": true,
+      "review_limits": [
+        "Source/patch review; upstream branch was not executed or merged."
+      ]
+    },
+    {
+      "number": 66,
+      "title": "fix: correct assertion error message",
+      "author": "CharlesCNorton",
+      "url": "https://github.com/facebookresearch/sam2/pull/66",
+      "head_sha": "cd45d4af9aec295c486dff8769e7d6dd50fb0177",
+      "base_ref": "main",
+      "base_sha": "86827e2fbae8a293f61d51caa70a4b0602c04454",
+      "draft": false,
+      "changed_paths": [
+        "sav_dataset/utils/sav_benchmark.py"
+      ],
+      "disposition": "already_covered",
+      "reason": "Corrects a concatenated assertion error string to include an apostrophe. Current code already says Cannot convert with proper formatting, so the malformed wording is gone.",
+      "current_fork_comparison": "sav_dataset/utils/sav_benchmark.py:_seg2bmap has a complete Cannot convert format string.",
+      "tests_needed": [
+        "No new behavioral test for wording."
+      ],
+      "duplicate_of": [],
+      "selected_for_current_batch": false,
+      "delivery_state": "review_recommendation_only",
+      "comparison_revision": "ba6db50a86af940f5de9a5869946abb90f75966a",
+      "patch_sha256": "11d6e26a86f25f9ffa9050d57cd235dac5c3d910e54ded2e58a3a7a4dbb6dac8",
+      "discussion_sha256": "8db410f01d18fa24907a46e3bd08cfb3827da6b91330384c73395d0371b6d1ec",
+      "discussion_counts": {
+        "issue_comments": 0,
+        "reviews": 1,
+        "review_comments": 0
+      },
+      "discussion_considered": true,
+      "review_limits": [
+        "Source/patch review; upstream branch was not executed or merged."
+      ]
+    },
+    {
+      "number": 46,
+      "title": "Add support for directly running on segmentation on video files.",
+      "author": "rolson24",
+      "url": "https://github.com/facebookresearch/sam2/pull/46",
+      "head_sha": "4538bfeff9a7deae8e50c7c0c211196d1480775a",
+      "base_ref": "main",
+      "base_sha": "86827e2fbae8a293f61d51caa70a4b0602c04454",
+      "draft": false,
+      "changed_paths": [
+        "sam2/sam2_video_predictor.py",
+        "sam2/utils/misc.py",
+        "setup.py"
+      ],
+      "disposition": "already_covered",
+      "reason": "Adds direct video-file inference using TorchVision VideoReader and an av==11 core pin. Fork already provides shared MP4 path/bytes decoding through current PyAV, with real CPU/MPS tracking and decoder tests. TorchVision 0.29 no longer provides the legacy reader path used here; avoid introducing a second decoder and old PyAV pin.",
+      "current_fork_comparison": "load_video_frames dispatches MP4 paths/bytes to the canonical PyAV loader; generated clips and real checkpoint MP4 qualification already pass. Additional AVI/MOV and lazy random-access behavior remain separate features.",
+      "tests_needed": [
+        "Retain MP4 path/bytes RGB/order/dimension/storage tests and real tracking; test AVI/MOV independently if intentionally broadening the supported formats."
+      ],
+      "duplicate_of": [
+        377
+      ],
+      "selected_for_current_batch": false,
+      "delivery_state": "review_recommendation_only",
+      "comparison_revision": "ba6db50a86af940f5de9a5869946abb90f75966a",
+      "patch_sha256": "cf74937408769da2290aa51f394fc0da71c0fa42a56c93b3fe340a2297c395f2",
+      "discussion_sha256": "6bef4331a700b1ac057fa453f82b12593a22597fa11236466bb6b3305dd57a77",
+      "discussion_counts": {
+        "issue_comments": 9,
+        "reviews": 0,
+        "review_comments": 0
+      },
+      "discussion_considered": true,
+      "review_limits": [
+        "Source/patch review; upstream branch was not executed or merged."
+      ]
+    }
+  ],
+  "delivery_checkpoint": {
+    "date": "2026-11-02",
+    "foundation_commit": "1ce370e2b5a01c34e6fcaaf247928acdabc33067",
+    "foundation_pr": "https://github.com/sealad886/sam2/pull/1",
+    "foundation_base": "sealad886/sam2:main",
+    "foundation_commit_signed_and_published": true,
+    "fork_about_updated": true,
+    "own_upstream_pr_778": "closed_with_replacement_link",
+    "other_contributors_prs_modified": false,
+    "curation_publication": "pending",
+    "merge_state": "not_merged",
+    "validation_reported_by": "Primary agent, with focused test source inspection by Agents Orchestrator.",
+    "integration_suite": {
+      "passed": 115,
+      "skipped": 6,
+      "skip_reason": "CUDA hardware unavailable",
+      "host": "physical Apple Silicon Mac",
+      "mps_cases_executed": 12,
+      "hardware_classification_cases": 8
+    },
+    "focused_core_suite": {
+      "passed": 12,
+      "backend": "cpu"
+    },
+    "demo_orientation_suite": {
+      "cases_per_version": 4,
+      "pyav_versions": [
+        "15",
+        "19"
+      ],
+      "rotations_degrees": [
+        0,
+        90,
+        180,
+        -90
+      ]
+    },
+    "ci": {
+      "failed_job": "hosted macOS 14, minimum PyTorch",
+      "attempts": 2,
+      "failure_stage": "first tiny MPS allocation, before SAM 2 execution",
+      "diagnosis": "PyTorch 2.14 advertises unsupported Apple Paravirtual GPU; PyTorch 2.15 rejects it.",
+      "repair_state": "Published; new hosted CI results pending.",
+      "hosted_accelerator_qualification": false,
+      "previous_observation": {
+        "passed_jobs": 5,
+        "total_jobs": 6,
+        "before_repair": true
+      },
+      "repair_commit": "4f499397432323ea8e5b37ffcf03aafe5177bad4",
+      "repair_commit_signed_and_published": true,
+      "repair_independent_review": "No open findings.",
+      "runner_after_repair": "macOS 15",
+      "shared_hardware_preflight": true
+    },
+    "native_mask_batch_qualification": {
+      "artifact": "docs/validation/mps-mask-batches-2026-11-02.json",
+      "passed": true,
+      "image_predictor_sha256": "4b6c35fd5b85a524e3d554ea546b97daf8a7482845cfd60f585c843ee94aa188",
+      "blanket_mps_fallback": false,
+      "batch_vs_serial_iou_each_backend": 1.0,
+      "cpu_vs_mps_nonempty_mask_iou": [
+        1.0,
+        0.9999575623832966
+      ],
+      "point_logit_refinement_areas_cpu": [
+        0,
+        0
+      ],
+      "point_logit_refinement_areas_mps": [
+        0,
+        0
+      ],
+      "empty_case_limit": "Agreement of empty masks is numerical/shape evidence, not foreground accuracy.",
+      "scope_limit": "One image, official tiny checkpoint and fixed mask prompts; no new CUDA, video or AMG qualification."
+    }
+  }
+}

@@ -1,0 +1,280 @@
+{
+  "experiment": "Official tiny-checkpoint mask-only prompt batch qualification",
+  "date": "2026-11-02",
+  "source_state": "working tree includes curated mask-batch fix",
+  "image_predictor_sha256": "4b6c35fd5b85a524e3d554ea546b97daf8a7482845cfd60f585c843ee94aa188",
+  "checkpoint": "checkpoints/sam2.1_hiera_tiny.pt",
+  "checkpoint_sha256": "7402e0d864fa82708a20fbd15bc84245c2f26dff0eb43a4b5b93452deb34be69",
+  "image": "notebooks/images/truck.jpg",
+  "image_sha256": "941715e721c8864324a1425b445ea4dde0498b995c45ddce0141a58971c6ff99",
+  "environment": {
+    "python": "3.12.16",
+    "pytorch": "2.14.1",
+    "torchvision": "0.29.1",
+    "platform": "macOS-27.2-arm64-arm-64bit",
+    "machine": "arm64",
+    "macos": "27.2",
+    "cpu_threads": 6,
+    "blanket_mps_fallback": null,
+    "chip": "Apple M3 Pro"
+  },
+  "settings": {
+    "config": "configs/sam2.1/sam2.1_hiera_t.yaml",
+    "model_input_size": 1024,
+    "dtype": "float32",
+    "initial_point": [
+      [
+        500,
+        375
+      ]
+    ],
+    "initial_point_labels": [
+      1
+    ],
+    "initial_prompt_backend": "cpu",
+    "mask_prompt_offsets": [
+      0.0,
+      0.25
+    ],
+    "multimask_output": false,
+    "synthetic_masks": "all-positive logit8; centered rectangle rows40:200 cols80:176 logit8 on background-8",
+    "gates_fixed_before_sampling": {
+      "each_backend_batch_vs_individual_iou_at_least": 0.99,
+      "each_cpu_vs_mps_batch_mask_iou_at_least": 0.99,
+      "finite_scores_and_logits": true,
+      "correct_output_shapes": true
+    },
+    "empty_mask_iou_convention": "Two empty masks have IoU1; explicit areas distinguish empty agreement from foreground quality",
+    "source_image_shape": [
+      1200,
+      1800,
+      3
+    ],
+    "initial_cpu_point": {
+      "scores": [
+        0.9328926205635071
+      ],
+      "mask_area": 23497,
+      "logit_range": [
+        -16.58597183227539,
+        6.743352890014648
+      ],
+      "logits_sha256": "1b39878ef9f3cbdff956085876c97a6e4b2d35c87313eb553812073e46fb8baa"
+    }
+  },
+  "initial_attempt": {
+    "disposition": "Extra nonempty-mask assertion stopped on CPU; individual and batched CPU predictions were both legitimately empty, with max logit difference4.3e-6. Required0.99/finite/shape gates unchanged."
+  },
+  "backends": {
+    "cpu": {
+      "cpu_point_refinement": {
+        "mask_input_shape": [
+          2,
+          1,
+          256,
+          256
+        ],
+        "output_shapes": [
+          [
+            2,
+            1,
+            1200,
+            1800
+          ],
+          [
+            2,
+            1
+          ],
+          [
+            2,
+            1,
+            256,
+            256
+          ]
+        ],
+        "batch_vs_individual_iou": [
+          1.0,
+          1.0
+        ],
+        "batch_vs_individual_max_score_difference": 1.4921397450962104e-12,
+        "batch_vs_individual_max_logit_difference": 4.291534423828125e-06,
+        "scores": [
+          [
+            1.9348550495124073e-07
+          ],
+          [
+            1.9386541794119694e-07
+          ]
+        ],
+        "mask_areas": [
+          0,
+          0
+        ],
+        "finite_scores_and_logits": true
+      },
+      "synthetic_masks": {
+        "mask_input_shape": [
+          2,
+          1,
+          256,
+          256
+        ],
+        "output_shapes": [
+          [
+            2,
+            1,
+            1200,
+            1800
+          ],
+          [
+            2,
+            1
+          ],
+          [
+            2,
+            1,
+            256,
+            256
+          ]
+        ],
+        "batch_vs_individual_iou": [
+          1.0,
+          1.0
+        ],
+        "batch_vs_individual_max_score_difference": 6.766640581190586e-10,
+        "batch_vs_individual_max_logit_difference": 4.5299530029296875e-06,
+        "scores": [
+          [
+            0.00011869976879097521
+          ],
+          [
+            1.3041892543697031e-06
+          ]
+        ],
+        "mask_areas": [
+          27,
+          23564
+        ],
+        "finite_scores_and_logits": true
+      }
+    },
+    "mps": {
+      "cpu_point_refinement": {
+        "mask_input_shape": [
+          2,
+          1,
+          256,
+          256
+        ],
+        "output_shapes": [
+          [
+            2,
+            1,
+            1200,
+            1800
+          ],
+          [
+            2,
+            1
+          ],
+          [
+            2,
+            1,
+            256,
+            256
+          ]
+        ],
+        "batch_vs_individual_iou": [
+          1.0,
+          1.0
+        ],
+        "batch_vs_individual_max_score_difference": 7.531752999057062e-13,
+        "batch_vs_individual_max_logit_difference": 3.0994415283203125e-06,
+        "scores": [
+          [
+            1.9348493651705212e-07
+          ],
+          [
+            1.938674500934212e-07
+          ]
+        ],
+        "mask_areas": [
+          0,
+          0
+        ],
+        "finite_scores_and_logits": true
+      },
+      "synthetic_masks": {
+        "mask_input_shape": [
+          2,
+          1,
+          256,
+          256
+        ],
+        "output_shapes": [
+          [
+            2,
+            1,
+            1200,
+            1800
+          ],
+          [
+            2,
+            1
+          ],
+          [
+            2,
+            1,
+            256,
+            256
+          ]
+        ],
+        "batch_vs_individual_iou": [
+          1.0,
+          1.0
+        ],
+        "batch_vs_individual_max_score_difference": 3.751665644813329e-12,
+        "batch_vs_individual_max_logit_difference": 3.337860107421875e-06,
+        "scores": [
+          [
+            0.00011869953596033156
+          ],
+          [
+            1.3041903912380803e-06
+          ]
+        ],
+        "mask_areas": [
+          27,
+          23563
+        ],
+        "finite_scores_and_logits": true
+      }
+    }
+  },
+  "cpu_vs_mps": {
+    "cpu_point_refinement": {
+      "mask_iou": [
+        1.0,
+        1.0
+      ],
+      "max_score_difference": 2.0321522242738865e-12,
+      "max_logit_difference": 9.298324584960938e-06
+    },
+    "synthetic_masks": {
+      "mask_iou": [
+        1.0,
+        0.9999575623832966
+      ],
+      "max_score_difference": 2.3283064365386963e-10,
+      "max_logit_difference": 1.2159347534179688e-05
+    }
+  },
+  "limitations": [
+    "One image, tiny checkpoint and four fixed mask prompts; not dataset accuracy or a performance benchmark",
+    "Empty agreement alone does not establish foreground mask quality; areas and numerical differences are reported",
+    "No CUDA validation or additional video/AMG qualification in this experiment"
+  ],
+  "passed": true,
+  "elapsed_seconds": 28.751870334002888,
+  "base_revision": "1ce370e2b5a01c34e6fcaaf247928acdabc33067"
+}
