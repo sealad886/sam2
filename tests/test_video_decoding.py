@@ -15,13 +15,11 @@ av = pytest.importorskip("av")
 
 
 @pytest.mark.parametrize("as_bytes", [False, True])
-@pytest.mark.parametrize("backend", ["cpu", "mps"])
+@pytest.mark.parametrize("backend", ["cpu", pytest.param("mps", marks=pytest.mark.mps)])
 @pytest.mark.parametrize("offload", [False, True])
 def test_mp4_paths_and_bytes_preserve_frames_dimensions_and_device(
     tmp_path, as_bytes, backend, offload
 ):
-    if backend == "mps" and not torch.backends.mps.is_available():
-        pytest.skip("MPS unavailable")
     path = tmp_path / "clip.mp4"
     values = [(40, 80, 120), (100, 140, 180), (180, 120, 60)]
     with av.open(str(path), "w") as container:

@@ -19,10 +19,8 @@ from sam2.utils.misc import (
 from sam2.utils.transforms import SAM2Transforms
 
 
-@pytest.fixture(params=["cpu", "mps", "cuda"])
+@pytest.fixture(params=["cpu", pytest.param("mps", marks=pytest.mark.mps), "cuda"])
 def device(request):
-    if request.param == "mps" and not torch.backends.mps.is_available():
-        pytest.skip("MPS hardware unavailable")
     if request.param == "cuda" and not torch.cuda.is_available():
         pytest.skip("CUDA hardware unavailable")
     return torch.device(request.param)

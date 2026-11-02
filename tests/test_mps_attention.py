@@ -8,12 +8,56 @@ import copy
 
 import pytest
 import torch
+from conftest import hosted_mps_first_allocation_unavailable
 from sam2.modeling.backbones.hieradet import Hiera
 
 from sam2.modeling.sam.transformer import RoPEAttention
 
 
-@pytest.mark.skipif(not torch.backends.mps.is_available(), reason="MPS unavailable")
+@pytest.mark.parametrize(
+    "platform,github_actions,runner_environment,allocated,unavailable",
+    [
+        ("darwin", "true", "github-hosted", 0, True),
+        ("darwin", "false", "github-hosted", 0, False),
+        ("darwin", "true", "self-hosted", 0, False),
+        ("linux", "true", "github-hosted", 0, False),
+        ("darwin", "true", "github-hosted", 4096, False),
+    ],
+)
+def test_only_hosted_first_allocation_oom_means_unavailable_gpu(
+    platform, github_actions, runner_environment, allocated, unavailable
+):
+    error = RuntimeError(
+        "MPS backend out of memory (MPS allocated: 0 bytes, "
+        "other allocations: 16.00 KiB, max allowed: 7.93 GiB)"
+    )
+    assert (
+        hosted_mps_first_allocation_unavailable(
+            error, allocated, platform, github_actions, runner_environment
+        )
+        is unavailable
+    )
+
+
+@pytest.mark.parametrize(
+    "error",
+    [
+        RuntimeError(
+            "MPS backend out of memory (MPS allocated: 4.00 KiB, other allocations: 16.00 KiB, max allowed: 7.93 GiB)"
+        ),
+        ValueError(
+            "MPS backend out of memory (MPS allocated: 0 bytes, other allocations: 16.00 KiB, max allowed: 7.93 GiB)"
+        ),
+        RuntimeError("Unexpected MPS kernel failure"),
+    ],
+)
+def test_other_mps_failures_are_not_hardware_unavailability(error):
+    assert not hosted_mps_first_allocation_unavailable(
+        error, 0, "darwin", "true", "github-hosted"
+    )
+
+
+@pytest.mark.mps
 @pytest.mark.parametrize("tokens", [4, 9])
 def test_mps_rotary_attention_matches_cpu_with_memory_and_object_pointers(tokens):
     torch.manual_seed(42)
@@ -35,7 +79,7 @@ def test_mps_rotary_attention_matches_cpu_with_memory_and_object_pointers(tokens
     torch.testing.assert_close(actual.cpu(), expected, atol=2e-4, rtol=2e-4)
 
 
-@pytest.mark.skipif(not torch.backends.mps.is_available(), reason="MPS unavailable")
+@pytest.mark.mps
 def test_mps_image_backbone_matches_cpu_without_global_operator_fallback():
     torch.manual_seed(42)
     reference = Hiera(

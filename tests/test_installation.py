@@ -92,6 +92,8 @@ def test_sdist_without_cuda_tooling_retains_cuda_sources(tmp_path):
     shutil.copytree(
         ROOT / "sam2", source / "sam2", ignore=shutil.ignore_patterns("__pycache__")
     )
+    (source / "tests").mkdir()
+    shutil.copy2(ROOT / "tests/conftest.py", source / "tests/conftest.py")
     subprocess.run(
         [sys.executable, "setup.py", "sdist", "--dist-dir", str(tmp_path / "dist")],
         cwd=source,
@@ -106,6 +108,7 @@ def test_sdist_without_cuda_tooling_retains_cuda_sources(tmp_path):
             Path(name).relative_to(package.getnames()[0]) for name in package.getnames()
         }
     assert Path("sam2/csrc/connected_components.cu") in paths
+    assert Path("tests/conftest.py") in paths
 
 
 @pytest.mark.parametrize("platform", ["darwin", "linux", "win32"])
