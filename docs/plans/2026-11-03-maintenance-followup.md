@@ -92,3 +92,16 @@ lint-only advisory. Frontend independent review passes, with a separate
 [validation receipt](../validation/frontend-maintenance-2026-11-03.json) recording
 advisory details and bounded browser scope. This dependency refresh does not
 establish a live model-backed browser session or upload/export acceptance.
+
+## Hosted CI correction
+
+Initial publication created fork PRs #4 and #5. PR #4 passed all six checks.
+PR #5's frontend, formatting and CPU checkpoint passed; its four contract jobs
+exposed a root-level Finder metadata exclusion bug in the new qualification
+command. The Mac's global Git ignore file had masked the original fixture.
+Use explicit Git glob semantics for root and nested `.DS_Store` paths, and
+disable global excludes only in the temporary test repository. The strengthened
+test reproduces the failure before the fix and all 20 gate cases pass after it.
+Neural inference source and frontend dependencies are unchanged by this repair.
+The initial source-hash validation receipts remain historical evidence; final
+clean-commit qualification and current hosted results are recorded on the PR.

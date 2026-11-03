@@ -43,7 +43,7 @@ def source_revision(repository):
         "--untracked-files=all",
         "--",
         ".",
-        ":(exclude)**/.DS_Store",
+        ":(exclude,glob)**/.DS_Store",
     ):
         raise RuntimeError("Qualification requires a clean committed checkout")
     return {"commit": git("rev-parse", "HEAD"), "tree": git("rev-parse", "HEAD^{tree}")}

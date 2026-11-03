@@ -234,6 +234,7 @@ def test_source_requires_commit_and_ignores_finder_metadata(tmp_path):
         )
 
     git("init", "-q")
+    git("config", "core.excludesFile", "/dev/null")
     git(
         "-c",
         "user.name=Qualification test",
@@ -247,6 +248,8 @@ def test_source_requires_commit_and_ignores_finder_metadata(tmp_path):
         "test fixture",
     )
     (tmp_path / ".DS_Store").write_bytes(b"Finder metadata")
+    (tmp_path / "nested").mkdir()
+    (tmp_path / "nested" / ".DS_Store").write_bytes(b"Finder metadata")
     assert qualification.source_revision(tmp_path)["commit"]
     (tmp_path / "uncommitted.py").write_text("pass\n")
     with pytest.raises(RuntimeError, match="clean committed checkout"):
