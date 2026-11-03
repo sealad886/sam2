@@ -1,0 +1,143 @@
+{
+  "schema_version": 1,
+  "date": "2026-11-03",
+  "scope": "Reviewed maintenance source on physical Apple M3 Pro; bundled tiny-checkpoint regression, not dataset accuracy",
+  "source_base": "874f693b8a405015a6cb0c4aa7876010d16bfa28",
+  "source_sha256": {
+    "sam2/build_sam.py": "779381995bf21b20afbdc2bbe94f50c78f6ba1023d3bf35783161e602f1eb743",
+    "sam2/utils/misc.py": "2bf34fbd9c0995b844f49be2251064f55de040ef6604a70bfcb9d545304ac005",
+    "sam2/automatic_mask_generator.py": "f18f1b254d4fc5f6644a9bc59808fa82de9cb403320b41ed8666656e6b7b6c50",
+    "sam2/sam2_image_predictor.py": "d23cfed69c25200c8e17d344c286a3567eb268fbd4c0228af8dacf610126c85f",
+    "sam2/sam2_video_predictor.py": "e04dedddee2e2aefa511d7c1f4d3cfd13f4e393141d60ef012ade535817a1fc6",
+    "training/dataset/vos_raw_dataset.py": "6a828c03fe5f91f9430282ca9ba5a688859107492b0112338d6284e4d861ac74",
+    "training/dataset/vos_segment_loader.py": "fbe150e377f3bb8ff0e3a0e801c1298f4ed00b812e581343ac218796def1d0a9",
+    "tests/test_loading_regressions.py": "fd35e427eeedf35a47729ca94c4d59319accaf07a389a64cb8af0a53564696cd",
+    "tools/qualify_release.py": "55fe95057ecb77e554985b04340355a8c2b3175447b0a7928ecd0c1e73e4807d",
+    "tests/test_release_qualification.py": "adb75989dcac8b401a702488c38e97f15eeac57cdf003f49b30d5e1c8cd82043"
+  },
+  "fallback": "unset",
+  "results": [
+    {
+      "pytorch": "2.14.1",
+      "torchvision": "0.29.1",
+      "environment": {
+        "machine": "arm64",
+        "macos": "27.2",
+        "platform": "macOS-27.2-arm64-arm-64bit",
+        "python": "3.12.16",
+        "pytorch": "2.14.1",
+        "cpu_threads": 6,
+        "chip": "Apple M3 Pro",
+        "ram_bytes": "38654705664"
+      },
+      "tests": {
+        "passed": 174,
+        "skipped": [
+          {
+            "test": "test_components_preserve_connectivity_areas_batch_and_device[cuda-False]",
+            "reason": "CUDA hardware unavailable"
+          },
+          {
+            "test": "test_components_preserve_connectivity_areas_batch_and_device[cuda-True]",
+            "reason": "CUDA hardware unavailable"
+          },
+          {
+            "test": "test_missing_cuda_extension_retains_cleanup",
+            "reason": "CUDA unavailable"
+          },
+          {
+            "test": "test_holes_and_sprinkles_are_processed_without_cuda_extension[cuda]",
+            "reason": "CUDA hardware unavailable"
+          },
+          {
+            "test": "test_jpeg_loading_is_float32_and_matches_cpu[cuda-False]",
+            "reason": "CUDA hardware unavailable"
+          },
+          {
+            "test": "test_jpeg_loading_is_float32_and_matches_cpu[cuda-True]",
+            "reason": "CUDA hardware unavailable"
+          }
+        ]
+      },
+      "checkpoint_sha256": "7402e0d864fa82708a20fbd15bc84245c2f26dff0eb43a4b5b93452deb34be69",
+      "passed": true,
+      "agreement": {
+        "image_iou": 1.0,
+        "automatic_matched_fraction": 1.0,
+        "minimum_video_iou": 0.9997682502896872
+      },
+      "gates": {
+        "image_iou_at_least_0.99": true,
+        "automatic_fraction_at_least_0.90_at_iou_0.95": true,
+        "video_iou_at_least_0.98": true,
+        "three_repeated_sessions": true,
+        "live_memory_growth_at_most_16_mib": true
+      },
+      "live_memory_growth_bytes": 0
+    },
+    {
+      "pytorch": "2.15.0",
+      "torchvision": "0.29.2",
+      "environment": {
+        "machine": "arm64",
+        "macos": "27.2",
+        "platform": "macOS-27.2-arm64-arm-64bit",
+        "python": "3.12.16",
+        "pytorch": "2.15.0",
+        "cpu_threads": 6,
+        "chip": "Apple M3 Pro",
+        "ram_bytes": "38654705664"
+      },
+      "tests": {
+        "passed": 174,
+        "skipped": [
+          {
+            "test": "test_components_preserve_connectivity_areas_batch_and_device[cuda-False]",
+            "reason": "CUDA hardware unavailable"
+          },
+          {
+            "test": "test_components_preserve_connectivity_areas_batch_and_device[cuda-True]",
+            "reason": "CUDA hardware unavailable"
+          },
+          {
+            "test": "test_missing_cuda_extension_retains_cleanup",
+            "reason": "CUDA unavailable"
+          },
+          {
+            "test": "test_holes_and_sprinkles_are_processed_without_cuda_extension[cuda]",
+            "reason": "CUDA hardware unavailable"
+          },
+          {
+            "test": "test_jpeg_loading_is_float32_and_matches_cpu[cuda-False]",
+            "reason": "CUDA hardware unavailable"
+          },
+          {
+            "test": "test_jpeg_loading_is_float32_and_matches_cpu[cuda-True]",
+            "reason": "CUDA hardware unavailable"
+          }
+        ]
+      },
+      "checkpoint_sha256": "7402e0d864fa82708a20fbd15bc84245c2f26dff0eb43a4b5b93452deb34be69",
+      "passed": true,
+      "agreement": {
+        "image_iou": 1.0,
+        "automatic_matched_fraction": 1.0,
+        "minimum_video_iou": 0.9997682502896872
+      },
+      "gates": {
+        "image_iou_at_least_0.99": true,
+        "automatic_fraction_at_least_0.90_at_iou_0.95": true,
+        "video_iou_at_least_0.98": true,
+        "three_repeated_sessions": true,
+        "live_memory_growth_at_most_16_mib": true
+      },
+      "live_memory_growth_bytes": 0
+    }
+  ],
+  "limits": [
+    "Working-tree source is identified by hashes; release acceptance additionally requires clean committed-source tools.qualify_release",
+    "No CUDA execution or training qualification",
+    "No larger checkpoints or long videos",
+    "No package, tag or release publication"
+  ]
+}

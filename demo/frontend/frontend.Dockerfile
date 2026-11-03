@@ -1,5 +1,5 @@
 # Stage 1: Build Stage
-FROM node:22.9.0 AS build
+FROM node:24.22.2 AS build
 
 WORKDIR /app
 
@@ -8,13 +8,13 @@ COPY package.json ./
 COPY yarn.lock ./
 
 # Install dependencies
-RUN yarn install --frozen-lockfile
+RUN corepack yarn install --frozen-lockfile
 
 # Copy source code
 COPY . .
 
 # Build the application
-RUN yarn build
+RUN corepack yarn build
 
 # Stage 2: Production Stage
 FROM nginx:latest

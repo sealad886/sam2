@@ -195,9 +195,7 @@ export class Panel {
 
   public canvas: HTMLCanvasElement | OffscreenCanvas;
   private context:
-    | CanvasRenderingContext2D
-    | OffscreenCanvasRenderingContext2D
-    | null = null;
+    CanvasRenderingContext2D | OffscreenCanvasRenderingContext2D | null = null;
 
   private name: string;
   private fg: string;

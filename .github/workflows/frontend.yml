@@ -1,0 +1,42 @@
+name: Demo frontend
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  frontend-build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: demo/frontend
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
+        with:
+          node-version: '24.22.2'
+          package-manager-cache: false
+      - name: Install the locked frontend dependencies
+        run: npm exec --yes --package=yarn@1.22.22 -- yarn install --frozen-lockfile --non-interactive
+      - name: Audit production dependencies
+        run: npm exec --yes --package=yarn@1.22.22 -- yarn audit --groups dependencies
+      - name: Generate Relay artifacts
+        run: npm exec --yes --package=yarn@1.22.22 -- yarn relay
+      - name: Lint the frontend
+        run: npm exec --yes --package=yarn@1.22.22 -- yarn lint
+      - name: Build the production frontend
+        run: npm exec --yes --package=yarn@1.22.22 -- yarn build
+      - name: Verify the build preserves the manifest and lockfile
+        run: git diff --exit-code -- package.json yarn.lock

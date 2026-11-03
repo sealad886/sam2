@@ -1,0 +1,301 @@
+{
+  "schema_version": 1,
+  "date": "2026-11-03",
+  "scope": "Consolidated frontend dependency refresh and supported build toolchain",
+  "source_base_commit": "874f693b8a405015a6cb0c4aa7876010d16bfa28",
+  "credits": {
+    "upstream_dependabot_prs": [
+      "https://github.com/facebookresearch/sam2/pull/755",
+      "https://github.com/facebookresearch/sam2/pull/754",
+      "https://github.com/facebookresearch/sam2/pull/752",
+      "https://github.com/facebookresearch/sam2/pull/750",
+      "https://github.com/facebookresearch/sam2/pull/745",
+      "https://github.com/facebookresearch/sam2/pull/744",
+      "https://github.com/facebookresearch/sam2/pull/743"
+    ],
+    "author": "dependabot[bot]",
+    "approach": "Resolve one current lockfile instead of replaying overlapping upstream lock patches. Package maintainers supplied the upstream security fixes."
+  },
+  "toolchain": {
+    "node": "24.22.2",
+    "yarn": "1.22.22",
+    "platform": "darwin-arm64",
+    "installation": "Isolated official Node archive; no global installation",
+    "node_archive_sha256": "aa9549349e47dffaa42dcf95d6e06ade8c4bdafc980979883b88767670df385a",
+    "node_archive_url": "https://nodejs.org/dist/v24.22.2/node-v24.22.2-darwin-arm64.tar.gz",
+    "node_security_release": "https://nodejs.org/en/blog/vulnerability/october-2026-security-releases",
+    "node_release": "https://nodejs.org/en/blog/release/v24.22.2"
+  },
+  "resolved_versions": {
+    "vite": "6.4.5",
+    "postcss": "8.5.32",
+    "@vitejs/plugin-react": "4.7.0",
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
+    "react-router-dom": "7.18.5",
+    "@graphql-tools/merge": "10.0.8",
+    "@graphql-tools/utils": "13.2.1",
+    "rollup": "4.67.4",
+    "immutable": "5.1.9",
+    "flatted": "3.4.4",
+    "picomatch": "4.0.7",
+    "tmp": "0.2.7",
+    "@babel/core": "7.29.7",
+    "typescript": "5.3.3",
+    "prettier": "3.9.10",
+    "eslint": "8.57.1"
+  },
+  "security_migrations": [
+    {
+      "package": "vite",
+      "from": "5.0.11",
+      "to": "6.4.5",
+      "reason": "Smallest current security-supported major; preserves Babel, React 18 and existing Vite plugin configuration",
+      "primary_sources": [
+        "https://vite.dev/releases",
+        "https://v6.vite.dev/guide/migration.html"
+      ]
+    },
+    {
+      "package": "react-router-dom",
+      "from": "6.21.2",
+      "to": "7.18.5",
+      "advisories": [
+        "GHSA-wrjc-x8rr-h8h6",
+        "GHSA-337j-9hxr-rhxg"
+      ],
+      "patched_floor": "7.18.0",
+      "primary_sources": [
+        "https://github.com/advisories/GHSA-wrjc-x8rr-h8h6",
+        "https://github.com/advisories/GHSA-337j-9hxr-rhxg",
+        "https://github.com/remix-run/react-router/blob/main/CHANGELOG.md"
+      ],
+      "reason": "Fix advisories without forcing an incompatible React upgrade; existing imports and router API are retained"
+    },
+    {
+      "package": "@graphql-tools/merge",
+      "from": "9.0.4",
+      "to": "10.0.8",
+      "advisories": [
+        "GHSA-7mx3-vvmw-hjmv"
+      ],
+      "patched_transitive_floor": "@graphql-tools/utils 12.0.1",
+      "resolved_transitive": "@graphql-tools/utils 13.2.1",
+      "primary_sources": [
+        "https://github.com/advisories/GHSA-7mx3-vvmw-hjmv",
+        "https://the-guild.dev/graphql/tools/docs/schema-merging"
+      ],
+      "reason": "Remove vulnerable utility dependency through its owning direct package; mergeTypeDefs public API still generates unchanged schema and Relay artifacts"
+    }
+  ],
+  "resolutions": [
+    {
+      "pattern": "**/@nrwl/tao/semver",
+      "version": "7.8.6",
+      "reason": "Parent pins 7.3.4; same-major patched release fixes GHSA-c2qf-rxjj-qqgw (patched floor 7.5.2)"
+    },
+    {
+      "pattern": "@tailwindcss/typography/postcss-selector-parser",
+      "version": "6.1.5",
+      "reason": "Parent pins 6.0.10; same-major security patch fixes GHSA-rj75-hqrm-r3gf"
+    },
+    {
+      "pattern": "**/@typescript-eslint/typescript-estree/minimatch",
+      "version": "9.0.7",
+      "reason": "Parent pins 9.0.3; same-major patches fix GHSA-3ppc-4f35-3m26, GHSA-7r86-cg39-jmmj and GHSA-23c5-xmqv-rm74; separate moderate major-11 advisory remains recorded"
+    },
+    {
+      "pattern": "@types/react-relay/@types/react",
+      "version": "18.3.31",
+      "reason": "Wildcard otherwise selects React 19 types incompatible with this React 18 application"
+    },
+    {
+      "pattern": "@types/react-relay/@types/relay-runtime",
+      "version": "14.1.24",
+      "reason": "Wildcard otherwise selects Relay 20 types incompatible with declared Relay types and runtime 16; aligns with direct declared @types/relay-runtime ^14.1.13"
+    },
+    {
+      "pattern": "eslint-plugin-import/eslint-module-utils",
+      "version": "2.8.0",
+      "reason": "Retain original lockfile combination; newer utilities require a node argument the older plugin does not pass"
+    },
+    {
+      "pattern": "eslint-import-resolver-typescript/eslint-module-utils",
+      "version": "2.10.0",
+      "reason": "Retain original lockfile resolver utility combination"
+    }
+  ],
+  "lint_tool_pins": {
+    "eslint-plugin-import": "2.29.1",
+    "eslint-import-resolver-typescript": "3.6.3",
+    "eslint-plugin-react-refresh": "0.4.5",
+    "reason": "Retain original working lint diagnostics while refreshing their dependency security patches. Newer combinations introduce StyleX import false positives or import-plugin API failures. All existing rules and zero-warning requirement remain enabled."
+  },
+  "audit": {
+    "source": "Yarn Classic registry audit, measured on 2026-11-03; counts identify reported dependency paths, not confirmed reachable exploits",
+    "grouping": "Explicit --groups dependencies distinguishes production from full graph; Yarn Classic dev:false flags are not used for classification",
+    "before_full": {
+      "unique_advisories": 80,
+      "affected_dependency_paths_by_severity": {
+        "info": 0,
+        "low": 15,
+        "moderate": 92,
+        "high": 126,
+        "critical": 0
+      },
+      "audited_dependencies": 654
+    },
+    "before_production": {
+      "unique_advisories": 12,
+      "affected_dependency_paths_by_severity": {
+        "info": 0,
+        "low": 1,
+        "moderate": 10,
+        "high": 5,
+        "critical": 0
+      },
+      "audited_dependencies": 111
+    },
+    "after_full": {
+      "unique_advisories": 1,
+      "affected_dependency_paths_by_severity": {
+        "info": 0,
+        "low": 0,
+        "moderate": 6,
+        "high": 0,
+        "critical": 0
+      },
+      "audited_dependencies": 642
+    },
+    "after_production": {
+      "unique_advisories": 0,
+      "affected_dependency_paths_by_severity": {
+        "info": 0,
+        "low": 0,
+        "moderate": 0,
+        "high": 0,
+        "critical": 0
+      },
+      "audited_dependencies": 107
+    },
+    "after_full_exit_code": 4,
+    "after_production_exit_code": 0,
+    "remaining": [
+      {
+        "id": "GHSA-g3hv-75wg-m249",
+        "severity": "moderate",
+        "title": "minimatch has potential denial of service via globparts amplification",
+        "source": "https://github.com/advisories/GHSA-g3hv-75wg-m249",
+        "findings": [
+          {
+            "version": "9.0.7",
+            "paths": [
+              "@typescript-eslint/parser>@typescript-eslint/typescript-estree>minimatch",
+              "@typescript-eslint/eslint-plugin>@typescript-eslint/type-utils>@typescript-eslint/typescript-estree>minimatch",
+              "@typescript-eslint/eslint-plugin>@typescript-eslint/type-utils>@typescript-eslint/utils>@typescript-eslint/typescript-estree>minimatch"
+            ]
+          },
+          {
+            "version": "3.1.5",
+            "paths": [
+              "eslint>minimatch",
+              "eslint>@eslint/eslintrc>minimatch",
+              "eslint>file-entry-cache>flat-cache>rimraf>glob>minimatch"
+            ]
+          }
+        ],
+        "patched_floor": ">=11.0.1",
+        "disposition": "Deferred lint-toolchain migration. Affected packages appear only in development audit; no production advisory. Do not force minimatch 11 into callers pinned to majors 3 and 9. Audit reports this risk; no blanket exception or suppression is configured."
+      }
+    ]
+  },
+  "validation": {
+    "frozen_install": {
+      "node": "24.22.2",
+      "command": "yarn install --frozen-lockfile",
+      "exit_code": 0
+    },
+    "relay": {
+      "command": "yarn relay",
+      "exit_code": 0,
+      "reader_documents": 11,
+      "normalization_documents": 11,
+      "operation_documents": 11,
+      "tracked_generated_changes": 0
+    },
+    "lint": {
+      "command": "yarn lint",
+      "exit_code": 0,
+      "errors": 0,
+      "warnings": 0
+    },
+    "build": {
+      "command": "yarn build",
+      "exit_code": 0,
+      "includes": "TypeScript typecheck and Vite production build"
+    },
+    "whitespace": {
+      "command": "git diff --check",
+      "exit_code": 0
+    }
+  },
+  "browser_smoke": {
+    "browser": "Chrome via isolated Playwright CLI",
+    "server": "Temporary local-only production static server and synthetic GraphQL/video fixture server",
+    "observed": "Unknown path renders Page not found and its observed homepage link navigates to root. A valid synthetic defaultVideo matching the non-null Video schema, bundled bedroom MP4/poster and synthetic startSession response then initialize the natural video editor. Visual inspection confirms the bedroom video frame, generated filmstrip, Play control, Change video button and Object 1. This validates frontend startup/worker decoding and routing with synthetic services; no real backend/model acceptance is claimed.",
+    "synthetic_data": {
+      "defaultVideo": {
+        "id": "fixture-bedroom",
+        "path": "fixture-bedroom.mp4",
+        "posterPath": "fixture-bedroom.jpg",
+        "url": "http://localhost:7263/fixture/bedroom.mp4",
+        "posterUrl": "http://localhost:7263/fixture/bedroom.jpg",
+        "width": 960,
+        "height": 540
+      },
+      "startSession": {
+        "sessionId": "synthetic-browser-session"
+      },
+      "closeSession": {
+        "success": true
+      }
+    },
+    "preexisting_warnings": [
+      "Inter-VariableFont.ttf reference does not match shipped font filename; browser font decode warnings"
+    ],
+    "not_run": [
+      "Live backend/model browser session",
+      "Video upload/segmentation/export flow",
+      "Docker image build",
+      "Controlled frontend performance comparison"
+    ],
+    "cleanup": "Temporary Chrome sessions, Vite preview server and valid fixture servers stopped",
+    "discarded_probe": "An initial defaultVideo:null response violated the actual defaultVideo:Video! schema and caused an editor error; discarded as an invalid fixture, then replaced by the valid video above.",
+    "console_observations": {
+      "font_decode_warnings": 4,
+      "generic_media_network_errors": 2,
+      "app_error_fallback_in_valid_fixture": false,
+      "reason_not_console_clean": "Browser also reports two generic media network errors. Their source is not isolated; do not claim a clean browser console."
+    },
+    "local_visual_evidence": {
+      "screenshot": "page-2026-11-03T07-45-56-168Z.png",
+      "sha256": "7666c7de1c1a99d2fd07efe530272080d24c98126047cac63f03c6dfc3e5f6b0",
+      "distribution": "Local validation evidence only; screenshot is not included in the repository"
+    },
+    "fixture_video_sha256": "1be76d5d19b066e8ad7c565d88a98e11a8f8d456a707508a7aa35390def70e30"
+  },
+  "bounded_risks": [
+    "One moderate lint-only minimatch advisory remains pending coordinated lint-toolchain migration",
+    "ESLint 8 and StyleX 0.6 dependencies have upstream deprecation notices; broader framework migration is deferred",
+    "Production build still warns about a large JavaScript chunk and preexisting font reference; bundle size/performance was not qualified"
+  ],
+  "source_sha256": {
+    "demo/frontend/package.json": "9354aeb09f24d4d13d9d04608075944d3e64f69789c921859d51d7e5ee363e42",
+    "demo/frontend/yarn.lock": "bff3d9e2faa2fe326eda57f7e168c80d692c8a9bf13254f4e4b7ea42b10699e3",
+    "demo/frontend/frontend.Dockerfile": "8d6cc33ab4aeb0fb26bd43b2d2109376cdbc7aef9f8fc6a0d2c01a05d04dae03",
+    "demo/README.md": "e6e19a86c8f804a8933e6d803070809edfe750844bdca6095e3095d636a2c259",
+    "demo/frontend/src/common/error/ErrorUtils.ts": "1060dc224823610f9a617baa5b1a2bbc155a7c53ace597328262d3f4e5b6194d",
+    "demo/frontend/src/debug/stats/Stats.ts": "2f4e7d820dc5eb7775c5eccd9564a6e9beb5e6f7ec4a305a490b07ea1e0e35e2",
+    "demo/frontend/src/demo/DemoConfig.tsx": "d1f3c2dd0425a769c5c595bd2d7c0c6f4b0e74c1a1db4595ef72835dbef8c4a8"
+  }
+}

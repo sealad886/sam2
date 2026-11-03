@@ -7,6 +7,11 @@ real-checkpoint Apple Silicon qualification; see [setup and validation](../INSTA
 It requires the tiny checkpoint and bundled sample assets. The separate
 `sam2/benchmark.py` script measures CUDA compilation performance only.
 
+Before a fork release, a maintainer must also complete the
+[physical Apple Silicon release checklist](../docs/apple-silicon.md#maintainer-release-checklist)
+using `python -m tools.qualify_release --output-dir /tmp/sam2-release-qualification`.
+This manual evidence command does not create a release.
+
 ### Semi-supervised VOS inference
 
 The `vos_inference.py` script can be used to generate predictions for semi-supervised video object segmentation (VOS) evaluation on datasets such as [DAVIS](https://davischallenge.org/index.html), [MOSE](https://henghuiding.github.io/MOSE/) or the SA-V dataset.
