@@ -19,10 +19,7 @@ import WebGLContextError from '@/graphql/errors/WebGLContextError';
 import {deserializeError, type ErrorObject} from 'serialize-error';
 
 export type RenderingErrorType =
-  | 'webgl_context'
-  | 'draw_frame'
-  | 'create_filmstrip'
-  | 'error';
+  'webgl_context' | 'draw_frame' | 'create_filmstrip' | 'error';
 
 export function getRenderErrorType(error?: ErrorObject): RenderingErrorType {
   const deserializedError = deserializeError(error);

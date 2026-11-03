@@ -19,15 +19,18 @@ To install Docker, follow these steps:
 
 ### [OPTIONAL] Installing Node.js and Yarn
 
-To install Node.js and Yarn, follow these steps:
+Use Node.js 24 LTS (24.22.2 or newer) and Yarn Classic 1.22.22, pinned by
+`demo/frontend/package.json`. Install Node.js using the
+[official instructions](https://nodejs.org/en/download/), then run Yarn through
+Corepack from the frontend directory:
 
-1. Go to the [Node.js website](https://nodejs.org/en/download/).
-2. Follow the installation instructions for your operating system.
-3. Once Node.js is installed, open a terminal or command prompt and run the following command to install Yarn:
+```bash
+corepack yarn install --frozen-lockfile
+```
 
-```
-npm install -g yarn
-```
+If your Node.js distribution does not include Corepack, use
+`npm exec --yes --package=yarn@1.22.22 -- yarn install --frozen-lockfile`.
+The frontend uses the security-supported Vite 6.4 release line.
 
 ### [OPTIONAL] Installing Anaconda
 
@@ -134,16 +137,48 @@ If you wish to run the frontend separately (useful for development), follow thes
 2. **Install dependencies:**
 
    ```bash
-   yarn install
+   corepack yarn install --frozen-lockfile
    ```
 
 3. **Start the development server:**
 
    ```bash
-   yarn dev --port 7262
+   corepack yarn dev --port 7262
    ```
 
 This will start the frontend development server on [http://localhost:7262](http://localhost:7262).
+
+### Frontend validation and dependency maintenance
+
+Run `corepack yarn relay`, `corepack yarn lint`, `corepack yarn build`, and
+`corepack yarn audit --groups dependencies` before submitting frontend changes.
+The production dependency audit must pass. The refresh consolidates upstream
+Dependabot PRs [#755](https://github.com/facebookresearch/sam2/pull/755),
+[#754](https://github.com/facebookresearch/sam2/pull/754),
+[#752](https://github.com/facebookresearch/sam2/pull/752),
+[#750](https://github.com/facebookresearch/sam2/pull/750),
+[#745](https://github.com/facebookresearch/sam2/pull/745),
+[#744](https://github.com/facebookresearch/sam2/pull/744), and
+[#743](https://github.com/facebookresearch/sam2/pull/743); their original fixes
+and package maintainers are credited in the validation receipt.
+
+The scoped Yarn resolutions have specific owners. Nx's `semver`,
+typescript-eslint's `minimatch`, and Tailwind Typography's
+`postcss-selector-parser` use patched versions within their existing major
+release because their parents pin vulnerable versions. React Relay's wildcard
+type dependencies are aligned with this application's React 18 and declared
+Relay type versions. The import resolver, import plugin, React Refresh plugin,
+and their two `eslint-module-utils` versions retain the previously working lint
+toolchain; newer combinations change StyleX import diagnostics or fail inside
+the import plugin. These constraints keep the existing lint rules enabled.
+
+The full development dependency audit still reports
+[GHSA-g3hv-75wg-m249](https://github.com/advisories/GHSA-g3hv-75wg-m249) in the
+lint toolchain's `minimatch` versions. Its fix requires major version 11;
+upgrading ESLint/typescript-eslint is a separate toolchain migration. These
+packages do not enter the production dependency graph. See the
+[dependency validation receipt](../docs/validation/frontend-maintenance-2026-11-03.json)
+for the measured audit counts, version choices, and validation limits.
 
 ## Docker Tips
 
