@@ -128,6 +128,43 @@ when hardware is unavailable. Hosted Linux/macOS CI covers minimum/current
 PyTorch and a separate CPU checkpoint workload. Hardware skips do not qualify an
 accelerator.
 
+## Maintainer release checklist
+
+Before publishing a fork release, a maintainer must run the following command
+on a trusted physical Apple Silicon Mac, from the clean committed source
+revision intended for release. Install `.[dev,interactive-demo]` and `pytest`,
+keep the official tiny checkpoint available, and select the project's Python
+environment first:
+
+```bash
+env -u PYTORCH_ENABLE_MPS_FALLBACK python -m tools.qualify_release \
+  --output-dir /tmp/sam2-release-qualification
+```
+
+Use a new output directory for each attempt, outside the source checkout.
+The command rejects a dirty checkout, fallback settings, non-Apple-Silicon
+hosts, virtual GPU reports and unavailable MPS. It checks real MPS allocation,
+arithmetic and synchronization before running the complete test suite and the
+existing CPU/MPS tiny-checkpoint image, automatic-mask and repeated-video
+qualification. Its mask agreement, session and retained-allocation gates are
+unchanged. Only unavailable CUDA hardware may be skipped; missing optional
+dependencies and MPS skips fail this release checklist.
+
+Retain `receipt.json`, `tests.xml`, `tests.log`, `inference.json` and
+`inference.log` with the release's validation evidence. A passing receipt
+identifies the source commit/tree, checkpoint hash, runtime, reported GPU,
+executed test count, CUDA skips and quality results. Source and checkpoint
+changes during the run invalidate the result. A failed attempt keeps its
+failed receipt and available logs; it cannot overwrite an earlier attempt.
+
+Confirm that the receipt's commit matches the final release revision and that
+the fork's required hosted checks pass before publishing. Repeat qualification
+after source changes. Hosted macOS jobs and their hardware skips do not satisfy
+this manual gate. Do not expose a personal self-hosted runner to arbitrary
+public pull-request code. The command neither changes GitHub settings nor
+creates tags, packages or releases; release publication remains a separate
+maintainer action. CUDA and larger or longer workloads need their own evidence.
+
 CUDA extension compilation/execution, CUDA training, compiled VOS, larger
 checkpoints, long clips and complete notebook sessions remain unqualified on
 this Mac. Rebuild CUDA extensions against the upgraded PyTorch and matching
