@@ -113,8 +113,13 @@ class PalettisedPNGSegmentLoader:
         png_filenames = os.listdir(self.video_png_root)
         self.frame_id_to_png_filename = {}
         for filename in png_filenames:
-            frame_id, _ = os.path.splitext(filename)
-            self.frame_id_to_png_filename[int(frame_id)] = filename
+            frame_id, extension = os.path.splitext(filename)
+            if (
+                frame_id.isdecimal()
+                and extension.lower() == ".png"
+                and os.path.isfile(os.path.join(self.video_png_root, filename))
+            ):
+                self.frame_id_to_png_filename[int(frame_id)] = filename
 
     def load(self, frame_id):
         """
@@ -158,9 +163,19 @@ class MultiplePNGSegmentLoader:
         self.single_object_mode = single_object_mode
         # read a mask to know the resolution of the video
         if self.single_object_mode:
-            tmp_mask_path = glob.glob(os.path.join(video_png_root, "*.png"))[0]
+            mask_paths = glob.glob(os.path.join(video_png_root, "*.png"))
         else:
-            tmp_mask_path = glob.glob(os.path.join(video_png_root, "*", "*.png"))[0]
+            mask_paths = [
+                path
+                for path in glob.glob(os.path.join(video_png_root, "*", "*.png"))
+                if os.path.basename(os.path.dirname(path)).isdecimal()
+            ]
+        tmp_mask_path = next(
+            path
+            for path in mask_paths
+            if os.path.isfile(path)
+            and os.path.splitext(os.path.basename(path))[0].isdecimal()
+        )
         tmp_mask = np.array(PILImage.open(tmp_mask_path))
         self.H = tmp_mask.shape[0]
         self.W = tmp_mask.shape[1]
@@ -205,7 +220,11 @@ class MultiplePNGSegmentLoader:
             binary_segments: dict
         """
         # get the path
-        all_objects = sorted(glob.glob(os.path.join(self.video_png_root, "*")))
+        all_objects = sorted(
+            path
+            for path in glob.glob(os.path.join(self.video_png_root, "*"))
+            if os.path.isdir(path) and os.path.basename(path).isdecimal()
+        )
         num_objects = len(all_objects)
         assert num_objects > 0
 

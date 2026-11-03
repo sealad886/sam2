@@ -142,7 +142,7 @@ def test_pretrained_entrypoints_share_builder_device_selection(
     monkeypatch.setattr(
         builders,
         "_hf_download",
-        lambda model_id: ("configs/sam2.1/sam2.1_hiera_t.yaml", None),
+        lambda model_id, **kwargs: ("configs/sam2.1/sam2.1_hiera_t.yaml", None),
     )
     cls = SAM2ImagePredictor if kind == "image" else SAM2VideoPredictor
     kwargs = {} if requested is None else {"device": requested}

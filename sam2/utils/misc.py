@@ -206,10 +206,14 @@ def load_video_frames(
     compute_device=None,
 ):
     """
-    Load the video frames from video_path. The frames are resized to image_size as in
-    the model and are loaded to GPU if offload_video_to_cpu=False. This is used by the demo.
+    Load frames from an MP4 path, JPEG directory, or MP4 bytes. Filesystem paths
+    may be strings or os.PathLike objects. The frames are resized to image_size as
+    in the model and are loaded to GPU if offload_video_to_cpu=False.
     """
     compute_device = get_device(compute_device)
+    if isinstance(video_path, os.PathLike):
+        # Decode filesystem bytes from __fspath__ without changing raw MP4 bytes.
+        video_path = os.fsdecode(video_path)
     is_bytes = isinstance(video_path, bytes)
     is_str = isinstance(video_path, str)
     is_mp4_path = is_str and os.path.splitext(video_path)[-1] in [".mp4", ".MP4"]

@@ -4,7 +4,6 @@
 # This source code is licensed under the license found in the
 # LICENSE file in the root directory of this source tree.
 
-import glob
 import logging
 import os
 from dataclasses import dataclass
@@ -53,6 +52,18 @@ class VOSRawDataset:
         raise NotImplementedError()
 
 
+def _get_frame_paths(video_frame_root):
+    """Discover actual JPEG frames, excluding metadata and non-frame entries."""
+    with os.scandir(video_frame_root) as entries:
+        return sorted(
+            entry.path
+            for entry in entries
+            if os.path.splitext(entry.name)[1] == ".jpg"
+            and os.path.splitext(entry.name)[0].isdecimal()
+            and entry.is_file()
+        )
+
+
 class PNGRawDataset(VOSRawDataset):
     def __init__(
         self,
@@ -78,7 +89,12 @@ class PNGRawDataset(VOSRawDataset):
             with g_pathmgr.open(file_list_txt, "r") as f:
                 subset = [os.path.splitext(line.strip())[0] for line in f]
         else:
-            subset = os.listdir(self.img_folder)
+            subset = [
+                name
+                for name in os.listdir(self.img_folder)
+                if name != ".DS_Store"
+                and os.path.isdir(os.path.join(self.img_folder, name))
+            ]
 
         # Read and process excluded files if provided
         if excluded_videos_list_txt is not None:
@@ -89,7 +105,11 @@ class PNGRawDataset(VOSRawDataset):
 
         # Check if it's not in excluded_files
         self.video_names = sorted(
-            [video_name for video_name in subset if video_name not in excluded_files]
+            [
+                video_name
+                for video_name in subset
+                if video_name != ".DS_Store" and video_name not in excluded_files
+            ]
         )
 
         if self.single_object_mode:
@@ -99,13 +119,22 @@ class PNGRawDataset(VOSRawDataset):
                     os.path.join(video_name, obj)
                     for video_name in self.video_names
                     for obj in os.listdir(os.path.join(self.gt_folder, video_name))
+                    if obj.isdecimal()
+                    and os.path.isdir(os.path.join(self.gt_folder, video_name, obj))
                 ]
             )
 
         if frames_sampling_mult:
             video_names_mult = []
             for video_name in self.video_names:
-                num_frames = len(os.listdir(os.path.join(self.img_folder, video_name)))
+                image_name = (
+                    os.path.dirname(video_name)
+                    if self.single_object_mode
+                    else video_name
+                )
+                num_frames = len(
+                    _get_frame_paths(os.path.join(self.img_folder, image_name))
+                )
                 video_names_mult.extend([video_name] * num_frames)
             self.video_names = video_names_mult
 
@@ -131,7 +160,7 @@ class PNGRawDataset(VOSRawDataset):
                 video_mask_root, self.single_object_mode
             )
 
-        all_frames = sorted(glob.glob(os.path.join(video_frame_root, "*.jpg")))
+        all_frames = _get_frame_paths(video_frame_root)
         if self.truncate_video > 0:
             all_frames = all_frames[: self.truncate_video]
         frames = []
@@ -257,10 +286,19 @@ class JSONRawDataset(VOSRawDataset):
             with g_pathmgr.open(file_list_txt, "r") as f:
                 subset = [os.path.splitext(line.strip())[0] for line in f]
         else:
-            subset = os.listdir(self.img_folder)
+            subset = [
+                name
+                for name in os.listdir(self.img_folder)
+                if name != ".DS_Store"
+                and os.path.isdir(os.path.join(self.img_folder, name))
+            ]
 
         self.video_names = sorted(
-            [video_name for video_name in subset if video_name not in excluded_files]
+            [
+                video_name
+                for video_name in subset
+                if video_name != ".DS_Store" and video_name not in excluded_files
+            ]
         )
 
     def get_video(self, video_idx):
@@ -275,21 +313,14 @@ class JSONRawDataset(VOSRawDataset):
             frames_fps=self.frames_fps,
         )
 
-        frame_ids = [
-            int(os.path.splitext(frame_name)[0])
-            for frame_name in sorted(
-                os.listdir(os.path.join(self.img_folder, video_name))
-            )
-        ]
+        frame_paths = _get_frame_paths(os.path.join(self.img_folder, video_name))
 
         frames = [
             VOSFrame(
-                frame_id,
-                image_path=os.path.join(
-                    self.img_folder, f"{video_name}/%05d.jpg" % (frame_id)
-                ),
+                int(os.path.splitext(os.path.basename(frame_path))[0]),
+                image_path=frame_path,
             )
-            for frame_id in frame_ids[:: self.sample_rate]
+            for frame_path in frame_paths[:: self.sample_rate]
         ]
 
         if self.rm_unannotated:
