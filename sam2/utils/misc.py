@@ -6,12 +6,15 @@
 
 import os
 import warnings
+from io import BytesIO
 from threading import Thread
 
 import numpy as np
 import torch
 from PIL import Image
 from tqdm import tqdm
+
+from sam2.utils.device import get_device
 
 
 def get_sdpa_settings():
@@ -58,9 +61,33 @@ def get_connected_components(mask):
     - counts: A tensor of shape (N, 1, H, W) containing the area of the connected
               components for foreground pixels and 0 for background pixels.
     """
-    from sam2 import _C
+    if mask.ndim != 4 or mask.shape[1] != 1:
+        raise ValueError("mask must have shape (N, 1, H, W)")
 
-    return _C.get_connected_componnets(mask.to(torch.uint8).contiguous())
+    # The CUDA kernel operates on 2x2 blocks and requires even spatial sizes.
+    if mask.is_cuda and mask.numel() and not any(s % 2 for s in mask.shape[-2:]):
+        try:
+            from sam2 import _C
+        except (ImportError, OSError):
+            pass
+        else:
+            return _C.get_connected_componnets(mask.to(torch.uint8).contiguous())
+
+    # Label each image separately on CPU, then return both maps to the caller's
+    # device. Numeric label IDs may differ from the CUDA kernel; areas do not.
+    from scipy import ndimage
+
+    masks = mask.detach().to(device="cpu", dtype=torch.uint8).numpy()
+    labels = np.zeros(masks.shape, dtype=np.int32)
+    areas = np.zeros_like(labels)
+    for i in range(len(masks)):
+        ndimage.label(masks[i, 0], structure=np.ones((3, 3)), output=labels[i, 0])
+        sizes = np.bincount(labels[i, 0].ravel(), minlength=1)
+        sizes[0] = 0
+        areas[i, 0] = sizes[labels[i, 0]]
+    return torch.from_numpy(labels).to(mask.device), torch.from_numpy(areas).to(
+        mask.device
+    )
 
 
 def mask_to_box(masks: torch.Tensor):
@@ -93,7 +120,7 @@ def _load_img_as_tensor(img_path, image_size):
     img_pil = Image.open(img_path)
     img_np = np.array(img_pil.convert("RGB").resize((image_size, image_size)))
     if img_np.dtype == np.uint8:  # np.uint8 is expected for JPEG images
-        img_np = img_np / 255.0
+        img_np = img_np.astype(np.float32) / 255.0
     else:
         raise RuntimeError(f"Unknown image dtype: {img_np.dtype} on {img_path}")
     img = torch.from_numpy(img_np).permute(2, 0, 1)
@@ -176,12 +203,13 @@ def load_video_frames(
     img_mean=(0.485, 0.456, 0.406),
     img_std=(0.229, 0.224, 0.225),
     async_loading_frames=False,
-    compute_device=torch.device("cuda"),
+    compute_device=None,
 ):
     """
     Load the video frames from video_path. The frames are resized to image_size as in
     the model and are loaded to GPU if offload_video_to_cpu=False. This is used by the demo.
     """
+    compute_device = get_device(compute_device)
     is_bytes = isinstance(video_path, bytes)
     is_str = isinstance(video_path, str)
     is_mp4_path = is_str and os.path.splitext(video_path)[-1] in [".mp4", ".MP4"]
@@ -217,7 +245,7 @@ def load_video_frames_from_jpg_images(
     img_mean=(0.485, 0.456, 0.406),
     img_std=(0.229, 0.224, 0.225),
     async_loading_frames=False,
-    compute_device=torch.device("cuda"),
+    compute_device=None,
 ):
     """
     Load the video frames from a directory of JPEG files ("<frame_index>.jpg" format).
@@ -227,6 +255,7 @@ def load_video_frames_from_jpg_images(
 
     You can load a frame asynchronously by setting `async_loading_frames` to `True`.
     """
+    compute_device = get_device(compute_device)
     if isinstance(video_path, str) and os.path.isdir(video_path):
         jpg_folder = video_path
     else:
@@ -283,20 +312,24 @@ def load_video_frames_from_video_file(
     offload_video_to_cpu,
     img_mean=(0.485, 0.456, 0.406),
     img_std=(0.229, 0.224, 0.225),
-    compute_device=torch.device("cuda"),
+    compute_device=None,
 ):
-    """Load the video frames from a video file."""
-    import decord
+    """Load RGB video frames from an MP4 path or bytes using optional PyAV."""
+    import av
 
+    compute_device = get_device(compute_device)
     img_mean = torch.tensor(img_mean, dtype=torch.float32)[:, None, None]
     img_std = torch.tensor(img_std, dtype=torch.float32)[:, None, None]
-    # Get the original video height and width
-    decord.bridge.set_bridge("torch")
-    video_height, video_width, _ = decord.VideoReader(video_path).next().shape
-    # Iterate over all frames in the video
     images = []
-    for frame in decord.VideoReader(video_path, width=image_size, height=image_size):
-        images.append(frame.permute(2, 0, 1))
+    source = BytesIO(video_path) if isinstance(video_path, bytes) else video_path
+    with av.open(source) as container:
+        for frame in container.decode(video=0):
+            if not images:
+                video_height, video_width = frame.height, frame.width
+            rgb = frame.reformat(width=image_size, height=image_size, format="rgb24")
+            images.append(torch.from_numpy(rgb.to_ndarray()).permute(2, 0, 1))
+    if not images:
+        raise RuntimeError("No video frames found in the input")
 
     images = torch.stack(images, dim=0).float() / 255.0
     if not offload_video_to_cpu:

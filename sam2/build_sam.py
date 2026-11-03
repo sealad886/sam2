@@ -13,6 +13,7 @@ from hydra.utils import instantiate
 from omegaconf import OmegaConf
 
 import sam2
+from sam2.utils.device import get_device
 
 # Check if the user is running Python from the parent directory of the sam2 repo
 # (i.e. the directory where this repo is cloned into) -- this is not supported since
@@ -71,13 +72,14 @@ HF_MODEL_ID_TO_FILENAMES = {
 def build_sam2(
     config_file,
     ckpt_path=None,
-    device="cuda",
+    device=None,
     mode="eval",
     hydra_overrides_extra=[],
     apply_postprocessing=True,
     **kwargs,
 ):
 
+    device = get_device(device)
     if apply_postprocessing:
         hydra_overrides_extra = hydra_overrides_extra.copy()
         hydra_overrides_extra += [
@@ -89,6 +91,7 @@ def build_sam2(
     # Read config and init model
     cfg = compose(config_name=config_file, overrides=hydra_overrides_extra)
     OmegaConf.resolve(cfg)
+    _check_compile_device(cfg, device)
     model = instantiate(cfg.model, _recursive_=True)
     _load_checkpoint(model, ckpt_path)
     model = model.to(device)
@@ -100,13 +103,16 @@ def build_sam2(
 def build_sam2_video_predictor(
     config_file,
     ckpt_path=None,
-    device="cuda",
+    device=None,
     mode="eval",
     hydra_overrides_extra=[],
     apply_postprocessing=True,
     vos_optimized=False,
     **kwargs,
 ):
+    device = get_device(device)
+    if vos_optimized and device.type != "cuda":
+        raise ValueError("vos_optimized=True requires a CUDA device.")
     hydra_overrides = [
         "++model._target_=sam2.sam2_video_predictor.SAM2VideoPredictor",
     ]
@@ -133,12 +139,18 @@ def build_sam2_video_predictor(
     # Read config and init model
     cfg = compose(config_name=config_file, overrides=hydra_overrides)
     OmegaConf.resolve(cfg)
+    _check_compile_device(cfg, device)
     model = instantiate(cfg.model, _recursive_=True)
     _load_checkpoint(model, ckpt_path)
     model = model.to(device)
     if mode == "eval":
         model.eval()
     return model
+
+
+def _check_compile_device(cfg, device):
+    if cfg.model.get("compile_image_encoder", False) and device.type != "cuda":
+        raise ValueError("compile_image_encoder=True requires a CUDA device.")
 
 
 def _hf_download(model_id):

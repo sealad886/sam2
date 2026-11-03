@@ -420,10 +420,16 @@ class Trainer:
             self.model = model_weight_initializer(model=self.model)
 
     def _load_resuming_checkpoint(self, ckpt_path: str):
+        """Resume full training state from a trusted checkpoint produced by this job.
+
+        Optimizer, metric and dataset state can contain Python objects. Only use
+        checkpoint directories and resume files from trusted sources because
+        unrestricted pickle loading can execute code.
+        """
         logging.info(f"Resuming training from {ckpt_path}")
 
         with g_pathmgr.open(ckpt_path, "rb") as f:
-            checkpoint = torch.load(f, map_location="cpu")
+            checkpoint = torch.load(f, map_location="cpu", weights_only=False)
         load_state_dict_into_model(
             model=self.model,
             state_dict=checkpoint["model"],

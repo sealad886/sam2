@@ -12,6 +12,7 @@ import numpy as np
 import torch
 from PIL import Image
 from sam2.build_sam import build_sam2_video_predictor
+from sam2.utils.device import inference_context
 
 
 # the PNG palette for DAVIS 2017 dataset
@@ -114,7 +115,6 @@ def save_masks_to_dir(
 
 
 @torch.inference_mode()
-@torch.autocast(device_type="cuda", dtype=torch.bfloat16)
 def vos_inference(
     predictor,
     base_video_dir,
@@ -245,7 +245,6 @@ def vos_inference(
 
 
 @torch.inference_mode()
-@torch.autocast(device_type="cuda", dtype=torch.bfloat16)
 def vos_separate_inference_per_object(
     predictor,
     base_video_dir,
@@ -439,6 +438,11 @@ def main():
         action="store_true",
         help="whether to use vos optimized video predictor with all modules compiled",
     )
+    parser.add_argument(
+        "--device",
+        default="auto",
+        help="inference device, e.g. auto, cuda, cuda:1, mps, or cpu (default: auto)",
+    )
     args = parser.parse_args()
 
     # if we use per-object PNG files, they could possibly overlap in inputs and outputs
@@ -448,6 +452,7 @@ def main():
     predictor = build_sam2_video_predictor(
         config_file=args.sam2_cfg,
         ckpt_path=args.sam2_checkpoint,
+        device=args.device,
         apply_postprocessing=args.apply_postprocessing,
         hydra_overrides_extra=hydra_overrides_extra,
         vos_optimized=args.use_vos_optimized_video_predictor,
@@ -474,19 +479,13 @@ def main():
 
     for n_video, video_name in enumerate(video_names):
         print(f"\n{n_video + 1}/{len(video_names)} - running on {video_name}")
-        if not args.track_object_appearing_later_in_video:
-            vos_inference(
-                predictor=predictor,
-                base_video_dir=args.base_video_dir,
-                input_mask_dir=args.input_mask_dir,
-                output_mask_dir=args.output_mask_dir,
-                video_name=video_name,
-                score_thresh=args.score_thresh,
-                use_all_masks=args.use_all_masks,
-                per_obj_png_file=args.per_obj_png_file,
-            )
-        else:
-            vos_separate_inference_per_object(
+        inference = (
+            vos_separate_inference_per_object
+            if args.track_object_appearing_later_in_video
+            else vos_inference
+        )
+        with inference_context(predictor.device):
+            inference(
                 predictor=predictor,
                 base_video_dir=args.base_video_dir,
                 input_mask_dir=args.input_mask_dir,

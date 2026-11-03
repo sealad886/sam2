@@ -2,6 +2,11 @@
 
 This directory provides toolkits for additional SAM 2 use cases.
 
+`python -m tools.validate_inference --device mps --reference-device cpu` runs
+real-checkpoint Apple Silicon qualification; see [setup and validation](../INSTALL.md#apple-silicon-macos).
+It requires the tiny checkpoint and bundled sample assets. The separate
+`sam2/benchmark.py` script measures CUDA compilation performance only.
+
 ### Semi-supervised VOS inference
 
 The `vos_inference.py` script can be used to generate predictions for semi-supervised video object segmentation (VOS) evaluation on datasets such as [DAVIS](https://davischallenge.org/index.html), [MOSE](https://henghuiding.github.io/MOSE/) or the SA-V dataset.
@@ -17,6 +22,9 @@ python ./tools/vos_inference.py \
   --output_mask_dir ./outputs/davis_2017_pred_pngs
 ```
 (replace `/path-to-davis-2017` with the path to DAVIS 2017 dataset)
+
+The CLI selects CUDA, then MPS, then CPU. Add `--device mps` or `--device cpu`
+to require a backend; CUDA optimization flags require CUDA.
 
 To evaluate on the SA-V dataset with per-object PNG files for the object masks, we need to **add the `--per_obj_png_file` flag** as follows (using SA-V val as an example). This script will also save per-object PNG files for the output masks under the `--per_obj_png_file` flag.
 ```bash

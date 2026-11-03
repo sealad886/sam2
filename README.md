@@ -1,5 +1,19 @@
 # SAM 2: Segment Anything in Images and Videos
 
+**Community-maintained fork with native Apple Silicon / MPS inference support.**
+
+This fork of [Meta's SAM 2](https://github.com/facebookresearch/sam2) keeps the
+original models and checkpoints while updating PyTorch for native Apple GPU
+execution. PyTorch 2.14.1+ and matching TorchVision 0.29.1+ support Hiera's MPS
+pooling and bicubic interpolation directly. Builders automatically select
+CUDA, then MPS, then CPU, with explicit device overrides.
+
+See [Apple Silicon setup](INSTALL.md#apple-silicon-macos) and the
+[measured inference qualification](docs/apple-silicon.md) for installation,
+CPU/MPS mask agreement, memory checks and remaining validation limits. Training
+remains a separate CUDA/CPU workflow. Original research and model credit belong
+to the authors below; this fork retains their license and attribution.
+
 **[AI at Meta, FAIR](https://ai.meta.com/research/)**
 
 [Nikhila Ravi](https://nikhilaravi.com/), [Valentin Gabeur](https://gabeur.github.io/), [Yuan-Ting Hu](https://scholar.google.com/citations?user=E8DVVYQAAAAJ&hl=en), [Ronghang Hu](https://ronghanghu.com/), [Chaitanya Ryali](https://scholar.google.com/citations?user=4LWx24UAAAAJ&hl=en), [Tengyu Ma](https://scholar.google.com/citations?user=VeTSl0wAAAAJ&hl=en), [Haitham Khedr](https://hkhedr.com/), [Roman Rädle](https://scholar.google.de/citations?user=Tpt57v0AAAAJ&hl=en), [Chloe Rolland](https://scholar.google.com/citations?hl=fr&user=n-SnMhoAAAAJ), [Laura Gustafson](https://scholar.google.com/citations?user=c8IpF9gAAAAJ&hl=en), [Eric Mintun](https://ericmintun.github.io/), [Junting Pan](https://junting.github.io/), [Kalyan Vasudev Alwala](https://scholar.google.co.in/citations?user=m34oaWEAAAAJ&hl=en), [Nicolas Carion](https://www.nicolascarion.com/), [Chao-Yuan Wu](https://chaoyuan.org/), [Ross Girshick](https://www.rossgirshick.info/), [Piotr Dollár](https://pdollar.github.io/), [Christoph Feichtenhofer](https://feichtenhofer.github.io/)
@@ -13,6 +27,13 @@
 ![SA-V dataset](assets/sa_v_dataset.jpg?raw=true)
 
 ## Latest updates
+
+**2026-11-02 -- community fork and Apple Silicon support**
+
+- Native PyTorch MPS inference for image prompts, automatic masks and multi-object
+  video, with portable mask cleanup and MP4 decoding.
+- Fork-owned Linux/macOS CI covers the minimum and current PyTorch versions,
+  checkpoint loading, packaging and a real-checkpoint CPU regression workload.
 
 **12/11/2024 -- full model compilation for a major VOS speedup and a new `SAM2VideoPredictor` to better handle multi-object tracking**
 
@@ -29,10 +50,10 @@
 
 ## Installation
 
-SAM 2 needs to be installed first before use. The code requires `python>=3.10`, as well as `torch>=2.5.1` and `torchvision>=0.20.1`. Please follow the instructions [here](https://pytorch.org/get-started/locally/) to install both PyTorch and TorchVision dependencies. You can install SAM 2 on a GPU machine using:
+SAM 2 needs to be installed first before use. The code requires `python>=3.10`, as well as `torch>=2.14.1` and `torchvision>=0.29.1`. Please follow the instructions [here](https://pytorch.org/get-started/locally/) to install matching PyTorch and TorchVision dependencies together. You can install SAM 2 on Linux or an Apple Silicon Mac using:
 
 ```bash
-git clone https://github.com/facebookresearch/sam2.git && cd sam2
+git clone https://github.com/sealad886/sam2.git && cd sam2
 
 pip install -e .
 ```
@@ -45,9 +66,9 @@ pip install -e ".[notebooks]"
 ```
 
 Note:
-1. It's recommended to create a new Python environment via [Anaconda](https://www.anaconda.com/) for this installation and install PyTorch 2.5.1 (or higher) via `pip` following https://pytorch.org/. If you have a PyTorch version lower than 2.5.1 in your current environment, the installation command above will try to upgrade it to the latest PyTorch version using `pip`.
-2. The step above requires compiling a custom CUDA kernel with the `nvcc` compiler. If it isn't already available on your machine, please install the [CUDA toolkits](https://developer.nvidia.com/cuda-toolkit-archive) with a version that matches your PyTorch CUDA version.
-3. If you see a message like `Failed to build the SAM 2 CUDA extension` during installation, you can ignore it and still use SAM 2 (some post-processing functionality may be limited, but it doesn't affect the results in most cases).
+1. Create a project virtual environment and install PyTorch 2.14.1 (or higher) and matching TorchVision via `pip` following https://pytorch.org/. If your current environment has an older PyTorch version, the installation command above will upgrade it. Rebuild any locally compiled CUDA extensions against the new PyTorch installation.
+2. The optional CUDA extension needs the `nvcc` compiler and matching [CUDA toolkits](https://developer.nvidia.com/cuda-toolkit-archive). On macOS it is disabled by default; CUDA is not needed for MPS inference.
+3. If the CUDA extension is unavailable, mask hole/speckle cleanup uses SciPy on CPU and returns results to the selected device.
 
 Please see [`INSTALL.md`](./INSTALL.md) for FAQs on potential issues and solutions.
 
@@ -74,6 +95,12 @@ or individually from:
 
 Then SAM 2 can be used in a few lines as follows for image and video prediction.
 
+Builders automatically select CUDA, then Apple Silicon MPS, then CPU. Pass
+`device="mps"`, `device="cpu"`, or `device="cuda:1"` to choose explicitly; an
+unavailable requested accelerator raises an error. Hugging Face loaders use the
+same selection. `inference_context` below enables CUDA bfloat16 autocast and
+uses float32 on MPS/CPU. See [Apple Silicon setup and validation](INSTALL.md#apple-silicon-macos).
+
 ### Image prediction
 
 SAM 2 has all the capabilities of [SAM](https://github.com/facebookresearch/segment-anything) on static images, and we provide image prediction APIs that closely resemble SAM for image use cases. The `SAM2ImagePredictor` class has an easy interface for image prompting.
@@ -82,19 +109,20 @@ SAM 2 has all the capabilities of [SAM](https://github.com/facebookresearch/segm
 import torch
 from sam2.build_sam import build_sam2
 from sam2.sam2_image_predictor import SAM2ImagePredictor
+from sam2.utils.device import inference_context
 
 checkpoint = "./checkpoints/sam2.1_hiera_large.pt"
 model_cfg = "configs/sam2.1/sam2.1_hiera_l.yaml"
 predictor = SAM2ImagePredictor(build_sam2(model_cfg, checkpoint))
 
-with torch.inference_mode(), torch.autocast("cuda", dtype=torch.bfloat16):
+with torch.inference_mode(), inference_context(predictor.device):
     predictor.set_image(<your_image>)
     masks, _, _ = predictor.predict(<input_prompts>)
 ```
 
-Please refer to the examples in [image_predictor_example.ipynb](./notebooks/image_predictor_example.ipynb) (also in Colab [here](https://colab.research.google.com/github/facebookresearch/sam2/blob/main/notebooks/image_predictor_example.ipynb)) for static image use cases.
+Please refer to the examples in [image_predictor_example.ipynb](./notebooks/image_predictor_example.ipynb) (also in Colab [here](https://colab.research.google.com/github/sealad886/sam2/blob/main/notebooks/image_predictor_example.ipynb)) for static image use cases.
 
-SAM 2 also supports automatic mask generation on images just like SAM. Please see [automatic_mask_generator_example.ipynb](./notebooks/automatic_mask_generator_example.ipynb) (also in Colab [here](https://colab.research.google.com/github/facebookresearch/sam2/blob/main/notebooks/automatic_mask_generator_example.ipynb)) for automatic mask generation in images.
+SAM 2 also supports automatic mask generation on images just like SAM. Please see [automatic_mask_generator_example.ipynb](./notebooks/automatic_mask_generator_example.ipynb) (also in Colab [here](https://colab.research.google.com/github/sealad886/sam2/blob/main/notebooks/automatic_mask_generator_example.ipynb)) for automatic mask generation in images.
 
 ### Video prediction
 
@@ -103,12 +131,13 @@ For promptable segmentation and tracking in videos, we provide a video predictor
 ```python
 import torch
 from sam2.build_sam import build_sam2_video_predictor
+from sam2.utils.device import inference_context
 
 checkpoint = "./checkpoints/sam2.1_hiera_large.pt"
 model_cfg = "configs/sam2.1/sam2.1_hiera_l.yaml"
 predictor = build_sam2_video_predictor(model_cfg, checkpoint)
 
-with torch.inference_mode(), torch.autocast("cuda", dtype=torch.bfloat16):
+with torch.inference_mode(), inference_context(predictor.device):
     state = predictor.init_state(<your_video>)
 
     # add new prompts and instantly get the output on the same frame
@@ -119,7 +148,7 @@ with torch.inference_mode(), torch.autocast("cuda", dtype=torch.bfloat16):
         ...
 ```
 
-Please refer to the examples in [video_predictor_example.ipynb](./notebooks/video_predictor_example.ipynb) (also in Colab [here](https://colab.research.google.com/github/facebookresearch/sam2/blob/main/notebooks/video_predictor_example.ipynb)) for details on how to add click or box prompts, make refinements, and track multiple objects in videos.
+Please refer to the examples in [video_predictor_example.ipynb](./notebooks/video_predictor_example.ipynb) (also in Colab [here](https://colab.research.google.com/github/sealad886/sam2/blob/main/notebooks/video_predictor_example.ipynb)) for details on how to add click or box prompts, make refinements, and track multiple objects in videos.
 
 ## Load from 🤗 Hugging Face
 
@@ -130,10 +159,11 @@ For image prediction:
 ```python
 import torch
 from sam2.sam2_image_predictor import SAM2ImagePredictor
+from sam2.utils.device import inference_context
 
 predictor = SAM2ImagePredictor.from_pretrained("facebook/sam2-hiera-large")
 
-with torch.inference_mode(), torch.autocast("cuda", dtype=torch.bfloat16):
+with torch.inference_mode(), inference_context(predictor.device):
     predictor.set_image(<your_image>)
     masks, _, _ = predictor.predict(<input_prompts>)
 ```
@@ -143,10 +173,11 @@ For video prediction:
 ```python
 import torch
 from sam2.sam2_video_predictor import SAM2VideoPredictor
+from sam2.utils.device import inference_context
 
 predictor = SAM2VideoPredictor.from_pretrained("facebook/sam2-hiera-large")
 
-with torch.inference_mode(), torch.autocast("cuda", dtype=torch.bfloat16):
+with torch.inference_mode(), inference_context(predictor.device):
     state = predictor.init_state(<your_video>)
 
     # add new prompts and instantly get the output on the same frame
@@ -180,7 +211,7 @@ The previous SAM 2 checkpoints released on July 29, 2024 can be found as follows
 | sam2_hiera_base_plus <br /> ([config](sam2/configs/sam2/sam2_hiera_b+.yaml), [checkpoint](https://dl.fbaipublicfiles.com/segment_anything_2/072824/sam2_hiera_base_plus.pt)) |     80.8     |     64.8    |        74.7         |        72.8        |       75.8        |
 |   sam2_hiera_large <br /> ([config](sam2/configs/sam2/sam2_hiera_l.yaml), [checkpoint](https://dl.fbaipublicfiles.com/segment_anything_2/072824/sam2_hiera_large.pt))   |    224.4     | 39.7 |        76.0         |        74.6        |       79.8        |
 
-Speed measured on an A100 with `torch 2.5.1, cuda 12.4`. See `benchmark.py` for an example on benchmarking (compiling all the model components). Compiling only the image encoder can be more flexible and also provide (a smaller) speed-up (set `compile_image_encoder: True` in the config).
+Speed measured on an A100 with `torch 2.5.1, cuda 12.4`. See `sam2/benchmark.py` for a CUDA-only example on benchmarking (compiling all the model components). Compiling only the image encoder can be more flexible and also provide (a smaller) speed-up (set `compile_image_encoder: True` in the config).
 ## Segment Anything Video Dataset
 
 See [sav_dataset/README.md](sav_dataset/README.md) for details.

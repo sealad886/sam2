@@ -59,6 +59,9 @@ def all_gather_via_filesys(data, filesys_save_dir=None, gather_to_rank_0_only=Fa
 
     If gather_to_rank_0_only is True, only rank 0 will load the gathered object list
     (and other ranks will have an empty list).
+
+    All participating workers and the shared directory must be trusted: object
+    transport uses unrestricted pickle loading.
     """
     world_size = get_world_size()
     if world_size == 1:
@@ -103,7 +106,7 @@ def all_gather_via_filesys(data, filesys_save_dir=None, gather_to_rank_0_only=Fa
             load_data_filename = f"data_to_gather_{timestamp}_{salt}_{rank_load}.pkl"
             load_data_path = os.path.join(save_dir, load_data_filename)
             assert os.path.exists(load_data_path), f"cannot read {save_data_path}"
-            data_list.append(torch.load(load_data_path))
+            data_list.append(torch.load(load_data_path, weights_only=False))
     dist.barrier(group=cpu_group)
 
     # delete the saved file
@@ -114,6 +117,8 @@ def all_gather_via_filesys(data, filesys_save_dir=None, gather_to_rank_0_only=Fa
 def all_gather(data, force_cpu=False, force_filesys=False, filesys_save_dir=None):
     """
     Run all_gather on arbitrary picklable data (not necessarily tensors)
+    All participating workers must be trusted: object transport uses
+    unrestricted pickle loading.
     Args:
         data: any picklable object
     Returns:
@@ -177,7 +182,7 @@ def all_gather(data, force_cpu=False, force_filesys=False, filesys_save_dir=None
     for size, tensor in zip(size_list, tensor_list):
         tensor = torch.split(tensor, [size, max_size - size], dim=0)[0]
         buffer = io.BytesIO(tensor.cpu().numpy())
-        obj = torch.load(buffer)
+        obj = torch.load(buffer, weights_only=False)
         data_list.append(obj)
 
     return data_list
@@ -411,6 +416,9 @@ def init_distributed_data_parallel_model(
 def broadcast_object(obj: Any, src: int = _PRIMARY_RANK, use_disk: bool = True) -> Any:
     """Broadcast an object from a source to all workers.
 
+    The source worker must be trusted: object transport uses unrestricted
+    pickle loading.
+
     Args:
         obj: Object to broadcast, must be serializable
         src: Source rank for broadcast (default is primary)
@@ -441,10 +449,10 @@ def broadcast_object(obj: Any, src: int = _PRIMARY_RANK, use_disk: bool = True) 
                 # collects it
                 del data_tensor
                 f.seek(0)
-                obj = torch.load(f)
+                obj = torch.load(f, weights_only=False)
         else:
             buffer = io.BytesIO(data_tensor.numpy())
-            obj = torch.load(buffer)
+            obj = torch.load(buffer, weights_only=False)
     return obj
 
 

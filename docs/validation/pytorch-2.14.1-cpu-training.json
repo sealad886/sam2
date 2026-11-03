@@ -1,0 +1,180 @@
+{
+  "experiment": "SAM2Train native-1024 two-frame one-object CPU forward/backward/AdamW",
+  "repository_head": "43170900519c8ae46633e884cedcdbab8915d59d",
+  "source_state": "Global PyTorch upgrade; source hashes identify the exercised implementation",
+  "python": "3.12.16",
+  "pytorch": "2.14.1",
+  "torchvision": "0.29.1",
+  "platform": "macOS-27.2-arm64-arm-64bit",
+  "device": "cpu",
+  "dtype": "float32",
+  "cpu_threads": 6,
+  "config": "configs/sam2.1/sam2.1_hiera_t.yaml",
+  "hydra_overrides": [
+    "++model._target_=training.model.sam2.SAM2Train",
+    "++model.freeze_image_encoder=False",
+    "++model.prob_to_use_pt_input_for_train=1.0",
+    "++model.prob_to_use_box_input_for_train=0.0",
+    "++model.num_frames_to_correct_for_train=1",
+    "++model.num_correction_pt_per_frame=1",
+    "++model.rand_init_cond_frames_for_train=False",
+    "++model.use_act_ckpt_iterative_pt_sampling=False"
+  ],
+  "checkpoint": "checkpoints/sam2.1_hiera_tiny.pt",
+  "checkpoint_sha256": "7402e0d864fa82708a20fbd15bc84245c2f26dff0eb43a4b5b93452deb34be69",
+  "seed": 20261027,
+  "frames": 2,
+  "objects": 1,
+  "image_size": 1024,
+  "limitations": [
+    "All model parameters trainable; no image-encoder freeze",
+    "No CUDA hardware, AMP, distributed training, torch.compile or full Trainer loop qualification",
+    "Synthetic one-step smoke test does not establish training convergence or accuracy"
+  ],
+  "model_class": "training.model.sam2.SAM2Train",
+  "parameters": 38962498,
+  "trainable_parameters": 38962498,
+  "batch_shapes": {
+    "images": [
+      2,
+      1,
+      3,
+      1024,
+      1024
+    ],
+    "masks": [
+      2,
+      1,
+      1024,
+      1024
+    ],
+    "object_to_frame": [
+      2,
+      1,
+      2
+    ]
+  },
+  "forward_seconds": 3.1404632499979925,
+  "output_frames": 2,
+  "output_shapes": [
+    [
+      1,
+      1,
+      1024,
+      1024
+    ],
+    [
+      1,
+      1,
+      1024,
+      1024
+    ]
+  ],
+  "losses": {
+    "loss_mask": 0.0004001776978839189,
+    "loss_dice": 0.010819017887115479,
+    "loss_iou": 0.0415918342769146,
+    "loss_class": 5.2998111641500145e-05,
+    "core_loss": 0.06046740710735321
+  },
+  "backward_seconds": 3.981545708003978,
+  "gradient_summary": {
+    "maskmem_tpos_enc": {
+      "tensors": 1,
+      "nonzero_tensors": 1,
+      "squared_norm": 7.362806612559294e-08
+    },
+    "no_mem_embed": {
+      "tensors": 1,
+      "nonzero_tensors": 1,
+      "squared_norm": 0.025193449967095712
+    },
+    "no_obj_ptr": {
+      "tensors": 1,
+      "nonzero_tensors": 0,
+      "squared_norm": 0.0
+    },
+    "no_obj_embed_spatial": {
+      "tensors": 1,
+      "nonzero_tensors": 0,
+      "squared_norm": 0.0
+    },
+    "image_encoder": {
+      "tensors": 162,
+      "nonzero_tensors": 162,
+      "squared_norm": 70.21976273056124
+    },
+    "memory_attention": {
+      "tensors": 106,
+      "nonzero_tensors": 106,
+      "squared_norm": 0.006167160001871815
+    },
+    "memory_encoder": {
+      "tensors": 40,
+      "nonzero_tensors": 40,
+      "squared_norm": 0.2895896895253887
+    },
+    "sam_prompt_encoder": {
+      "tensors": 16,
+      "nonzero_tensors": 13,
+      "squared_norm": 0.18263760366328724
+    },
+    "sam_mask_decoder": {
+      "tensors": 131,
+      "nonzero_tensors": 125,
+      "squared_norm": 12.914767095624208
+    },
+    "obj_ptr_proj": {
+      "tensors": 6,
+      "nonzero_tensors": 6,
+      "squared_norm": 2.8854008622653964e-05
+    },
+    "obj_ptr_tpos_proj": {
+      "tensors": 2,
+      "nonzero_tensors": 2,
+      "squared_norm": 4.195710494070982e-06
+    }
+  },
+  "all_existing_gradients_finite": true,
+  "gradient_norm_before_clip": 9.145286560058594,
+  "optimizer_seconds": 0.10674804099835455,
+  "changed_parameter_tensors_by_module": {
+    "maskmem_tpos_enc": 1,
+    "no_mem_embed": 1,
+    "no_obj_ptr": 1,
+    "no_obj_embed_spatial": 1,
+    "image_encoder": 162,
+    "memory_attention": 106,
+    "memory_encoder": 40,
+    "sam_prompt_encoder": 16,
+    "sam_mask_decoder": 131,
+    "obj_ptr_proj": 6,
+    "obj_ptr_tpos_proj": 2
+  },
+  "maximum_absolute_update": 1.0967254638671875e-05,
+  "optimizer_state_entries": 467,
+  "passed": true,
+  "elapsed_seconds": 7.799116333997517,
+  "process_max_rss_bytes": 6007554048,
+  "source_sha256": {
+    "sam2/modeling/backbones/hieradet.py": "ab6ca7e1ff917ef3371479b401a8680fcca2c89510d3be3a68fb21b733b3f493",
+    "training/model/sam2.py": "1bd1ba698ab1803e6496fc1c3fe6d522b19393d9e23650d18e7c76843236fa44",
+    "training/loss_fns.py": "457d7bd5c90fbab7c1a9012abc01e7f5c6583289bf51e366dea0a22f04e6ef38",
+    "training/utils/data_utils.py": "f773363d9ea7574d0aefd70db8b462ab64810b4fefb7b8a6d160a11915c393a4",
+    "training/trainer.py": "574c33836794907453359cd4ecefeabde48324070fce072b301d0b7132806770"
+  },
+  "synthetic_input": {
+    "background": "torch.randn(3,1024,1024)*0.05 per frame",
+    "object_rgb": [
+      1.2,
+      -0.6,
+      0.1
+    ],
+    "rectangle_rows": "280+12*i:600+12*i",
+    "rectangle_columns": "300+18*i:620+18*i",
+    "frame_indices": [
+      0,
+      1
+    ]
+  }
+}

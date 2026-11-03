@@ -42,12 +42,14 @@ class SAM2VideoPredictor(SAM2Base):
     def init_state(
         self,
         video_path,
-        offload_video_to_cpu=False,
+        offload_video_to_cpu=None,
         offload_state_to_cpu=False,
         async_loading_frames=False,
     ):
-        """Initialize an inference state."""
+        """Initialize a state, storing video frames on CPU by default for MPS."""
         compute_device = self.device  # device of the model
+        if offload_video_to_cpu is None:
+            offload_video_to_cpu = compute_device.type == "mps"
         images, video_height, video_width = load_video_frames(
             video_path=video_path,
             image_size=self.image_size,
@@ -778,7 +780,10 @@ class SAM2VideoPredictor(SAM2Base):
         storage_device = inference_state["storage_device"]
         maskmem_features = current_out["maskmem_features"]
         if maskmem_features is not None:
-            maskmem_features = maskmem_features.to(torch.bfloat16)
+            memory_dtype = (
+                torch.float32 if self.device.type == "mps" else torch.bfloat16
+            )
+            maskmem_features = maskmem_features.to(memory_dtype)
             maskmem_features = maskmem_features.to(storage_device, non_blocking=True)
         pred_masks_gpu = current_out["pred_masks"]
         # potentially fill holes in the predicted masks
@@ -830,7 +835,8 @@ class SAM2VideoPredictor(SAM2Base):
 
         # optionally offload the output to CPU memory to save GPU space
         storage_device = inference_state["storage_device"]
-        maskmem_features = maskmem_features.to(torch.bfloat16)
+        memory_dtype = torch.float32 if self.device.type == "mps" else torch.bfloat16
+        maskmem_features = maskmem_features.to(memory_dtype)
         maskmem_features = maskmem_features.to(storage_device, non_blocking=True)
         # "maskmem_pos_enc" is the same across frames, so we only need to store one copy of it
         maskmem_pos_enc = self._get_maskmem_pos_enc(
