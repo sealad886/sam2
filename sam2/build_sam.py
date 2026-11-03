@@ -153,21 +153,25 @@ def _check_compile_device(cfg, device):
         raise ValueError("compile_image_encoder=True requires a CUDA device.")
 
 
-def _hf_download(model_id):
+def _hf_download(model_id, cache_dir=None):
     from huggingface_hub import hf_hub_download
 
     config_name, checkpoint_name = HF_MODEL_ID_TO_FILENAMES[model_id]
-    ckpt_path = hf_hub_download(repo_id=model_id, filename=checkpoint_name)
+    ckpt_path = hf_hub_download(
+        repo_id=model_id, filename=checkpoint_name, cache_dir=cache_dir
+    )
     return config_name, ckpt_path
 
 
-def build_sam2_hf(model_id, **kwargs):
-    config_name, ckpt_path = _hf_download(model_id)
+def build_sam2_hf(model_id, cache_dir=None, **kwargs):
+    """Build an image model, optionally caching its HF checkpoint in cache_dir."""
+    config_name, ckpt_path = _hf_download(model_id, cache_dir=cache_dir)
     return build_sam2(config_file=config_name, ckpt_path=ckpt_path, **kwargs)
 
 
-def build_sam2_video_predictor_hf(model_id, **kwargs):
-    config_name, ckpt_path = _hf_download(model_id)
+def build_sam2_video_predictor_hf(model_id, cache_dir=None, **kwargs):
+    """Build a video predictor, optionally caching its HF checkpoint in cache_dir."""
+    config_name, ckpt_path = _hf_download(model_id, cache_dir=cache_dir)
     return build_sam2_video_predictor(
         config_file=config_name, ckpt_path=ckpt_path, **kwargs
     )

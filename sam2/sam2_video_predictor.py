@@ -107,6 +107,7 @@ class SAM2VideoPredictor(SAM2Base):
 
         Arguments:
           model_id (str): The Hugging Face repository ID.
+          cache_dir (str or Path, optional): Directory used to cache the checkpoint.
           **kwargs: Additional arguments to pass to the model constructor.
 
         Returns:
