@@ -54,8 +54,10 @@ with `init_state(..., offload_video_to_cpu=False)` to store them on the selected
 device. `offload_state_to_cpu=True` also stores tracking state on CPU. Both
 synchronous and asynchronous JPEG loaders normalize in float32 before transfer.
 JPEG directories need no video decoder; MP4 input requires the optional
-`av>=13.0.0` dependency (`pip install 'av>=13.0.0'`), included in the
+`av>=15.0.0` dependency (`pip install 'av>=15.0.0'`), included in the
 notebook and interactive-demo extras. PyAV provides native Apple Silicon wheels.
+PyAV 15 or later lets the demo preserve the displayed dimensions of rotated
+uploads using decoded-frame rotation metadata.
 
 Start with the tiny checkpoint and a short clip. MPS results can differ
 numerically from CPU/CUDA, and memory use depends on model, frames, and objects.
